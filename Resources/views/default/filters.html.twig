@@ -1,0 +1,31 @@
+{{ form_start(pagination.form, formOptions) }}
+
+<div class="search-container mb-2">
+    <div class="form-row search">
+        <div class="col-auto w-25">
+            {{ form_widget(pagination.searchForm) }}
+        </div>
+
+        <div class="col-auto">
+            <button type="submit" class="btn btn-primary">Search</button>
+            <input type="submit" name="{{ pagination.getPaginatorOption('paramNameClear') }}" class="btn" value="Clear">
+        </div>
+
+        <div class="col-auto ml-auto">
+            {{ form_widget(pagination.pageSizeForm) }}
+        </div>
+    </div>
+</div>
+
+<div class="filter-container">
+    <div class="form-row filters">
+    {% set filterForm = pagination.filterForm %}
+    {% for parameters in pagination.getPaginatorBuilder().getAllFilterFormParameters() %}
+        <div class="col-auto filter mb-2 w-25">
+            {{ form_widget(filterForm[parameters.alias][parameters.name], {compound: false}) }}
+        </div>
+    {% endfor %}
+    </div>
+</div>
+
+{{ form_end(pagination.form) }}

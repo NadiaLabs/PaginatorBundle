@@ -1,0 +1,35 @@
+{% if max > 1 %}
+<nav aria-label="Nadia pagination">
+    <ul class="pagination justify-content-center">
+        <li class="page-item {{ current > 1 ? '' : 'disabled' }}">
+            <a class="page-link" href="{{ current > 1 ? linkPrefix ~ 1 : '#' }}" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+                <span class="sr-only">First</span>
+            </a>
+        </li>
+        <li class="page-item {{ current > 1 ? '' : 'disabled' }}">
+            <a class="page-link" href="{{ current > 1 ? linkPrefix ~ (current - 1) : '#' }}" aria-label="First">
+                <span aria-hidden="true">&lt;</span>
+                <span class="sr-only">Previous</span>
+            </a>
+        </li>
+        {% for page in first..last %}
+        <li class="page-item {{ page == current ? 'active' : '' }}">
+            <a class="page-link" href="{{ linkPrefix ~ page }}">{{ page }}</a>
+        </li>
+        {% endfor %}
+        <li class="page-item {{ current < max ? '' : 'disabled' }}">
+            <a class="page-link" href="{{ current < max ? linkPrefix ~ (current + 1) : '#' }}" aria-label="Last">
+                <span aria-hidden="true">&gt;</span>
+                <span class="sr-only">Next</span>
+            </a>
+        </li>
+        <li class="page-item {{ max == current ? 'disabled' : '' }}">
+            <a class="page-link" href="{{ current < max ? linkPrefix ~ max : '#' }}" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+                <span class="sr-only">Last</span>
+            </a>
+        </li>
+    </ul>
+</nav>
+{% endif %}
