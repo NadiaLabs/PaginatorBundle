@@ -1,8 +1,8 @@
 {
-    "name": "nadia-lab/paginator-bundle",
+    "name": "nadialabs/paginator-bundle",
     "type": "symfony-bundle",
     "description": "Yet another Paginator bundle",
-    "keywords": ["paginator", "pagination", "symfony", "bundle", "nadia", "nadia-lab"],
+    "keywords": ["paginator", "pagination", "symfony", "bundle", "nadia", "nadialabs"],
     "homepage": "",
     "license": "MIT",
     "authors": [
@@ -11,8 +11,12 @@
             "homepage": "https://github.com/LeoOnTheEarth"
         }
     ],
+    "autoload": {
+        "psr-4": {
+            "Nadia\\Bundle\\PaginatorBundle\\": ""
+        }
+    },
     "require": {
-        "php": ">=5.5.9",
         "doctrine/doctrine-bundle": "^1.6",
         "doctrine/orm": "^2.5",
         "symfony/http-foundation": "^3.4",
@@ -20,14 +24,10 @@
     },
     "require-dev": {
     },
-    "autoload": {
-        "psr-4": {
-            "Nadia\\Bundle\\PaginatorBundle\\": ""
-        }
-    },
     "extra": {
         "branch-alias": {
             "dev-master": "1.0.x-dev"
         }
-    }
+    },
+    "minimum-stability": "dev"
 }
