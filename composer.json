@@ -3,7 +3,7 @@
     "type": "symfony-bundle",
     "description": "Yet another Paginator bundle",
     "keywords": ["paginator", "pagination", "symfony", "bundle", "nadia", "nadialabs"],
-    "homepage": "",
+    "homepage": "https://github.com/NadiaLabs/PaginatorBundle",
     "license": "MIT",
     "authors": [
         {
