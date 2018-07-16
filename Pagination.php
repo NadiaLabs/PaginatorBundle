@@ -1,12 +1,12 @@
 <?php
 
-namespace NadiaProject\Bundle\PaginatorBundle;
+namespace Nadia\Bundle\PaginatorBundle;
 
 use ArrayAccess;
 use Countable;
 use Iterator;
-use NadiaProject\Bundle\PaginatorBundle\Builder\PaginatorBuilder;
-use NadiaProject\Bundle\PaginatorBundle\Input\Input;
+use Nadia\Bundle\PaginatorBundle\Builder\PaginatorBuilder;
+use Nadia\Bundle\PaginatorBundle\Input\Input;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\HttpFoundation\Request;
 

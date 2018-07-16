@@ -1,9 +1,8 @@
 <?php
 
-namespace NadiaProject\Bundle\PaginatorBundle\Twig;
+namespace Nadia\Bundle\PaginatorBundle\Twig;
 
-use NadiaProject\Bundle\PaginatorBundle\Pagination;
-use Symfony\Component\Form\FormFactoryInterface;
+use Nadia\Bundle\PaginatorBundle\Pagination;
 use Symfony\Component\HttpFoundation\Request;
 
 class PaginationExtension extends \Twig_Extension

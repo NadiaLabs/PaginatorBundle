@@ -1,8 +1,8 @@
 <?php
 
-namespace NadiaProject\Bundle\PaginatorBundle\Input\InputFactory;
+namespace Nadia\Bundle\PaginatorBundle\Input\InputFactory;
 
-use NadiaProject\Bundle\PaginatorBundle\Input\Input;
+use Nadia\Bundle\PaginatorBundle\Input\Input;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\Request;
 

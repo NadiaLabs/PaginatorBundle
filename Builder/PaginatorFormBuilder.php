@@ -1,8 +1,8 @@
 <?php
 
-namespace NadiaProject\Bundle\PaginatorBundle\Builder;
+namespace Nadia\Bundle\PaginatorBundle\Builder;
 
-use NadiaProject\Bundle\PaginatorBundle\Input\Input;
+use Nadia\Bundle\PaginatorBundle\Input\Input;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;

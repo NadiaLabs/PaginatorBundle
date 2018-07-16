@@ -1,8 +1,8 @@
 <?php
 
-namespace NadiaProject\Bundle\PaginatorBundle\Builder;
+namespace Nadia\Bundle\PaginatorBundle\Builder;
 use Doctrine\ORM\QueryBuilder;
-use NadiaProject\Bundle\PaginatorBundle\Input\InputInterface;
+use Nadia\Bundle\PaginatorBundle\Input\InputInterface;
 
 /**
  * Class PaginatorBuilder

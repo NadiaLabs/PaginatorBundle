@@ -1,8 +1,8 @@
 <?php
 
-namespace NadiaProject\Bundle\PaginatorBundle\Type;
+namespace Nadia\Bundle\PaginatorBundle\Type;
 
-use NadiaProject\Bundle\PaginatorBundle\Builder\PaginatorBuilder;
+use Nadia\Bundle\PaginatorBundle\Builder\PaginatorBuilder;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 interface PaginatorTypeInterface

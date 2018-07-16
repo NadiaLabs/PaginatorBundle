@@ -1,6 +1,6 @@
 <?php
 
-namespace NadiaProject\Bundle\PaginatorBundle\Input;
+namespace Nadia\Bundle\PaginatorBundle\Input;
 
 /**
  * class Input

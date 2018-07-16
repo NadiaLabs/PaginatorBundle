@@ -1,6 +1,6 @@
 <?php
 
-namespace NadiaProject\Bundle\PaginatorBundle;
+namespace Nadia\Bundle\PaginatorBundle;
 
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 

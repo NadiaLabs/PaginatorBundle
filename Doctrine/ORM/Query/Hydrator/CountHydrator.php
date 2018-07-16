@@ -1,5 +1,5 @@
 <?php
-namespace NadiaProject\Bundle\PaginatorBundle\Doctrine\ORM\Query\Hydrator;
+namespace Nadia\Bundle\PaginatorBundle\Doctrine\ORM\Query\Hydrator;
 
 use Doctrine\ORM\Internal\Hydration\AbstractHydrator;
 

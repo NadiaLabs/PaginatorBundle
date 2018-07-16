@@ -1,16 +1,16 @@
 <?php
 
-namespace NadiaProject\Bundle\PaginatorBundle;
+namespace Nadia\Bundle\PaginatorBundle;
 
 use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\CountOutputWalker;
-use NadiaProject\Bundle\PaginatorBundle\Builder\PaginatorBuilder;
-use NadiaProject\Bundle\PaginatorBundle\Builder\PaginatorFormBuilder;
-use NadiaProject\Bundle\PaginatorBundle\Doctrine\ORM\Query\Hydrator\CountHydrator;
-use NadiaProject\Bundle\PaginatorBundle\Input\InputFactory\HttpFoundationRequestInputFactory;
-use NadiaProject\Bundle\PaginatorBundle\QueryBuilder\ORMQueryBuilder;
-use NadiaProject\Bundle\PaginatorBundle\Type\PaginatorTypeInterface;
+use Nadia\Bundle\PaginatorBundle\Builder\PaginatorBuilder;
+use Nadia\Bundle\PaginatorBundle\Builder\PaginatorFormBuilder;
+use Nadia\Bundle\PaginatorBundle\Doctrine\ORM\Query\Hydrator\CountHydrator;
+use Nadia\Bundle\PaginatorBundle\Input\InputFactory\HttpFoundationRequestInputFactory;
+use Nadia\Bundle\PaginatorBundle\QueryBuilder\ORMQueryBuilder;
+use Nadia\Bundle\PaginatorBundle\Type\PaginatorTypeInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 

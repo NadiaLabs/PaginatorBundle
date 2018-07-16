@@ -1,9 +1,9 @@
 <?php
 
-namespace NadiaProject\Bundle\PaginatorBundle\QueryBuilder;
+namespace Nadia\Bundle\PaginatorBundle\QueryBuilder;
 
 use Doctrine\ORM\QueryBuilder;
-use NadiaProject\Bundle\PaginatorBundle\Builder\PaginatorBuilder;
+use Nadia\Bundle\PaginatorBundle\Builder\PaginatorBuilder;
 
 /**
  * Class ORMQueryBuilder
