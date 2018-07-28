@@ -10,14 +10,14 @@ interface InputInterface
     /**
      * @return array
      */
-    public function getFilters();
+    public function getFilter();
 
     /**
-     * @param array $filters
+     * @param array $filter
      *
      * @return $this
      */
-    public function setFilters(array $filters);
+    public function setFilter(array $filter);
 
     /**
      * @return string
@@ -25,23 +25,23 @@ interface InputInterface
     public function getSearch();
 
     /**
-     * @param string $keywords
+     * @param array $search
      *
      * @return $this
      */
-    public function setSearch($keywords);
+    public function setSearch(array $search);
 
     /**
      * @return array
      */
-    public function getSorts();
+    public function getSort();
 
     /**
-     * @param array $sorts
+     * @param array $sort
      *
      * @return $this
      */
-    public function setSorts(array $sorts);
+    public function setSort(array $sort);
 
     /**
      * @return int
@@ -58,12 +58,12 @@ interface InputInterface
     /**
      * @return int
      */
-    public function getPageSize();
+    public function getLimit();
 
     /**
-     * @param int $pageSize
+     * @param int $limit
      *
      * @return $this
      */
-    public function setPageSize($pageSize);
+    public function setLimit($limit);
 }

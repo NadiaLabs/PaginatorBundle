@@ -10,7 +10,7 @@ class Input implements InputInterface
     /**
      * @var array
      */
-    private $filters = [];
+    private $filter = [];
     /**
      * @var string
      */
@@ -18,7 +18,7 @@ class Input implements InputInterface
     /**
      * @var array
      */
-    private $sorts = [];
+    private $sort = [];
     /**
      * @var int
      */
@@ -26,40 +26,40 @@ class Input implements InputInterface
     /**
      * @var int
      */
-    private $pageSize;
+    private $limit;
 
     /**
      * Input constructor.
      *
-     * @param array $filters
-     * @param string|null $search
-     * @param array $sorts
+     * @param array    $filter
+     * @param array    $search
+     * @param array    $sort
      * @param int|null $page
-     * @param int|null $pageSize
+     * @param int|null $limit
      */
-    public function __construct(array $filters = [], $search = null, array $sorts = [], $page = null, $pageSize = null)
+    public function __construct(array $filter = [], array $search = [], array $sort = [], $page = null, $limit = null)
     {
-        $this->filters = $filters;
+        $this->filter = $filter;
         $this->search = $search;
-        $this->sorts = $sorts;
+        $this->sort = $sort;
         $this->page = $page;
-        $this->pageSize = $pageSize;
+        $this->limit = $limit;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getFilters()
+    public function getFilter()
     {
-        return $this->filters;
+        return $this->filter;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function setFilters(array $filters)
+    public function setFilter(array $filter)
     {
-        $this->filters = $filters;
+        $this->filter = $filter;
         return $this;
     }
 
@@ -74,7 +74,7 @@ class Input implements InputInterface
     /**
      * {@inheritdoc}
      */
-    public function setSearch($search)
+    public function setSearch(array $search)
     {
         $this->search = $search;
         return $this;
@@ -83,17 +83,17 @@ class Input implements InputInterface
     /**
      * {@inheritdoc}
      */
-    public function getSorts()
+    public function getSort()
     {
-        return $this->sorts;
+        return $this->sort;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function setSorts(array $sorts)
+    public function setSort(array $sort)
     {
-        $this->sorts = $sorts;
+        $this->sort = $sort;
     }
 
     /**
@@ -116,17 +116,17 @@ class Input implements InputInterface
     /**
      * {@inheritdoc}
      */
-    public function getPageSize()
+    public function getLimit()
     {
-        return $this->pageSize;
+        return $this->limit;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function setPageSize($pageSize)
+    public function setLimit($limit)
     {
-        $this->pageSize = $pageSize;
+        $this->limit = $limit;
         return $this;
     }
 }
