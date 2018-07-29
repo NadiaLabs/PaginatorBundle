@@ -12,7 +12,7 @@ class DefaultSearchQueryProcessor
     /**
      * The default QueryProcessor for search configurations
      *
-     * @param QueryBuilder $qb      The ORM QueryBuilder instance
+     * @param QueryBuilder $qb      The DBAL QueryBuilder instance
      * @param array        $fields  Search fields
      * @param string       $value   Search keywords
      *

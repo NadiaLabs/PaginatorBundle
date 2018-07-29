@@ -20,7 +20,7 @@ interface InputInterface
     public function setFilter(array $filter);
 
     /**
-     * @return string
+     * @return array
      */
     public function getSearch();
 
@@ -32,16 +32,16 @@ interface InputInterface
     public function setSearch(array $search);
 
     /**
-     * @return array
+     * @return string
      */
     public function getSort();
 
     /**
-     * @param array $sort
+     * @param string $sort
      *
      * @return $this
      */
-    public function setSort(array $sort);
+    public function setSort($sort);
 
     /**
      * @return int
@@ -66,4 +66,15 @@ interface InputInterface
      * @return $this
      */
     public function setLimit($limit);
+
+    /**
+     * @return int
+     */
+    public function getOffset();
+
+    /**
+     * @param int $page
+     * @param int $limit
+     */
+    public function setOffset($page, $limit);
 }

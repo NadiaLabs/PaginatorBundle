@@ -12,13 +12,13 @@ class Input implements InputInterface
      */
     private $filter = [];
     /**
-     * @var string
-     */
-    private $search;
-    /**
      * @var array
      */
-    private $sort = [];
+    private $search = [];
+    /**
+     * @var string
+     */
+    private $sort;
     /**
      * @var int
      */
@@ -27,23 +27,29 @@ class Input implements InputInterface
      * @var int
      */
     private $limit;
+    /**
+     * @var int
+     */
+    private $offset;
 
     /**
      * Input constructor.
      *
-     * @param array    $filter
-     * @param array    $search
-     * @param array    $sort
-     * @param int|null $page
-     * @param int|null $limit
+     * @param array       $filter
+     * @param array       $search
+     * @param string|null $sort
+     * @param int|null    $page
+     * @param int|null    $limit
      */
-    public function __construct(array $filter = [], array $search = [], array $sort = [], $page = null, $limit = null)
+    public function __construct(array $filter = [], array $search = [], $sort = null, $page = null, $limit = null)
     {
         $this->filter = $filter;
         $this->search = $search;
         $this->sort = $sort;
         $this->page = $page;
         $this->limit = $limit;
+
+        $this->setOffset($page, $limit);
     }
 
     /**
@@ -91,7 +97,7 @@ class Input implements InputInterface
     /**
      * {@inheritdoc}
      */
-    public function setSort(array $sort)
+    public function setSort($sort)
     {
         $this->sort = $sort;
     }
@@ -110,6 +116,9 @@ class Input implements InputInterface
     public function setPage($page)
     {
         $this->page = $page;
+
+        $this->setOffset($this->page, $this->limit);
+
         return $this;
     }
 
@@ -127,6 +136,25 @@ class Input implements InputInterface
     public function setLimit($limit)
     {
         $this->limit = $limit;
+
+        $this->setOffset($this->page, $this->limit);
+
         return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getOffset()
+    {
+        return $this->offset;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setOffset($page, $limit)
+    {
+        $this->offset = ($page - 1) * $limit;
     }
 }

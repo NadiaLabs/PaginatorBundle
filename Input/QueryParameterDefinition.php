@@ -10,23 +10,23 @@ class QueryParameterDefinition
     /**
      * @var string
      */
-    public $filter = 'filter';
+    public $filter = '__filter';
     /**
      * @var string
      */
-    public $search = 'search';
+    public $search = '__search';
     /**
      * @var string
      */
-    public $sort = 'sort';
+    public $sort = '__sort';
     /**
      * @var string
      */
-    public $page = 'page';
+    public $page = '__page';
     /**
      * @var string
      */
-    public $limit = 'limit';
+    public $limit = '__limit';
     /**
      * @var string
      */

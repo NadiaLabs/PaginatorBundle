@@ -25,15 +25,8 @@ class FilterBuilder
      */
     public function add($name, $formType, array $options = [])
     {
-        $parts = explode('.', $name);
-
-        if (2 !== count($parts)) {
-            return $this;
-        }
-
         $this->forms[$name] = [
-            'alias' => $parts[0],
-            'name' => $parts[1],
+            'name' => $name,
             'type' => $formType,
             'options' => $options,
         ];
@@ -73,5 +66,13 @@ class FilterBuilder
     public function all()
     {
         return $this->forms;
+    }
+
+    /**
+     * @return int
+     */
+    public function count()
+    {
+        return count($this->forms);
     }
 }

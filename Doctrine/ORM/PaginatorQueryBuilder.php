@@ -3,7 +3,8 @@
 namespace Nadia\Bundle\PaginatorBundle\QueryBuilder;
 
 use Doctrine\ORM\QueryBuilder;
-use Nadia\Bundle\PaginatorBundle\Builder\PaginatorBuilder;
+use Nadia\Bundle\PaginatorBundle\Configuration\PaginatorBuilder;
+use Nadia\Bundle\PaginatorBundle\Doctrine\ORM\DefaultSearchQueryProcessor;
 
 /**
  * Class PaginatorQueryBuilder
@@ -100,63 +101,20 @@ class PaginatorQueryBuilder
     }
 
     /**
-     * {@inheritdoc}
+     * @param QueryBuilder $qb
+     * @param array        $filter
+     * @param array        $search
+     * @param array        $sort
+     * @param int          $limit
+     * @param int          $offset
+     *
+     * @return QueryBuilder
      */
-    public function build(QueryBuilder $qb, $search = '', array $filters = [], array $sorts = [], $limit = 0, $offset = 0)
+    public function build(QueryBuilder $qb, array $filter = [], array $search = [], array $sort = [], $limit = 0, $offset = 0)
     {
-        $searchProcessor = $this->paginatorBuilder->getSearchProcessor();
-        $filterProcessors = $this->paginatorBuilder->getFilterProcessors();
-        $sortProcessors = $this->paginatorBuilder->getSortProcessors();
-        $searchColumns = $this->paginatorBuilder->getSearchColumns();
-        $parameterCount = 0;
-
-        foreach ($filters as $alias => $filter) {
-            foreach ($filter as $key => $value) {
-                if ('' === $value) {
-                    continue;
-                }
-
-                $fieldName = $alias . '.' . $key;
-
-                if (!empty($filterProcessors[$fieldName]) && is_callable($filterProcessors[$fieldName])) {
-                    call_user_func($filterProcessors[$fieldName], $qb, $fieldName, $value);
-                } else {
-                    if (is_array($value)) {
-                        $bindParameters = [];
-
-                        foreach ($value as $v) {
-                            $bindParameters[] = '?' . $parameterCount;
-
-                            $qb->setParameter($parameterCount++, $v);
-                        }
-
-                        $qb->andWhere($qb->expr()->in($fieldName, $bindParameters));
-                    } else {
-                        $qb->andWhere($qb->expr()->eq($fieldName, '?' . $parameterCount));
-                        $qb->setParameter($parameterCount++, $value);
-                    }
-                }
-            }
-        }
-
-        if (!empty($search) && !empty($searchColumns)) {
-            call_user_func($searchProcessor, $qb, $searchColumns, $search);
-        }
-
-        if (!empty($sorts)) {
-            $directionList = ['ASC' => 'ASC', 'DESC' => 'DESC'];
-
-            foreach ($sorts as $fieldName => $direction) {
-                $direction = strtoupper($direction);
-                $direction = !isset($directionList[$direction]) ? 'ASC' : $direction;
-
-                if (!empty($sortProcessors[$fieldName])) {
-                    call_user_func($sortProcessors[$fieldName], $qb, $fieldName, $direction);
-                } else {
-                    $qb->addOrderBy($fieldName, $direction);
-                }
-            }
-        }
+        $this->buildFilter($qb, $filter);
+        $this->buildSearch($qb, $search);
+        $this->buildSort($qb, $sort);
 
         if (!empty($limit)) {
             $qb->setMaxResults($limit);
@@ -167,5 +125,105 @@ class PaginatorQueryBuilder
         }
 
         return $qb;
+    }
+
+    /**
+     * @param QueryBuilder $qb
+     * @param array        $filter
+     */
+    protected function buildFilter(QueryBuilder $qb, array $filter)
+    {
+        if (!$this->paginatorBuilder->hasFilter()) {
+            return;
+        }
+
+        $filterBuilder = $this->paginatorBuilder->getFilterBuilder();
+        $filterProcessors = $this->paginatorBuilder->getFilterQueryProcessors();
+        $parameterCount = 0;
+
+        foreach ($filter as $name => $value) {
+            if ('' === $value || !$filterBuilder->has($name)) {
+                continue;
+            }
+
+            if ($filterProcessors->has($name) && is_callable($filterProcessors[$name])) {
+                call_user_func($filterProcessors[$name], $qb, $name, $value);
+            } else {
+                if (is_array($value)) {
+                    $bindParameters = [];
+
+                    foreach ($value as $v) {
+                        $bindParameters[] = '?' . $parameterCount;
+
+                        $qb->setParameter($parameterCount++, $v);
+                    }
+
+                    $qb->andWhere($qb->expr()->in($name, $bindParameters));
+                } else {
+                    $qb->andWhere($qb->expr()->eq($name, '?' . $parameterCount));
+                    $qb->setParameter($parameterCount++, $value);
+                }
+            }
+        }
+    }
+
+    /**
+     * @param QueryBuilder $qb
+     * @param array        $search
+     *
+     */
+    protected function buildSearch(QueryBuilder $qb, array $search)
+    {
+        if (!$this->paginatorBuilder->hasSearch()) {
+            return;
+        }
+
+        $searchBuilder = $this->paginatorBuilder->getSearchBuilder();
+        $searchProcessors = $this->paginatorBuilder->getSearchQueryProcessors();
+
+        foreach ($search as $name => $value) {
+            if ('' === $value || !$searchBuilder->has($name)) {
+                continue;
+            }
+
+            $params = $searchBuilder->get($name);
+
+            if ($searchProcessors->has($name) && is_callable($searchProcessors[$name])) {
+                call_user_func($searchProcessors[$name], $qb, $params['fields'], $value);
+            } else {
+                DefaultSearchQueryProcessor::process($qb, $params['fields'], $value);
+            }
+        }
+    }
+
+    /**
+     * @param QueryBuilder $qb
+     * @param array        $sort
+     */
+    protected function buildSort(QueryBuilder $qb, array $sort)
+    {
+        if (!$this->paginatorBuilder->hasSort() && !empty($sort)) {
+            return;
+        }
+
+        foreach ($sort as $statement) {
+            $orderBys = array_map(function($v) {
+                $parts = explode(' ', $v, 2);
+
+                if (1 === count($parts)) {
+                    // Default order direction
+                    $parts[] = 'ASC';
+                }
+
+                return [
+                    'fieldName' => $parts[0],
+                    'direction' => strtoupper($parts[1]),
+                ];
+            }, explode(',', $statement));
+
+            foreach ($orderBys as $orderBy) {
+                $qb->addOrderBy($orderBy['fieldName'], $orderBy['direction']);
+            }
+        }
     }
 }

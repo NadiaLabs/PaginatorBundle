@@ -8,25 +8,26 @@ namespace Nadia\Bundle\PaginatorBundle\Configuration;
 class SortBuilder
 {
     /**
-     * Sort fields
+     * Sort statements
      *
-     * Format: ['columnName1' => 'defaultDirection1', 'columnName2' => 'defaultDirection2', ...]
+     * Format: ['foo', 'foo ASC', 'foo ASC, bar DESC', ...]
      *
      * @var array
      */
-    private $fields = [];
+    private $sorts = [];
 
     /**
-     * Add a sort field name and its default direction
+     * Add a sort statement
      *
-     * @param string $name             The sort field name
-     * @param string $defaultDirection The default sort direction
+     * @param string $statement The sort statement, ex: 'foo', 'foo ASC', 'foo ASC, bar DESC'
      *
      * @return $this
      */
-    public function add($name, $defaultDirection = 'ASC')
+    public function add($statement)
     {
-        $this->fields[$name] = $defaultDirection;
+        if (!empty($statement)) {
+            $this->sorts[] = $statement;
+        }
 
         return $this;
     }
@@ -36,6 +37,14 @@ class SortBuilder
      */
     public function all()
     {
-        return $this->fields;
+        return $this->sorts;
+    }
+
+    /**
+     * @return int
+     */
+    public function count()
+    {
+        return count($this->sorts);
     }
 }

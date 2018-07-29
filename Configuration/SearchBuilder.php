@@ -34,7 +34,7 @@ class SearchBuilder
             'name' => $name,
             'type' => $formType,
             'options' => $options,
-            'columns' => $fields,
+            'fields' => $fields,
         ];
 
         return $this;
@@ -74,5 +74,13 @@ class SearchBuilder
     public function all()
     {
         return $this->forms;
+    }
+
+    /**
+     * @return int
+     */
+    public function count()
+    {
+        return count($this->forms);
     }
 }

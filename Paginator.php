@@ -5,14 +5,12 @@ namespace Nadia\Bundle\PaginatorBundle;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\CountOutputWalker;
-use Nadia\Bundle\PaginatorBundle\Builder\PaginatorBuilder;
-use Nadia\Bundle\PaginatorBundle\Builder\PaginatorFormBuilder;
+use Nadia\Bundle\PaginatorBundle\Configuration\PaginatorBuilder;
 use Nadia\Bundle\PaginatorBundle\Doctrine\ORM\Query\Hydrator\CountHydrator;
-use Nadia\Bundle\PaginatorBundle\Input\InputFactory\HttpFoundationRequestInputFactory;
-use Nadia\Bundle\PaginatorBundle\QueryBuilder\ORMQueryBuilder;
-use Nadia\Bundle\PaginatorBundle\Type\PaginatorTypeInterface;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\OptionsResolver\OptionsResolver;
+use Nadia\Bundle\PaginatorBundle\Input\InputInterface;
+use Nadia\Bundle\PaginatorBundle\Pagination\Pagination;
+use Nadia\Bundle\PaginatorBundle\QueryBuilder\PaginatorQueryBuilder;
+use Symfony\Component\Form\FormInterface;
 
 /**
  * Class Paginator
@@ -20,48 +18,62 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class Paginator
 {
     /**
-     * @var PaginatorFormBuilder
+     * @var PaginatorBuilder
      */
-    private $formBuilder;
+    private $builder;
+    /**
+     * @var FormInterface
+     */
+    private $form;
+    /**
+     * @var InputInterface
+     */
+    private $input;
+    /**
+     * @var array
+     */
+    private $options = [];
 
-    public function __construct(PaginatorFormBuilder $formBuilder)
+    /**
+     * Paginator constructor.
+     *
+     * @param PaginatorBuilder $builder
+     * @param FormInterface    $form
+     * @param InputInterface   $input
+     * @param array            $options
+     */
+    public function __construct(PaginatorBuilder $builder, FormInterface $form, InputInterface $input, array $options)
     {
-        $this->formBuilder = $formBuilder;
+        $this->builder = $builder;
+        $this->form = $form;
+        $this->input = $input;
+        $this->options = $options;
     }
 
     /**
      * Do the paginate process and generate Pagination instance
      *
      * @param mixed $target Paginating target, retrieve data from this target instance
-     * @param mixed $request Request data
-     * @param PaginatorTypeInterface $type PaginatorType instance
-     * @param array $typeOptions PaginatorType options
      *
      * @return Pagination
      */
-    public function paginate($target, $request, PaginatorTypeInterface $type, array $typeOptions = [])
+    public function paginate(QueryBuilder $target)
     {
-        if (!($target instanceof QueryBuilder)) {
-            throw new \InvalidArgumentException('Unsupported target instance. Currently only support Doctrine\ORM\QueryBuilder.');
-        }
-        if (!($request instanceof Request)) {
-            throw new \InvalidArgumentException('Unsupported request instance. Currently only support Symfony\Component\HttpFoundation\Request.');
-        }
+        $input = $this->input;
 
-        $typeOptions = $this->resolveTypeOptions($type, $typeOptions);
-        $inputFactory = $this->getInputFactory();
-        $input = $inputFactory->factory($request, $typeOptions);
+        $queryBuilder = new PaginatorQueryBuilder($this->builder);
+        $qb = $queryBuilder->build($target, $input->getFilter(), $input->getSearch(), $input->getSort(), $input->getLimit(), $input->getOffset());
 
-        $paginatorBuilder = new PaginatorBuilder();
+        $count = $this->count($qb);
+        $items = $qb->getQuery()->getResult();
 
-        $type->buildPaginator($paginatorBuilder, $typeOptions);
-        $paginatorBuilder->validateInput($input);
+        $pagination = new Pagination($this->builder, $this->options, $input, $this->form, $count, $items);
 
-        $form = $this->formBuilder->build($paginatorBuilder, $input, $typeOptions);
+        return $pagination;
+    }
 
-        $offset = ($input->getPage() - 1) * $input->getPageSize();
-        $queryBuilder = new ORMQueryBuilder($paginatorBuilder);
-        $qb = $queryBuilder->build($target, $input->getSearch(), $input->getFilters(), $input->getSorts(), $input->getPageSize(), $offset);
+    private function count(QueryBuilder $qb)
+    {
         $countQuery = (clone $qb)->getQuery();
 
         $countQuery->setHint(Query::HINT_CUSTOM_OUTPUT_WALKER, CountOutputWalker::class);
@@ -70,82 +82,7 @@ class Paginator
         $countQuery->getEntityManager()->getConfiguration()->addCustomHydrationMode('count', CountHydrator::class);
 
         $countResult = $countQuery->getResult('count');
-        $count = intval(current(current($countResult)));
-        $items = $qb->getQuery()->getResult();
 
-        $pagination = new Pagination(
-            $paginatorBuilder, $typeOptions, $input, $request, $count, $items, $form
-        );
-
-        return $pagination;
-    }
-
-    /**
-     * Process input data
-     *
-     * @param $request
-     * @param PaginatorTypeInterface $type
-     * @param array $typeOptions
-     *
-     * @return Input\Input
-     */
-    public function resolveInputSession($request, PaginatorTypeInterface $type, array $typeOptions = [])
-    {
-        $typeOptions = $this->resolveTypeOptions($type, $typeOptions);
-        $inputFactory = $this->getInputFactory();
-
-        return $inputFactory->factory($request, $typeOptions);
-    }
-
-    /**
-     * Resolve PaginatorType options
-     *
-     * @param PaginatorTypeInterface $type PaginatorType instance
-     * @param array $options PaginatorType options
-     *
-     * @return array Resolved PaginatorType options
-     */
-    private function resolveTypeOptions(PaginatorTypeInterface $type, array $options = [])
-    {
-        $resolver = new OptionsResolver();
-
-        $resolver->setRequired([
-            'paramNameFilter',
-            'paramNameSearch',
-            'paramNameSortBy',
-            'paramNameSortDirection',
-            'paramNamePage',
-            'paramNamePageSize',
-            'defaultPageSize',
-            'paramNameClear',
-        ]);
-
-        $resolver->setDefaults([
-            'formName' => 'form',
-            'paramNameFilter' => 'filter',
-            'paramNameSearch' => 'search',
-            'paramNameSortBy' => 'sort_by',
-            'paramNameSortDirection' => 'sort_direction',
-            'paramNamePage' => 'page',
-            'paramNamePageSize' => 'page_size',
-            'defaultPageSize' => 10,
-            'paramNameClear' => '_clear_all_parameters',
-            'sessionKey' => 'nadia.paginator.params.' . hash('md5', get_class($type)),
-            'templatePagination' => '@NadiaPaginator/default/pagination.html.twig',
-            'templateFilters' => '@NadiaPaginator/default/filters.html.twig',
-            'templateSort' => '@NadiaPaginator/default/sort.html.twig',
-        ]);
-
-        $type->configureOptions($resolver);
-
-        return $resolver->resolve($options);
-    }
-
-    /**
-     * @return HttpFoundationRequestInputFactory
-     */
-    public function getInputFactory()
-    {
-        return new HttpFoundationRequestInputFactory();
+        return intval(current(current($countResult)));
     }
 }
