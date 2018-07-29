@@ -1,9 +1,7 @@
 <?php
 
-namespace Nadia\Bundle\PaginatorBundle;
+namespace Nadia\Bundle\PaginatorBundle\Configuration;
 
-use Nadia\Bundle\PaginatorBundle\Configuration\PaginatorBuilder;
-use Nadia\Bundle\PaginatorBundle\Configuration\PaginatorTypeInterface;
 use Nadia\Bundle\PaginatorBundle\Input\QueryParameterDefinition;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 

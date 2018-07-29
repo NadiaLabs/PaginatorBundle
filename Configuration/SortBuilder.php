@@ -20,13 +20,14 @@ class SortBuilder
      * Add a sort statement
      *
      * @param string $statement The sort statement, ex: 'foo', 'foo ASC', 'foo ASC, bar DESC'
+     * @param string $title     The sort title
      *
      * @return $this
      */
-    public function add($statement)
+    public function add($statement, $title)
     {
         if (!empty($statement)) {
-            $this->sorts[] = $statement;
+            $this->sorts[$title] = $statement;
         }
 
         return $this;
