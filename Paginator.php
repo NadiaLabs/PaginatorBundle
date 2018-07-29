@@ -6,10 +6,10 @@ use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\CountOutputWalker;
 use Nadia\Bundle\PaginatorBundle\Configuration\PaginatorBuilder;
+use Nadia\Bundle\PaginatorBundle\Doctrine\ORM\PaginatorQueryBuilder;
 use Nadia\Bundle\PaginatorBundle\Doctrine\ORM\Query\Hydrator\CountHydrator;
 use Nadia\Bundle\PaginatorBundle\Input\InputInterface;
 use Nadia\Bundle\PaginatorBundle\Pagination\Pagination;
-use Nadia\Bundle\PaginatorBundle\QueryBuilder\PaginatorQueryBuilder;
 use Symfony\Component\Form\FormInterface;
 
 /**

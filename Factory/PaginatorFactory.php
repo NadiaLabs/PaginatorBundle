@@ -68,7 +68,7 @@ class PaginatorFactory
             $queryParamDef->sort   => $input->getSort(),
             $queryParamDef->limit  => $input->getLimit(),
         ];
-        $form = $this->formFactory->create();
+        $form = $this->formFactory->create(FormType::class, null, ['csrf_protection' => false]);
 
         if ($builder->hasFilter()) {
             $filterForm = $this->formFactory->createNamed($queryParamDef->filter, FormType::class, null, ['auto_initialize' => false]);

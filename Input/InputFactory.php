@@ -21,7 +21,8 @@ class InputFactory
         $sessionKey = $options['sessionKey'];
         $params = array_merge($_GET, $_POST);
         $clear = array_key_exists($queryParamDef->clear, $params);
-        $filter = $search = $sort = [];
+        $filter = $search = [];
+        $sort = null;
         $limit = $options['defaultLimit'];
         $page = 1;
 

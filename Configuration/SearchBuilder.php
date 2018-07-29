@@ -17,7 +17,7 @@ class SearchBuilder
     /**
      * Add a search form parameters
      *
-     * @param string $name     Search name
+     * @param string $name     Search name, ex: article:title, article:createdAt, ...
      * @param array  $fields   Search fields, ex: post.title, user.name
      * @param string $formType Form type class name
      * @param array  $options  Form type options

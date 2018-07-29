@@ -17,7 +17,7 @@ class FilterBuilder
     /**
      * Add a filter form parameters
      *
-     * @param string $name     Filter name
+     * @param string $name     Filter name, ex: article:title, article:createdAt, ...
      * @param string $formType Form type class name
      * @param array  $options  Form type options
      *

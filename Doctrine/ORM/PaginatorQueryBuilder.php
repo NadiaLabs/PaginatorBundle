@@ -1,10 +1,9 @@
 <?php
 
-namespace Nadia\Bundle\PaginatorBundle\QueryBuilder;
+namespace Nadia\Bundle\PaginatorBundle\Doctrine\ORM;
 
 use Doctrine\ORM\QueryBuilder;
 use Nadia\Bundle\PaginatorBundle\Configuration\PaginatorBuilder;
-use Nadia\Bundle\PaginatorBundle\Doctrine\ORM\DefaultSearchQueryProcessor;
 
 /**
  * Class PaginatorQueryBuilder
@@ -110,7 +109,7 @@ class PaginatorQueryBuilder
      *
      * @return QueryBuilder
      */
-    public function build(QueryBuilder $qb, array $filter = [], array $search = [], array $sort = [], $limit = 0, $offset = 0)
+    public function build(QueryBuilder $qb, array $filter = [], array $search = [], $sort = null, $limit = 0, $offset = 0)
     {
         $this->buildFilter($qb, $filter);
         $this->buildSearch($qb, $search);
@@ -133,7 +132,7 @@ class PaginatorQueryBuilder
      */
     protected function buildFilter(QueryBuilder $qb, array $filter)
     {
-        if (!$this->paginatorBuilder->hasFilter()) {
+        if (!$this->paginatorBuilder->hasFilter() || empty($filter)) {
             return;
         }
 
@@ -146,8 +145,10 @@ class PaginatorQueryBuilder
                 continue;
             }
 
+            $fieldName = str_replace(':', '.', $name);
+
             if ($filterProcessors->has($name) && is_callable($filterProcessors[$name])) {
-                call_user_func($filterProcessors[$name], $qb, $name, $value);
+                call_user_func($filterProcessors[$name], $qb, $fieldName, $value);
             } else {
                 if (is_array($value)) {
                     $bindParameters = [];
@@ -158,9 +159,9 @@ class PaginatorQueryBuilder
                         $qb->setParameter($parameterCount++, $v);
                     }
 
-                    $qb->andWhere($qb->expr()->in($name, $bindParameters));
+                    $qb->andWhere($qb->expr()->in($fieldName, $bindParameters));
                 } else {
-                    $qb->andWhere($qb->expr()->eq($name, '?' . $parameterCount));
+                    $qb->andWhere($qb->expr()->eq($fieldName, '?' . $parameterCount));
                     $qb->setParameter($parameterCount++, $value);
                 }
             }
@@ -174,7 +175,7 @@ class PaginatorQueryBuilder
      */
     protected function buildSearch(QueryBuilder $qb, array $search)
     {
-        if (!$this->paginatorBuilder->hasSearch()) {
+        if (!$this->paginatorBuilder->hasSearch() || empty($search)) {
             return;
         }
 
@@ -198,32 +199,30 @@ class PaginatorQueryBuilder
 
     /**
      * @param QueryBuilder $qb
-     * @param array        $sort
+     * @param string|null  $sort
      */
-    protected function buildSort(QueryBuilder $qb, array $sort)
+    protected function buildSort(QueryBuilder $qb, $sort = null)
     {
-        if (!$this->paginatorBuilder->hasSort() && !empty($sort)) {
+        if (!$this->paginatorBuilder->hasSort() || empty($sort)) {
             return;
         }
 
-        foreach ($sort as $statement) {
-            $orderBys = array_map(function($v) {
-                $parts = explode(' ', $v, 2);
+        $orderBys = array_map(function($v) {
+            $parts = explode(' ', $v, 2);
 
-                if (1 === count($parts)) {
-                    // Default order direction
-                    $parts[] = 'ASC';
-                }
-
-                return [
-                    'fieldName' => $parts[0],
-                    'direction' => strtoupper($parts[1]),
-                ];
-            }, explode(',', $statement));
-
-            foreach ($orderBys as $orderBy) {
-                $qb->addOrderBy($orderBy['fieldName'], $orderBy['direction']);
+            if (1 === count($parts)) {
+                // Default order direction
+                $parts[] = 'ASC';
             }
+
+            return [
+                'fieldName' => $parts[0],
+                'direction' => strtoupper($parts[1]),
+            ];
+        }, explode(',', $sort));
+
+        foreach ($orderBys as $orderBy) {
+            $qb->addOrderBy($orderBy['fieldName'], $orderBy['direction']);
         }
     }
 }
