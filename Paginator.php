@@ -74,7 +74,7 @@ class Paginator
 
     private function count(QueryBuilder $qb)
     {
-        $countQuery = (clone $qb)->getQuery();
+        $countQuery = (clone $qb)->resetDQLPart('orderBy')->getQuery();
 
         $countQuery->setHint(Query::HINT_CUSTOM_OUTPUT_WALKER, CountOutputWalker::class);
         $countQuery->setFirstResult(null);

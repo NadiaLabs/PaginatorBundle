@@ -4,6 +4,7 @@ namespace Nadia\Bundle\PaginatorBundle\Pagination;
 
 use Nadia\Bundle\PaginatorBundle\Configuration\PaginatorBuilder;
 use Nadia\Bundle\PaginatorBundle\Input\InputInterface;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 
 /**
@@ -11,16 +12,36 @@ use Symfony\Component\Form\FormView;
  */
 class Pagination
 {
+    /**
+     * @var PaginatorBuilder
+     */
     private $builder;
+    /**
+     * @var array
+     */
     private $options;
+    /**
+     * @var InputInterface
+     */
     private $input;
+    /**
+     * @var FormInterface
+     */
     private $form;
+    /**
+     * @var int
+     */
     private $count;
+    /**
+     * @var array
+     */
     private $items;
-    private $template;
+    /**
+     * @var int
+     */
     private $lastPage;
 
-    public function __construct(PaginatorBuilder $builder, array $options, InputInterface $input, $form, $count, $items)
+    public function __construct(PaginatorBuilder $builder, array $options, InputInterface $input, FormInterface $form, $count, $items)
     {
         $this->builder = $builder;
         $this->options = $options;
@@ -28,9 +49,6 @@ class Pagination
         $this->form = $form;
         $this->count = $count;
         $this->items = $items;
-        $this->template = $options['template'];
-
-
         $this->lastPage = (int) ceil($count / $this->input->getLimit());
     }
 
@@ -74,7 +92,15 @@ class Pagination
      */
     public function getForm()
     {
-        return $this->form;
+        return $this->form->createView();
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasFilterForm()
+    {
+        return $this->form->has($this->options['queryParams']->filter);
     }
 
     /**
@@ -82,7 +108,15 @@ class Pagination
      */
     public function getFilterForm()
     {
-        return $this->form[$this->options['queryParams']->filter];
+        return $this->form[$this->options['queryParams']->filter]->createView();
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasSearchForm()
+    {
+        return $this->form->has($this->options['queryParams']->search);
     }
 
     /**
@@ -90,7 +124,15 @@ class Pagination
      */
     public function getSearchForm()
     {
-        return $this->form[$this->options['queryParams']->search];
+        return $this->form[$this->options['queryParams']->search]->createView();
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasSortForm()
+    {
+        return $this->form->has($this->options['queryParams']->sort);
     }
 
     /**
@@ -98,7 +140,15 @@ class Pagination
      */
     public function getSortForm()
     {
-        return $this->form[$this->options['queryParams']->sort];
+        return $this->form[$this->options['queryParams']->sort]->createView();
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasLimitForm()
+    {
+        return $this->form->has($this->options['queryParams']->limit);
     }
 
     /**
@@ -106,7 +156,7 @@ class Pagination
      */
     public function getLimitForm()
     {
-        return $this->form[$this->options['queryParams']->limit];
+        return $this->form[$this->options['queryParams']->limit]->createView();
     }
 
     /**
@@ -130,6 +180,6 @@ class Pagination
      */
     public function getTemplate()
     {
-        return $this->template;
+        return $this->options['template'];
     }
 }

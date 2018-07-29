@@ -68,13 +68,15 @@ class PaginatorFactory
             $queryParamDef->sort   => $input->getSort(),
             $queryParamDef->limit  => $input->getLimit(),
         ];
-        $form = $this->formFactory->create(FormType::class, null, ['csrf_protection' => false]);
+        $form = $this->formFactory->createNamed(null, FormType::class, null, ['csrf_protection' => false]);
 
         if ($builder->hasFilter()) {
             $filterForm = $this->formFactory->createNamed($queryParamDef->filter, FormType::class, null, ['auto_initialize' => false]);
 
             foreach ($builder->getFilterBuilder()->all() as $filter) {
-                $filterForm->add($filter['name'], $filter['type'], $filter['options']);
+                $filterOptions = array_merge(['required' => false], $filter['options']);
+
+                $filterForm->add($filter['name'], $filter['type'], $filterOptions);
             }
 
             $form->add($filterForm);
@@ -84,7 +86,9 @@ class PaginatorFactory
             $searchForm = $this->formFactory->createNamed($queryParamDef->search, FormType::class, null, ['auto_initialize' => false]);
 
             foreach ($builder->getSearchBuilder()->all() as $search) {
-                $searchForm->add($search['name'], $search['type'], $search['options']);
+                $searchOptions = array_merge(['required' => false], $search['options']);
+
+                $searchForm->add($search['name'], $search['type'], $searchOptions);
             }
 
             $form->add($searchForm);

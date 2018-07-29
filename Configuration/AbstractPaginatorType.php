@@ -32,6 +32,7 @@ abstract class AbstractPaginatorType implements PaginatorTypeInterface
         $resolver->setDefaults([
             'queryParams' => new QueryParameterDefinition(),
             'defaultLimit' => 10,
+            'sessionEnabled' => true,
             'sessionKey' => 'nadia.paginator.session.' . hash('md5', get_class($this)),
             'template' => '@NadiaPaginator/template-bootstrap4.html.twig',
         ]);

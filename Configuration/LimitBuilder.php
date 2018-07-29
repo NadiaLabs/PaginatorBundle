@@ -7,6 +7,9 @@ namespace Nadia\Bundle\PaginatorBundle\Configuration;
  */
 class LimitBuilder
 {
+    /**
+     * @var array
+     */
     private $pageSizes = [];
 
     /**
@@ -23,16 +26,16 @@ class LimitBuilder
                 return $this;
             }
 
-            $pageSizes = [$pageSizes];
+            $pageSizes = [$pageSizes => $pageSizes];
         }
 
         foreach ($pageSizes as $pageSize) {
             if (!$this->has($pageSize)) {
-                $this->pageSizes[] = $pageSize;
+                $this->pageSizes[$pageSize] = $pageSize;
             }
         }
 
-        sort($this->pageSizes);
+        ksort($this->pageSizes);
 
         return $this;
     }
@@ -46,7 +49,7 @@ class LimitBuilder
      */
     public function has($pageSize)
     {
-        return in_array($pageSize, $this->pageSizes);
+        return isset($this->pageSizes[$pageSize]);
     }
 
     /**
