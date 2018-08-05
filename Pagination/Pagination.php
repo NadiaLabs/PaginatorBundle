@@ -4,13 +4,14 @@ namespace Nadia\Bundle\PaginatorBundle\Pagination;
 
 use Nadia\Bundle\PaginatorBundle\Configuration\PaginatorBuilder;
 use Nadia\Bundle\PaginatorBundle\Input\InputInterface;
+use Nadia\Bundle\PaginatorBundle\Input\QueryParameterDefinition;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 
 /**
  * Class Pagination
  */
-class Pagination
+class Pagination implements \Countable, \Iterator, \ArrayAccess
 {
     /**
      * @var PaginatorBuilder
@@ -31,7 +32,7 @@ class Pagination
     /**
      * @var int
      */
-    private $count;
+    private $total;
     /**
      * @var array
      */
@@ -41,15 +42,25 @@ class Pagination
      */
     private $lastPage;
 
-    public function __construct(PaginatorBuilder $builder, array $options, InputInterface $input, FormInterface $form, $count, $items)
+    /**
+     * Pagination constructor.
+     *
+     * @param PaginatorBuilder $builder
+     * @param array            $options
+     * @param InputInterface   $input
+     * @param FormInterface    $form
+     * @param int              $total
+     * @param mixed            $items
+     */
+    public function __construct(PaginatorBuilder $builder, array $options, InputInterface $input, FormInterface $form, $total, $items)
     {
         $this->builder = $builder;
         $this->options = $options;
         $this->input = $input;
         $this->form = $form;
-        $this->count = $count;
+        $this->total = $total;
         $this->items = $items;
-        $this->lastPage = (int) ceil($count / $this->input->getLimit());
+        $this->lastPage = (int) ceil($total / $this->input->getLimit());
     }
 
     /**
@@ -96,75 +107,99 @@ class Pagination
     }
 
     /**
+     * @param FormView $form
+     *
      * @return bool
      */
-    public function hasFilterForm()
+    public function hasFilterForm(FormView $form)
     {
-        return $this->form->has($this->options['queryParams']->filter);
+        return isset($form[$this->getQueryParamDef()->filter]);
     }
 
     /**
+     * @param FormView $form
+     *
      * @return FormView
      */
-    public function getFilterForm()
+    public function getFilterForm(FormView $form)
     {
-        return $this->form[$this->options['queryParams']->filter]->createView();
+        return $form[$this->getQueryParamDef()->filter];
     }
 
     /**
+     * @param FormView $form
+     *
      * @return bool
      */
-    public function hasSearchForm()
+    public function hasSearchForm(FormView $form)
     {
-        return $this->form->has($this->options['queryParams']->search);
+        return isset($form[$this->getQueryParamDef()->search]);
     }
 
     /**
+     * @param FormView $form
+     *
      * @return FormView
      */
-    public function getSearchForm()
+    public function getSearchForm(FormView $form)
     {
-        return $this->form[$this->options['queryParams']->search]->createView();
+        return $form[$this->getQueryParamDef()->search];
     }
 
     /**
+     * @param FormView $form
+     *
      * @return bool
      */
-    public function hasSortForm()
+    public function hasSortForm(FormView $form)
     {
-        return $this->form->has($this->options['queryParams']->sort);
+        return isset($form[$this->getQueryParamDef()->sort]);
     }
 
     /**
+     * @param FormView $form
+     *
      * @return FormView
      */
-    public function getSortForm()
+    public function getSortForm(FormView $form)
     {
-        return $this->form[$this->options['queryParams']->sort]->createView();
+        return $form[$this->getQueryParamDef()->sort];
     }
 
     /**
+     * @param FormView $form
+     *
      * @return bool
      */
-    public function hasLimitForm()
+    public function hasLimitForm(FormView $form)
     {
-        return $this->form->has($this->options['queryParams']->limit);
+        return isset($form[$this->getQueryParamDef()->limit]);
     }
 
     /**
+     * @param FormView $form
+     *
      * @return FormView
      */
-    public function getLimitForm()
+    public function getLimitForm(FormView $form)
     {
-        return $this->form[$this->options['queryParams']->limit]->createView();
+        return $form[$this->getQueryParamDef()->limit];
+    }
+
+    /**
+     * @return QueryParameterDefinition
+     */
+    public function getQueryParamDef()
+    {
+        return $this->options['queryParams'];
     }
 
     /**
      * @return int
      */
-    public function getCount()
+    public function getTotal()
     {
-        return $this->count;
+        return $this->total;
     }
 
     /**
@@ -181,5 +216,89 @@ class Pagination
     public function getTemplate()
     {
         return $this->options['template'];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function rewind()
+    {
+        reset($this->items);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function current()
+    {
+        return current($this->items);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function key()
+    {
+        return key($this->items);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function next()
+    {
+        next($this->items);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function valid()
+    {
+        return key($this->items) !== null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function count()
+    {
+        return count($this->items);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function offsetExists($offset)
+    {
+        return array_key_exists($offset, $this->items);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function offsetGet($offset)
+    {
+        return $this->items[$offset];
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function offsetSet($offset, $value)
+    {
+        if (null === $offset) {
+            $this->items[] = $value;
+        } else {
+            $this->items[$offset] = $value;
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function offsetUnset($offset)
+    {
+        unset($this->items[$offset]);
     }
 }
