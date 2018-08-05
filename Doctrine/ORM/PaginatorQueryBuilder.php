@@ -140,15 +140,13 @@ class PaginatorQueryBuilder
         $filterProcessors = $this->paginatorBuilder->getFilterQueryProcessors();
         $parameterCount = 0;
 
-        foreach ($filter as $name => $value) {
-            if ('' === $value || !$filterBuilder->has($name)) {
+        foreach ($filter as $fieldName => $value) {
+            if ('' === $value || !$filterBuilder->has($fieldName)) {
                 continue;
             }
 
-            $fieldName = str_replace(':', '.', $name);
-
-            if ($filterProcessors->has($name) && is_callable($filterProcessors[$name])) {
-                call_user_func($filterProcessors[$name], $qb, $fieldName, $value);
+            if ($filterProcessors->has($fieldName) && is_callable($filterProcessors[$fieldName])) {
+                call_user_func($filterProcessors[$fieldName], $qb, $fieldName, $value);
             } else {
                 if (is_array($value)) {
                     $bindParameters = [];

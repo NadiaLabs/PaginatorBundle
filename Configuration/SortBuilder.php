@@ -10,7 +10,7 @@ class SortBuilder
     /**
      * Sort statements
      *
-     * Format: ['foo', 'foo ASC', 'foo ASC, bar DESC', ...]
+     * Format: ['foo title' => 'foo', 'foo ASC title' => 'foo ASC', 'foo bar sort title' => 'foo ASC, bar DESC', ...]
      *
      * @var array
      */
