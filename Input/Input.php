@@ -2,23 +2,25 @@
 
 namespace Nadia\Bundle\PaginatorBundle\Input;
 
+use Nadia\Bundle\PaginatorBundle\Configuration\SortInterface;
+
 /**
  * class Input
  */
-class Input implements InputInterface
+class Input
 {
     /**
      * @var array
      */
-    private $filter = [];
+    private $filter = array();
     /**
      * @var array
      */
-    private $search = [];
+    private $search = array();
     /**
-     * @var string
+     * @var array
      */
-    private $sort;
+    private $sort = array();
     /**
      * @var int
      */
@@ -41,19 +43,19 @@ class Input implements InputInterface
      * @param int|null    $page
      * @param int|null    $limit
      */
-    public function __construct(array $filter = [], array $search = [], $sort = null, $page = null, $limit = null)
+    public function __construct(array $filter = array(), array $search = array(), $sort = null, $page = null, $limit = null)
     {
         $this->filter = $filter;
         $this->search = $search;
-        $this->sort = $sort;
         $this->page = $page;
         $this->limit = $limit;
+        $this->offset = $this->calculateOffset($this->page, $this->limit);
 
-        $this->setOffset($page, $limit);
+        $this->setSort($sort);
     }
 
     /**
-     * {@inheritdoc}
+     * @return array
      */
     public function getFilter()
     {
@@ -61,16 +63,19 @@ class Input implements InputInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @param array $filter
+     *
+     * @return $this
      */
     public function setFilter(array $filter)
     {
         $this->filter = $filter;
+
         return $this;
     }
 
     /**
-     * {@inheritdoc}
+     * @return array
      */
     public function getSearch()
     {
@@ -78,16 +83,19 @@ class Input implements InputInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @param array $search
+     *
+     * @return $this
      */
     public function setSearch(array $search)
     {
         $this->search = $search;
+
         return $this;
     }
 
     /**
-     * {@inheritdoc}
+     * @return array Format: array('key' => 'sort key', 'direction' => 'sort direction')
      */
     public function getSort()
     {
@@ -95,15 +103,41 @@ class Input implements InputInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @param string $sort
+     *
+     * @return $this
      */
     public function setSort($sort)
     {
-        $this->sort = $sort;
+        $sort = trim($sort);
+
+        if (empty($sort)) {
+            return $this;
+        }
+
+        $parts = explode(' ', $sort, 2);
+
+        if (2 === count($parts)) {
+            $direction = $parts[1] === SortInterface::DESC ? SortInterface::DESC : SortInterface::ASC;
+
+            $this->sort = array('key' => $parts[0], 'direction' => $direction);
+        } else {
+            $this->sort = array('key' => $parts[0], 'direction' => SortInterface::ASC);
+        }
+
+        return $this;
     }
 
     /**
-     * {@inheritdoc}
+     * @return bool
+     */
+    public function hasSort()
+    {
+        return !empty($this->sort['key']) && !empty($this->sort['direction']);
+    }
+
+    /**
+     * @return int|null
      */
     public function getPage()
     {
@@ -111,19 +145,21 @@ class Input implements InputInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @param int $page
+     *
+     * @return $this
      */
     public function setPage($page)
     {
         $this->page = $page;
 
-        $this->setOffset($this->page, $this->limit);
+        $this->setOffset($this->calculateOffset($this->page, $this->limit));
 
         return $this;
     }
 
     /**
-     * {@inheritdoc}
+     * @return int|null
      */
     public function getLimit()
     {
@@ -131,19 +167,21 @@ class Input implements InputInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @param int $limit
+     *
+     * @return $this
      */
     public function setLimit($limit)
     {
         $this->limit = $limit;
 
-        $this->setOffset($this->page, $this->limit);
+        $this->setOffset($this->calculateOffset($this->page, $this->limit));
 
         return $this;
     }
 
     /**
-     * {@inheritdoc}
+     * @return int
      */
     public function getOffset()
     {
@@ -151,10 +189,25 @@ class Input implements InputInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @param int $offset
+     *
+     * @return $this
      */
-    public function setOffset($page, $limit)
+    public function setOffset($offset)
     {
-        $this->offset = ($page - 1) * $limit;
+        $this->offset = $offset;
+
+        return $this;
+    }
+
+    /**
+     * @param int $page
+     * @param int $limit
+     *
+     * @return int
+     */
+    private function calculateOffset($page, $limit)
+    {
+        return ($page - 1) * $limit;
     }
 }

@@ -3,32 +3,32 @@
 namespace Nadia\Bundle\PaginatorBundle\Input;
 
 /**
- * Define query parameter field names
+ * The definition of URL query parameter names
  */
-class QueryParameterDefinition
+class InputKeys
 {
     /**
      * @var string
      */
-    public $filter = '__filter';
+    public $filter = '_f';
     /**
      * @var string
      */
-    public $search = '__search';
+    public $search = '_q';
     /**
      * @var string
      */
-    public $sort = '__sort';
+    public $sort = '_s';
     /**
      * @var string
      */
-    public $page = '__page';
+    public $page = '_p';
     /**
      * @var string
      */
-    public $limit = '__limit';
+    public $limit = '_l';
     /**
      * @var string
      */
-    public $clear = '__clear_all_parameters';
+    public $clear = '_c';
 }

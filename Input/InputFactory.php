@@ -2,6 +2,10 @@
 
 namespace Nadia\Bundle\PaginatorBundle\Input;
 
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
+
 /**
  * Class InputFactory
  */
@@ -10,76 +14,151 @@ class InputFactory
     /**
      * Generate an Input instance
      *
-     * @param array $options
+     * @param Request       $request A Request instance
+     * @param FormInterface $form    A FormInterface instance for validating input params
+     * @param array         $options Format: {
+     *     @var $inputKeys      InputKeys
+     *     @var $defaultLimit   int
+     *     @var $sessionEnabled bool
+     *     @var $sessionKey     string
+     *     @var $session        SessionInterface
+     * }
      *
      * @return Input
      */
-    public function factory(array $options)
+    public function create(Request $request, FormInterface $form, array $options)
     {
-        /** @var QueryParameterDefinition $queryParamDef */
-        $queryParamDef = $options['queryParams'];
+        $params = $request->isMethod('POST') ? array_merge($request->query->all(), $request->request->all()) : $request->query->all();
+        /** @var InputKeys $inputKeys */
+        $inputKeys = $options['inputKeys'];
         $sessionKey = $options['sessionKey'];
-        $params = array_merge($_GET, $_POST);
-        $clear = array_key_exists($queryParamDef->clear, $params);
-        $filter = $search = [];
+        $sessionEnabled = $options['sessionEnabled'];
+        $clear = array_key_exists($inputKeys->clear, $params);
+        $filter = $search = array();
         $sort = null;
         $limit = $options['defaultLimit'];
         $page = 1;
 
         if (!$clear) {
-            if (isset($_SESSION) && $options['sessionEnabled']) {
-                $states = array_key_exists($sessionKey, $_SESSION) ? $_SESSION[$sessionKey] : [];
-                $states = (is_array($states) && !$clear) ? $states : [];
+            if ($sessionEnabled) {
+                $states = $request->getSession()->get($sessionKey, array());
+                $states = is_array($states) ? $states : array();
             } else {
-                $states = [];
+                $states = array();
             }
 
-            $filter = array_key_exists($queryParamDef->filter, $states) ? $states[$queryParamDef->filter] : $filter;
-            $filter = array_key_exists($queryParamDef->filter, $params) ? $params[$queryParamDef->filter] : $filter;
-            $filter = is_array($filter) ? $filter : [];
-            $search = array_key_exists($queryParamDef->search, $states) ? $states[$queryParamDef->search] : $search;
-            $search = array_key_exists($queryParamDef->search, $params) ? $params[$queryParamDef->search] : $search;
-            $search = is_array($search) ? $search : [];
-            $sort = array_key_exists($queryParamDef->sort, $states) ? $states[$queryParamDef->sort] : $sort;
-            $sort = array_key_exists($queryParamDef->sort, $params) ? $params[$queryParamDef->sort] : $sort;
-            $limit = (int) (array_key_exists($queryParamDef->limit, $states) ? $states[$queryParamDef->limit] : $limit);
-            $limit = (int) (array_key_exists($queryParamDef->limit, $params) ? $params[$queryParamDef->limit] : $limit);
-            $page = (int) (array_key_exists($queryParamDef->page, $params) ? $params[$queryParamDef->page] : $page);
+            $this->processParams($states, $params, $inputKeys, $filter, $search, $sort, $limit, $page);
         }
 
-        if (isset($_SESSION) && $options['sessionEnabled']) {
-            $_SESSION[$sessionKey] = [
-                $queryParamDef->filter => $filter,
-                $queryParamDef->search => $search,
-                $queryParamDef->sort => $sort,
-                $queryParamDef->limit => $limit,
-            ];
-        }
+        $this->processParamsWithForm($form, $params, $inputKeys, $filter, $search, $sort, $limit);
 
-        $this->replaceKeys($filter, $search);
+        if ($sessionEnabled) {
+            $request->getSession()->set($sessionKey, $params);
+        }
 
         return new Input($filter, $search, $sort, $page, $limit);
     }
 
     /**
-     * Replace ':' to '.' in filter & search array keys
+     * @param array     $states
+     * @param array     $params
+     * @param InputKeys $inputKeys
+     * @param array     $filter
+     * @param array     $search
+     * @param string    $sort
+     * @param int       $limit
+     * @param int       $page
+     */
+    private function processParams(array &$states, array &$params, InputKeys $inputKeys,
+                                   array &$filter, array &$search, &$sort, &$limit, &$page)
+    {
+        $filter = $this->getValue($inputKeys->filter, $states, $params, $filter);
+        $filter = is_array($filter) ? $filter : array();
+
+        $search = $this->getValue($inputKeys->search, $states, $params, $search);
+        $search = is_array($search) ? $search : array();
+
+        $sort = $this->getValue($inputKeys->sort, $states, $params, $sort);
+
+        $limit = (int) $this->getValue($inputKeys->limit, $states, $params, $limit);
+
+        $page = (int) (array_key_exists($inputKeys->page, $params) ? $params[$inputKeys->page] : $page);
+    }
+
+    /**
+     * @param FormInterface $form
+     * @param array         $params
+     * @param InputKeys     $inputKeys
+     * @param array         $filter
+     * @param array         $search
+     * @param string        $sort
+     * @param int           $limit
+     */
+    private function processParamsWithForm(FormInterface $form, array &$params, InputKeys $inputKeys,
+                                           array &$filter, array &$search, &$sort, &$limit)
+    {
+        $params = array(
+            $inputKeys->filter => $filter,
+            $inputKeys->search => $search,
+            $inputKeys->sort   => $sort,
+            $inputKeys->limit  => $limit,
+        );
+        $params = $form->submit($params)->getData();
+
+        if (array_key_exists($inputKeys->filter, $params) && is_array($params[$inputKeys->filter])) {
+            $this->modifyFilter($params[$inputKeys->filter]);
+
+            $filter = $params[$inputKeys->filter];
+        }
+
+        if (array_key_exists($inputKeys->search, $params) && is_array($params[$inputKeys->search])) {
+            $this->modifyFilter($params[$inputKeys->search]);
+
+            $search = $params[$inputKeys->search];
+        }
+
+        $sort = array_key_exists($inputKeys->sort, $params) ? $params[$inputKeys->sort] : $sort;
+        $limit = array_key_exists($inputKeys->limit, $params) ? $params[$inputKeys->limit] : $limit;
+    }
+
+    /**
+     * Modify filter data
+     *
+     * 1. Remove empty values
+     * 2. Replace ':' to '.' in filter & search array keys
      *
      * @param array $filter
-     * @param array $search
      */
-    private function replaceKeys(array &$filter, array &$search)
+    private function modifyFilter(array &$filter)
     {
-        $replaceKeys = function(array $input) {
-            $output = [];
+        $output = array();
 
-            foreach ($input as $key => $value) {
-                $output[str_replace(':', '.', $key)] = $value;
+        foreach ($filter as $key => $value) {
+            if (null === $value || '' === $value) {
+                continue;
             }
 
-            return $output;
-        };
+            $output[str_replace(':', '.', $key)] = $value;
+        }
 
-        $filter = $replaceKeys($filter);
-        $search = $replaceKeys($search);
+        $filter = $output;
+    }
+
+    /**
+     * Get input value by key
+     *
+     * @param string $key
+     * @param array  $states
+     * @param array  $params
+     * @param mixed  $default
+     *
+     * @return mixed
+     */
+    private function getValue($key, array &$states, array &$params, $default)
+    {
+        $value = array_key_exists($key, $states) ? $states[$key] : $default;
+        $value = array_key_exists($key, $params) ? $params[$key] : $value;
+
+        return $value;
     }
 }
