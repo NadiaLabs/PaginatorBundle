@@ -31,7 +31,7 @@ class PaginatorExtension extends \Twig_Extension
         $options = array('is_safe' => array('html'), 'needs_environment' => true);
 
         return array(
-            new \Twig_SimpleFunction('nadia_paginator_pages',       array($this, 'pages'),     $options),
+            new \Twig_SimpleFunction('nadia_paginator_pages',      array($this, 'pages'),     $options),
             new \Twig_SimpleFunction('nadia_paginator_searches',   array($this, 'searches'),  $options),
             new \Twig_SimpleFunction('nadia_paginator_filters',    array($this, 'filters'),   $options),
             new \Twig_SimpleFunction('nadia_paginator_sort_form',  array($this, 'sortForm'),  $options),
@@ -46,6 +46,11 @@ class PaginatorExtension extends \Twig_Extension
      * @param \Twig_Environment $env
      * @param Pagination        $pagination
      * @param array             $options    Format: {
+     *     @var int    $range            The range of pages, default is 8
+     *     @var string $firstPageText    First page display text
+     *     @var string $lastPageText     Last page display text
+     *     @var string $previousPageText Previous page display text
+     *     @var string $nextPageText     Next page display text
      * }
      *
      * @return string
@@ -68,7 +73,7 @@ class PaginatorExtension extends \Twig_Extension
      * @param \Twig_Environment $env
      * @param Pagination        $pagination A Pagination instance
      * @param array             $options    Format: {
-     *     @var array $attributes Attributes for each search's div container, ex: array('class' => 'foobar', ...)
+     *     @var array $attr Attributes for each search's div container, ex: array('class' => 'foobar', ...)
      * }
      *
      * @return string
@@ -95,7 +100,7 @@ class PaginatorExtension extends \Twig_Extension
      * @param \Twig_Environment $env
      * @param Pagination        $pagination A Pagination instance
      * @param array             $options    Format: {
-     *     @var array $attributes Attributes for each filter's div container, ex: array('class' => 'foobar', ...)
+     *     @var array $attr Attributes for each filter's div container, ex: array('class' => 'foobar', ...)
      * }
      *
      * @return string
@@ -149,7 +154,7 @@ class PaginatorExtension extends \Twig_Extension
      * @param string            $key        Sort key
      * @param string            $direction  Sort default direction (SortInterface::ASC or SortInterface::DESC)
      * @param array             $options    Format: {
-     *     @var array $attributes Html tag attributes, ex: array('class' => 'foobar', 'alt' => 'balabalabala...', ...)
+     *     @var array $attr Html tag attributes, ex: array('class' => 'foobar', 'alt' => 'balabalabala...', ...)
      * }
      *
      * @return string
