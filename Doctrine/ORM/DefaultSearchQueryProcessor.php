@@ -20,12 +20,12 @@ class DefaultSearchQueryProcessor
      */
     public static function process(QueryBuilder $qb, array $fields, $value)
     {
-        $criteria = [];
+        $criteria = array();
 
         foreach ($fields as $field) {
             $criteria[] = $qb->expr()->like($field, $qb->expr()->literal('%' . $value . '%'));
         }
 
-        $qb->andWhere(call_user_func_array([$qb->expr(), 'orX'], $criteria));
+        $qb->andWhere(call_user_func_array(array($qb->expr(), 'orX'), $criteria));
     }
 }
