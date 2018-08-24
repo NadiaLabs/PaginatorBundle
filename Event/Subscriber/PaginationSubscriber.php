@@ -82,10 +82,8 @@ class PaginationSubscriber implements EventSubscriberInterface
     {
         $builder = $event->getBuilder();
         $options = $event->getOptions();
-        /** @var InputKeys $inputKeys */
-        $inputKeys = $options['inputKeys'];
 
-        $form = $this->formFactory->create($builder, $inputKeys);
+        $form = $this->formFactory->create($builder, $options);
         $input = $this->inputFactory->create($this->request, $form, $options);
 
         $event->form = $form;
