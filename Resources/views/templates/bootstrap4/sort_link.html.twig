@@ -1,0 +1,6 @@
+<a {% for name, value in attributes %} {{ name }}="{{ value }}" {% endfor %}>
+    {{ title }}
+{% if showDirection %}
+    {{ direction == 'ASC' ? '&#9650;' : '&#9660;' }}
+{% endif %}
+</a>

@@ -1,0 +1,31 @@
+<nav>
+    <ul class="pagination">
+        <li class="page-item first-page {% if firstPage.url == '#' %}disabled{% endif %}">
+            <a class="page-link" href="{{ firstPage.url }}" tabindex="-1">
+                {{ firstPage.text }}
+            </a>
+        </li>
+        <li class="page-item previous-page {% if previousPage.url == '#' %}disabled{% endif %}">
+            <a class="page-link" href="{{ previousPage.url }}" tabindex="-1">
+                {{ previousPage.text }}
+            </a>
+        </li>
+        {% for page in pages %}
+        <li class="page-item {% if page.number == current %}active{% endif %}">
+            <a class="page-link" href="{{ page.url }}">
+                {{ page.text }}
+            </a>
+        </li>
+        {% endfor %}
+        <li class="page-item next-page {% if nextPage.url == '#' %}disabled{% endif %}">
+            <a class="page-link" href="{{ nextPage.url }}" tabindex="-1">
+                {{ nextPage.text }}
+            </a>
+        </li>
+        <li class="page-item last-page {% if lastPage.url == '#' %}disabled{% endif %}">
+            <a class="page-link" href="{{ lastPage.url }}" tabindex="-1">
+                {{ lastPage.text }}
+            </a>
+        </li>
+    </ul>
+</nav>

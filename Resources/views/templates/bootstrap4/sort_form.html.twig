@@ -1,0 +1,8 @@
+<div>
+    {% if sortForm.vars.label is empty %}
+        {{ sortForm.vars.name|replace({':':'.'})|capitalize }}
+    {% else %}
+        {{ sortForm.vars.label }}
+    {% endif %}
+</div>
+{{ form_widget(sortForm) }}
