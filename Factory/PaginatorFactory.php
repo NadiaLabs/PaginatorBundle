@@ -6,7 +6,6 @@ use Nadia\Bundle\PaginatorBundle\Configuration\DependencyInjectionPaginatorTypeL
 use Nadia\Bundle\PaginatorBundle\Configuration\PaginatorBuilder;
 use Nadia\Bundle\PaginatorBundle\Configuration\PaginatorTypeInterface;
 use Nadia\Bundle\PaginatorBundle\Event\InputEvent;
-use Nadia\Bundle\PaginatorBundle\Input\InputKeys;
 use Nadia\Bundle\PaginatorBundle\Paginator;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -59,7 +58,6 @@ class PaginatorFactory
     {
         $type = $this->getType($type);
         $options = $this->resolveOptions($type, $options);
-
         $builder = new PaginatorBuilder();
 
         $type->build($builder, $options);
@@ -102,7 +100,7 @@ class PaginatorFactory
     {
         $resolver = new OptionsResolver();
 
-        $this->configureDefaultOptions($resolver, $type);
+        $this->configureDefaultOptions($type, $resolver);
 
         $type->configureOptions($resolver);
 
@@ -110,23 +108,12 @@ class PaginatorFactory
     }
 
     /**
-     * {@inheritdoc}
+     * @param PaginatorTypeInterface $type
+     * @param OptionsResolver        $resolver
      */
-    private function configureDefaultOptions(OptionsResolver $resolver, PaginatorTypeInterface $type)
+    private function configureDefaultOptions(PaginatorTypeInterface $type, OptionsResolver $resolver)
     {
-        $defaultOptions = [
-            'inputKeysClass' => InputKeys::class,
-            'defaultLimit' => 10,
-            'defaultPageRange' => 8,
-            'sessionEnabled' => true,
-            'pagesTemplate' => '@NadiaPaginator/templates/bootstrap4/pages.html.twig',
-            'searchesTemplate' => '@NadiaPaginator/templates/bootstrap4/searches.html.twig',
-            'filtersTemplate' => '@NadiaPaginator/templates/bootstrap4/filters.html.twig',
-            'sortFormTemplate' => '@NadiaPaginator/templates/bootstrap4/sort_form.html.twig',
-            'sortLinkTemplate' => '@NadiaPaginator/templates/bootstrap4/sort_link.html.twig',
-            'limitFormTemplate' => '@NadiaPaginator/templates/bootstrap4/limit_form.html.twig',
-        ];
-        $defaultOptions = array_merge($defaultOptions, $this->defaultOptions);
+        $defaultOptions = $this->defaultOptions;
 
         $defaultOptions['sessionKey'] = 'nadia.paginator.session.' . hash('md5', get_class($type));
         $defaultOptions['inputKeys'] = new $defaultOptions['inputKeysClass'];
