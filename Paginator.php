@@ -2,14 +2,14 @@
 
 namespace Nadia\Bundle\PaginatorBundle;
 
-use Doctrine\ORM\Query;
-use Doctrine\ORM\QueryBuilder;
-use Doctrine\ORM\Tools\Pagination\CountOutputWalker;
 use Nadia\Bundle\PaginatorBundle\Configuration\PaginatorBuilder;
-use Nadia\Bundle\PaginatorBundle\Doctrine\ORM\PaginatorQueryBuilder;
-use Nadia\Bundle\PaginatorBundle\Doctrine\ORM\Query\Hydrator\CountHydrator;
-use Nadia\Bundle\PaginatorBundle\Input\InputInterface;
-use Nadia\Bundle\PaginatorBundle\Pagination\Pagination;
+use Nadia\Bundle\PaginatorBundle\Event\BeforeEvent;
+use Nadia\Bundle\PaginatorBundle\Event\InputEvent;
+use Nadia\Bundle\PaginatorBundle\Event\ItemsEvent;
+use Nadia\Bundle\PaginatorBundle\Event\PaginationEvent;
+use Nadia\Bundle\PaginatorBundle\Input\Input;
+use Nadia\Bundle\PaginatorBundle\Pagination\PaginationInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormInterface;
 
 /**
@@ -21,68 +21,88 @@ class Paginator
      * @var PaginatorBuilder
      */
     private $builder;
+
+    /**
+     * @var array
+     */
+    private $options;
+
     /**
      * @var FormInterface
      */
     private $form;
+
     /**
-     * @var InputInterface
+     * @var Input
      */
     private $input;
+
     /**
-     * @var array
+     * @var EventDispatcherInterface
      */
-    private $options = [];
+    protected $eventDispatcher;
 
     /**
      * Paginator constructor.
      *
-     * @param PaginatorBuilder $builder
-     * @param FormInterface    $form
-     * @param InputInterface   $input
-     * @param array            $options
+     * @param PaginatorBuilder         $builder         PaginatorBuilder instance
+     * @param array                    $options         PaginatorType options
+     * @param FormInterface            $form            FormInterface instance
+     * @param Input                    $input           Input instance
+     * @param EventDispatcherInterface $eventDispatcher EventDispatcher instance
      */
-    public function __construct(PaginatorBuilder $builder, FormInterface $form, InputInterface $input, array $options)
+    public function __construct(
+        PaginatorBuilder $builder,
+        array $options,
+        FormInterface $form,
+        Input $input,
+        EventDispatcherInterface $eventDispatcher
+    )
     {
         $this->builder = $builder;
+        $this->options = $options;
         $this->form = $form;
         $this->input = $input;
-        $this->options = $options;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     /**
      * Do the paginate process and generate Pagination instance
      *
-     * @param mixed $target Paginating target, retrieve data from this target instance
+     * @param mixed    $target Paginating target, retrieve data from this target instance
+     * @param int|null $page
+     * @param int|null $limit
      *
-     * @return Pagination
+     * @return PaginationInterface
      */
-    public function paginate(QueryBuilder $target)
+    public function paginate($target, $page = null, $limit = null)
     {
-        $input = $this->input;
+        $beforeEvent = new BeforeEvent($this->eventDispatcher);
+        $this->eventDispatcher->dispatch('nadia_paginator.before', $beforeEvent);
 
-        $queryBuilder = new PaginatorQueryBuilder($this->builder);
-        $qb = $queryBuilder->build($target, $input->getFilter(), $input->getSearch(), $input->getSort(), $input->getLimit(), $input->getOffset());
+        if (!is_null($page) && is_numeric($page)) {
+            $this->input->setPage((int) $page);
+        }
+        if (!is_null($limit) && is_numeric($limit)) {
+            $this->input->setLimit((int) $limit);
+        }
 
-        $count = $this->count($qb);
-        $items = $qb->getQuery()->getResult();
+        $itemsEvent = new ItemsEvent($this->builder, $this->input);
+        $itemsEvent->target =& $target;
+        $this->eventDispatcher->dispatch('nadia_paginator.items', $itemsEvent);
 
-        $pagination = new Pagination($this->builder, $this->options, $input, $this->form, $count, $items);
+        $paginationEvent = new PaginationEvent();
+        $this->eventDispatcher->dispatch('nadia_paginator.pagination', $paginationEvent);
+
+        $pagination = $paginationEvent->getPagination();
+
+        $pagination->setBuilder($this->builder);
+        $pagination->setOptions($this->options);
+        $pagination->setCount($itemsEvent->count);
+        $pagination->setItems($itemsEvent->items);
+        $pagination->setForm($this->form);
+        $pagination->setInput($this->input);
 
         return $pagination;
-    }
-
-    private function count(QueryBuilder $qb)
-    {
-        $countQuery = (clone $qb)->resetDQLPart('orderBy')->getQuery();
-
-        $countQuery->setHint(Query::HINT_CUSTOM_OUTPUT_WALKER, CountOutputWalker::class);
-        $countQuery->setFirstResult(null);
-        $countQuery->setMaxResults(null);
-        $countQuery->getEntityManager()->getConfiguration()->addCustomHydrationMode('count', CountHydrator::class);
-
-        $countResult = $countQuery->getResult('count');
-
-        return intval(current(current($countResult)));
     }
 }
