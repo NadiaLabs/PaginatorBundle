@@ -28,7 +28,7 @@ class Configuration implements ConfigurationInterface
                         ->scalarNode('input_key_class')->defaultValue(InputKeys::class)->end()
                         ->scalarNode('default_limit')->defaultValue(10)->end()
                         ->scalarNode('default_page_range')->defaultValue(8)->end()
-                        ->scalarNode('session_enabled')->defaultTrue()->end()
+                        ->scalarNode('session_enabled')->defaultFalse()->end()
                     ->end()
                 ->end()
                 ->arrayNode('templates')
