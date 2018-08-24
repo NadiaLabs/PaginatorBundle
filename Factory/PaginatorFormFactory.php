@@ -3,7 +3,6 @@
 namespace Nadia\Bundle\PaginatorBundle\Factory;
 
 use Nadia\Bundle\PaginatorBundle\Configuration\PaginatorBuilder;
-use Nadia\Bundle\PaginatorBundle\Configuration\SortInterface;
 use Nadia\Bundle\PaginatorBundle\Input\InputKeys;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -39,11 +38,15 @@ class PaginatorFormFactory
      */
     public function create(PaginatorBuilder $builder, array $options)
     {
-        /** @var InputKeys $inputKeys */
-        $inputKeys = $options['inputKeys'];
-        $formOptions = array('csrf_protection' => false, 'method' => $options['sessionEnabled'] ? 'POST' : 'GET');
+        $formOptions = array(
+            'csrf_protection' => false,
+            'method' => $options['sessionEnabled'] ? 'POST' : 'GET'
+        );
         $formOptions = array_merge($formOptions, $builder->getFormOptions());
         $form = $this->formFactory->createNamed(null, FormType::class, null, $formOptions);
+
+        /** @var InputKeys $inputKeys */
+        $inputKeys = $options['inputKeys'];
 
         if ($builder->hasFilter()) {
             $filterForm = $this->formFactory->createNamed($inputKeys->filter, FormType::class, null, array('auto_initialize' => false));
