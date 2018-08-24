@@ -1,6 +1,47 @@
 # Learn more about services, parameters and containers at
 # https://symfony.com/doc/current/service_container.html
 parameters:
-    #parameter_name: value
+    nadia_paginator.context_processor_class: Nadia\Bundle\PaginatorBundle\Twig\ContextProcessor
 
 services:
+    nadia_paginator.type_loader:
+        class: Nadia\Bundle\PaginatorBundle\Configuration\DependencyInjectionPaginatorTypeLoader
+        arguments:
+            - ~
+
+    nadia_paginator.paginator_factory:
+        class: Nadia\Bundle\PaginatorBundle\Factory\PaginatorFactory
+        arguments:
+            - '@nadia_paginator.type_loader'
+            - '@event_dispatcher'
+            - []
+        public: true
+
+    nadia_paginator.paginator_form_factory:
+        class: Nadia\Bundle\PaginatorBundle\Factory\PaginatorFormFactory
+        arguments:
+            - '@form.factory'
+
+    nadia_paginator.input_factory:
+        class: Nadia\Bundle\PaginatorBundle\Input\InputFactory
+
+    nadia_paginator.context_processor:
+        class: '%nadia_paginator.context_processor_class%'
+        arguments:
+            - '@router'
+            - '@translator'
+
+    nadia_paginator.twig.extension:
+        class: Nadia\Bundle\PaginatorBundle\Twig\Extension\PaginatorExtension
+        arguments:
+            - '@nadia_paginator.context_processor'
+        tags: ['twig.extension']
+
+    nadia_paginator.subscriber.pagination:
+        class: Nadia\Bundle\PaginatorBundle\Event\Subscriber\PaginationSubscriber
+        arguments:
+            - '@nadia_paginator.paginator_form_factory'
+            - '@nadia_paginator.input_factory'
+        tags:
+            - 'nadia_paginator.subscriber'
+            - {name: 'kernel.event_listener', event: 'kernel.request', method: 'onKernelRequest'}
