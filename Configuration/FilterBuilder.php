@@ -12,7 +12,7 @@ class FilterBuilder
      *
      * @var array
      */
-    private $forms = [];
+    private $forms = array();
 
     /**
      * Add a filter form parameters
@@ -23,13 +23,13 @@ class FilterBuilder
      *
      * @return $this
      */
-    public function add($name, $formType, array $options = [])
+    public function add($name, $formType, array $options = array())
     {
-        $this->forms[$name] = [
+        $this->forms[$name] = array(
             'name' => $name,
             'type' => $formType,
             'options' => $options,
-        ];
+        );
 
         return $this;
     }

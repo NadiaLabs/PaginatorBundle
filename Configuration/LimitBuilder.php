@@ -10,7 +10,14 @@ class LimitBuilder
     /**
      * @var array
      */
-    private $pageSizes = [];
+    private $pageSizes = array();
+
+    /**
+     * Limit Form options
+     *
+     * @var array
+     */
+    private $formOptions = array();
 
     /**
      * Add a pageSize number, or a list of pageSize numbers
@@ -60,5 +67,33 @@ class LimitBuilder
     public function all()
     {
         return $this->pageSizes;
+    }
+
+    /**
+     * @return array
+     */
+    public function getFormOptions()
+    {
+        return $this->formOptions;
+    }
+
+    /**
+     * @param array $formOptions
+     *
+     * @return LimitBuilder
+     */
+    public function setFormOptions(array $formOptions)
+    {
+        $this->formOptions = $formOptions;
+
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function count()
+    {
+        return count($this->pageSizes);
     }
 }

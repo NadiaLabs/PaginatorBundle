@@ -12,7 +12,7 @@ class SearchBuilder
      *
      * @var array
      */
-    private $forms = [];
+    private $forms = array();
 
     /**
      * Add a search form parameters
@@ -24,18 +24,18 @@ class SearchBuilder
      *
      * @return $this
      */
-    public function add($name, array $fields, $formType, array $options = [])
+    public function add($name, array $fields, $formType, array $options = array())
     {
         if (empty($name) || !count($fields)) {
             return $this;
         }
 
-        $this->forms[$name] = [
+        $this->forms[$name] = array(
             'name' => $name,
             'type' => $formType,
             'options' => $options,
             'fields' => $fields,
-        ];
+        );
 
         return $this;
     }

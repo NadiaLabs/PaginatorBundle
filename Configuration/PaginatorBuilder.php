@@ -13,42 +13,47 @@ class PaginatorBuilder
      * @var FilterBuilder
      */
     private $filterBuilder;
+
     /**
      * @var QueryProcessorCollection
      */
     private $filterQueryProcessors;
+
     /**
      * @var SearchBuilder
      */
     private $searchBuilder;
+
     /**
      * @var QueryProcessorCollection
      */
     private $searchQueryProcessors;
+
     /**
      * @var SortBuilder
      */
     private $sortBuilder;
+
     /**
      * @var LimitBuilder
      */
     private $limitBuilder;
 
     /**
-     * @param string $className Filter class name
-     * @param array  $options   Filter options
+     * @var array
      */
-    public function setFilter($className, array $options = [])
-    {
-        if (!class_exists($className)) {
-            throw new \InvalidArgumentException('Could not load type "'.$className.'": class does not exist.');
-        }
-        if (!is_subclass_of($className, 'Nadia\Bundle\PaginatorBundle\Configuration\FilterInterface')) {
-            throw new \InvalidArgumentException('Could not load type "'.$className.'": class does not implement "Nadia\Bundle\PaginatorBundle\Configuration\FilterInterface".');
-        }
+    private $formOptions;
 
-        /** @var FilterInterface $filter */
-        $filter = new $className();
+    /**
+     * Setup FilterBuilder
+     *
+     * @param FilterInterface $filter  Filter instance
+     * @param array           $options Filter options
+     *
+     * @return PaginatorBuilder
+     */
+    public function setFilter(FilterInterface $filter, array $options = array())
+    {
         $this->filterBuilder = new FilterBuilder();
         $this->filterQueryProcessors = new QueryProcessorCollection();
         $optionResolver = new OptionsResolver();
@@ -58,23 +63,20 @@ class PaginatorBuilder
         $options = $optionResolver->resolve($options);
 
         $filter->build($this->filterBuilder, $this->filterQueryProcessors, $options);
+
+        return $this;
     }
 
     /**
-     * @param string $className Search class name
-     * @param array  $options   Search options
+     * Setup SearchBuilder
+     *
+     * @param SearchInterface $search  Search instance
+     * @param array           $options Search options
+     *
+     * @return PaginatorBuilder
      */
-    public function setSearch($className, array $options = [])
+    public function setSearch(SearchInterface $search, array $options = array())
     {
-        if (!class_exists($className)) {
-            throw new \InvalidArgumentException('Could not load class "'.$className.'": class does not exist.');
-        }
-        if (!is_subclass_of($className, 'Nadia\Bundle\PaginatorBundle\Configuration\SearchInterface')) {
-            throw new \InvalidArgumentException('Could not load class "'.$className.'": class does not implement "Nadia\Bundle\PaginatorBundle\Configuration\SearchInterface".');
-        }
-
-        /** @var SearchInterface $search */
-        $search = new $className();
         $this->searchBuilder = new SearchBuilder();
         $this->searchQueryProcessors = new QueryProcessorCollection();
         $optionResolver = new OptionsResolver();
@@ -84,44 +86,40 @@ class PaginatorBuilder
         $options = $optionResolver->resolve($options);
 
         $search->build($this->searchBuilder, $this->searchQueryProcessors, $options);
+
+        return $this;
     }
 
     /**
-     * @param string $className Sort class name
+     * Setup SortBuilder
+     *
+     * @param SortInterface $sort Sort instance
+     *
+     * @return PaginatorBuilder
      */
-    public function setSort($className)
+    public function setSort(SortInterface $sort)
     {
-        if (!class_exists($className)) {
-            throw new \InvalidArgumentException('Could not load class "'.$className.'": class does not exist.');
-        }
-        if (!is_subclass_of($className, 'Nadia\Bundle\PaginatorBundle\Configuration\SortInterface')) {
-            throw new \InvalidArgumentException('Could not load class "'.$className.'": class does not implement "Nadia\Bundle\PaginatorBundle\Configuration\SortInterface".');
-        }
-
-        /** @var SortInterface $sort */
-        $sort = new $className();
         $this->sortBuilder = new SortBuilder();
 
         $sort->build($this->sortBuilder);
+
+        return $this;
     }
 
     /**
-     * @param string $className Limit class name
+     * Setup LimitBuilder
+     *
+     * @param LimitInterface $limit Limit instance
+     *
+     * @return PaginatorBuilder
      */
-    public function setLimit($className)
+    public function setLimit(LimitInterface $limit)
     {
-        if (!class_exists($className)) {
-            throw new \InvalidArgumentException('Could not load class "'.$className.'": class does not exist.');
-        }
-        if (!is_subclass_of($className, 'Nadia\Bundle\PaginatorBundle\Configuration\LimitInterface')) {
-            throw new \InvalidArgumentException('Could not load class "'.$className.'": class does not implement "Nadia\Bundle\PaginatorBundle\Configuration\LimitInterface".');
-        }
-
-        /** @var LimitInterface $limit */
-        $limit = new $className();
         $this->limitBuilder = new LimitBuilder();
 
         $limit->build($this->limitBuilder);
+
+        return $this;
     }
 
     /**
@@ -173,6 +171,26 @@ class PaginatorBuilder
     }
 
     /**
+     * @return array
+     */
+    public function getFormOptions()
+    {
+        return $this->formOptions;
+    }
+
+    /**
+     * @param array $options
+     *
+     * @return PaginatorBuilder
+     */
+    public function setFormOptions(array $options)
+    {
+        $this->formOptions = $options;
+
+        return $this;
+    }
+
+    /**
      * @return bool
      */
     public function hasFilter()
@@ -201,6 +219,6 @@ class PaginatorBuilder
      */
     public function hasLimit()
     {
-        return $this->limitBuilder instanceof LimitBuilder;
+        return $this->limitBuilder instanceof LimitBuilder && $this->limitBuilder->count();
     }
 }

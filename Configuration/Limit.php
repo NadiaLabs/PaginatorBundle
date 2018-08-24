@@ -12,7 +12,7 @@ class Limit implements LimitInterface
      */
     public function build(LimitBuilder $builder)
     {
-        $pageSizes = [5 => 5, 10 => 10, 20 => 20, 25 => 25, 50 => 50, 100 => 100, 200 => 200];
+        $pageSizes = array(5 => 5, 10 => 10, 20 => 20, 25 => 25, 50 => 50, 100 => 100, 200 => 200);
 
         $builder->add($pageSizes);
     }

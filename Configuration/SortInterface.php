@@ -7,6 +7,9 @@ namespace Nadia\Bundle\PaginatorBundle\Configuration;
  */
 interface SortInterface
 {
+    const ASC = 'ASC';
+    const DESC = 'DESC';
+
     /**
      * Build Sort configuration
      *

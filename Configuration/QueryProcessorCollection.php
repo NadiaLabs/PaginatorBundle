@@ -13,7 +13,7 @@ class QueryProcessorCollection implements \ArrayAccess
     /**
      * @var callable[]
      */
-    private $processors = [];
+    private $processors = array();
 
     /**
      * Get a query processor
