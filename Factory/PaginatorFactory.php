@@ -2,17 +2,13 @@
 
 namespace Nadia\Bundle\PaginatorBundle\Factory;
 
-use Nadia\Bundle\PaginatorBundle\Configuration\AbstractPaginatorType;
+use Nadia\Bundle\PaginatorBundle\Configuration\DependencyInjectionPaginatorTypeLoader;
 use Nadia\Bundle\PaginatorBundle\Configuration\PaginatorBuilder;
 use Nadia\Bundle\PaginatorBundle\Configuration\PaginatorTypeInterface;
-use Nadia\Bundle\PaginatorBundle\Input\Input;
-use Nadia\Bundle\PaginatorBundle\Input\InputFactory;
-use Nadia\Bundle\PaginatorBundle\Input\QueryParameterDefinition;
+use Nadia\Bundle\PaginatorBundle\Event\InputEvent;
+use Nadia\Bundle\PaginatorBundle\Input\InputKeys;
 use Nadia\Bundle\PaginatorBundle\Paginator;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\FormType;
-use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\Form\FormInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
@@ -21,124 +17,79 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class PaginatorFactory
 {
     /**
-     * @var FormFactoryInterface
+     * @var DependencyInjectionPaginatorTypeLoader
      */
-    private $formFactory;
+    private $typeLoader;
+
+    /**
+     * @var EventDispatcherInterface
+     */
+    private $eventDispatcher;
+
+    /**
+     * @var array
+     */
+    private $defaultOptions;
 
     /**
      * PaginatorFactory constructor.
      *
-     * @param FormFactoryInterface $formFactory
+     * @param DependencyInjectionPaginatorTypeLoader $typeLoader
+     * @param EventDispatcherInterface               $eventDispatcher
+     * @param array                                  $defaultOptions
      */
-    public function __construct(FormFactoryInterface $formFactory)
+    public function __construct(
+        DependencyInjectionPaginatorTypeLoader $typeLoader,
+        EventDispatcherInterface $eventDispatcher,
+        array $defaultOptions = array()
+    )
     {
-        $this->formFactory = $formFactory;
+        $this->typeLoader = $typeLoader;
+        $this->eventDispatcher = $eventDispatcher;
+        $this->defaultOptions = $defaultOptions;
     }
 
     /**
      * @param string $type
-     * @param array $options
+     * @param array  $options
      *
      * @return Paginator
      */
-    public function createPaginator($type, array $options = [])
+    public function createPaginator($type, array $options = array())
     {
         $type = $this->getType($type);
         $options = $this->resolveOptions($type, $options);
-        $input = $this->getInputFactory()->factory($options);
 
         $builder = new PaginatorBuilder();
 
         $type->build($builder, $options);
 
-        $form = $this->createForm($builder, $input, $options);
+        $inputEvent = new InputEvent($builder, $options);
 
-        return new Paginator($builder, $form, $input, $options);
+        $this->eventDispatcher->dispatch('nadia_paginator.input', $inputEvent);
+
+        return new Paginator($builder, $options, $inputEvent->form, $inputEvent->input, $this->eventDispatcher);
     }
 
     /**
-     * @param PaginatorBuilder $builder
-     * @param Input            $input
-     * @param array            $options
-     *
-     * @return FormInterface
-     */
-    private function createForm(PaginatorBuilder $builder, Input $input, array $options)
-    {
-        /** @var QueryParameterDefinition $queryParamDef */
-        $queryParamDef = $options['queryParams'];
-        $data = [
-            $queryParamDef->filter => $input->getFilter(),
-            $queryParamDef->search => $input->getSearch(),
-            $queryParamDef->sort   => $input->getSort(),
-            $queryParamDef->limit  => $input->getLimit(),
-        ];
-        $form = $this->formFactory->createNamed(null, FormType::class, null, ['csrf_protection' => false]);
-
-        if ($builder->hasFilter()) {
-            $filterForm = $this->formFactory->createNamed($queryParamDef->filter, FormType::class, null, ['auto_initialize' => false]);
-
-            foreach ($builder->getFilterBuilder()->all() as $filter) {
-                $filterOptions = array_merge(['required' => false], $filter['options']);
-                $fieldName = str_replace('.', ':', $filter['name']);
-
-                $filterForm->add($fieldName, $filter['type'], $filterOptions);
-            }
-
-            $form->add($filterForm);
-        }
-
-        if ($builder->hasSearch()) {
-            $searchForm = $this->formFactory->createNamed($queryParamDef->search, FormType::class, null, ['auto_initialize' => false]);
-
-            foreach ($builder->getSearchBuilder()->all() as $search) {
-                $searchOptions = array_merge(['required' => false], $search['options']);
-                $fieldName = str_replace('.', ':', $search['name']);
-
-                $searchForm->add($fieldName, $search['type'], $searchOptions);
-            }
-
-            $form->add($searchForm);
-        }
-
-        if ($builder->hasSort()) {
-            $formOptions = [
-                'required' => false,
-                'choices' => $builder->getSortBuilder()->all(),
-                'placeholder' => '',
-            ];
-            $form->add($queryParamDef->sort, ChoiceType::class, $formOptions);
-        }
-
-        if ($builder->hasLimit()) {
-            $formOptions = [
-                'required' => false,
-                'choices' => $builder->getLimitBuilder()->all(),
-            ];
-
-            $form->add($queryParamDef->limit, ChoiceType::class, $formOptions);
-        }
-
-        $form->submit($data);
-
-        return $form;
-    }
-
-    /**
-     * @param string $typeClass Paginator type class
+     * @param string $name PaginatorType class name
      *
      * @return PaginatorTypeInterface
      */
-    private function getType($typeClass)
+    private function getType($name)
     {
-        if (!class_exists($typeClass)) {
-            throw new \InvalidArgumentException('Could not load type "'.$typeClass.'": class does not exist.');
+        if (!class_exists($name)) {
+            throw new \InvalidArgumentException('Could not load type "'.$name.'": class does not exist.');
         }
-        if (!is_subclass_of($typeClass, 'Nadia\Bundle\PaginatorBundle\Configuration\PaginatorTypeInterface')) {
-            throw new \InvalidArgumentException('Could not load type "'.$typeClass.'": class does not implement "Nadia\Bundle\PaginatorBundle\Configuration\PaginatorTypeInterface".');
+        if (!is_subclass_of($name, 'Nadia\Bundle\PaginatorBundle\Configuration\PaginatorTypeInterface')) {
+            throw new \InvalidArgumentException('Could not load type "'.$name.'": class does not implement "Nadia\Bundle\PaginatorBundle\Configuration\PaginatorTypeInterface".');
         }
 
-        return new $typeClass();
+        if ($this->typeLoader->hasType($name)) {
+            return $this->typeLoader->getType($name);
+        }
+
+        return new $name();
     }
 
     /**
@@ -151,9 +102,7 @@ class PaginatorFactory
     {
         $resolver = new OptionsResolver();
 
-        if ($type instanceof AbstractPaginatorType) {
-            $type->defaultConfigureOptions($resolver);
-        }
+        $this->configureDefaultOptions($resolver, $type);
 
         $type->configureOptions($resolver);
 
@@ -161,10 +110,27 @@ class PaginatorFactory
     }
 
     /**
-     * @return InputFactory
+     * {@inheritdoc}
      */
-    private function getInputFactory()
+    private function configureDefaultOptions(OptionsResolver $resolver, PaginatorTypeInterface $type)
     {
-        return new InputFactory();
+        $defaultOptions = [
+            'inputKeysClass' => InputKeys::class,
+            'defaultLimit' => 10,
+            'defaultPageRange' => 8,
+            'sessionEnabled' => true,
+            'pagesTemplate' => '@NadiaPaginator/templates/bootstrap4/pages.html.twig',
+            'searchesTemplate' => '@NadiaPaginator/templates/bootstrap4/searches.html.twig',
+            'filtersTemplate' => '@NadiaPaginator/templates/bootstrap4/filters.html.twig',
+            'sortFormTemplate' => '@NadiaPaginator/templates/bootstrap4/sort_form.html.twig',
+            'sortLinkTemplate' => '@NadiaPaginator/templates/bootstrap4/sort_link.html.twig',
+            'limitFormTemplate' => '@NadiaPaginator/templates/bootstrap4/limit_form.html.twig',
+        ];
+        $defaultOptions = array_merge($defaultOptions, $this->defaultOptions);
+
+        $defaultOptions['sessionKey'] = 'nadia.paginator.session.' . hash('md5', get_class($type));
+        $defaultOptions['inputKeys'] = new $defaultOptions['inputKeysClass'];
+
+        $resolver->setDefaults($defaultOptions);
     }
 }
