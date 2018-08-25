@@ -26,13 +26,13 @@
         "symfony/http-kernel": "^3.4",
         "symfony/options-resolver": "^3.4",
         "symfony/routing": "^3.4",
-        "twig/twig": "^1.0||^2.0"
+        "twig/twig": "^2.0"
     },
     "require-dev": {
     },
     "suggest": {
-        "doctrine/orm": "2.6^",
-        "doctrine/dbal": "2.8^"
+        "doctrine/orm": "^2.6",
+        "doctrine/dbal": "^2.8"
     },
     "extra": {
         "branch-alias": {
