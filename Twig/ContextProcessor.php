@@ -63,6 +63,10 @@ class ContextProcessor
 
         if (array_key_exists($inputKeys->reset, $routeParams)) {
             unset($routeParams[$inputKeys->reset]);
+            unset($routeParams[$inputKeys->search]);
+            unset($routeParams[$inputKeys->filter]);
+            unset($routeParams[$inputKeys->sort]);
+            unset($routeParams[$inputKeys->page]);
         }
 
         $firstPage = [
@@ -214,6 +218,9 @@ class ContextProcessor
         }
         if (array_key_exists($inputKeys->reset, $routeParams)) {
             unset($routeParams[$inputKeys->reset]);
+            unset($routeParams[$inputKeys->search]);
+            unset($routeParams[$inputKeys->filter]);
+            unset($routeParams[$inputKeys->page]);
         }
         if (array_key_exists($inputKeys->page, $routeParams)) {
             unset($routeParams[$inputKeys->page]);
