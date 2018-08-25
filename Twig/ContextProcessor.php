@@ -61,6 +61,10 @@ class ContextProcessor
         $rangeLevel = intval($current / $range);
         $pages = array();
 
+        if (array_key_exists($inputKeys->reset, $routeParams)) {
+            unset($routeParams[$inputKeys->reset]);
+        }
+
         $firstPage = [
             'number' => $range * $rangeLevel + 1,
             'url' => '#',
@@ -207,6 +211,12 @@ class ContextProcessor
 
         if (!$sessionEnabled) {
             $routeParams = array_merge($pagination->getCurrentRouteParams(), $routeParams);
+        }
+        if (array_key_exists($inputKeys->reset, $routeParams)) {
+            unset($routeParams[$inputKeys->reset]);
+        }
+        if (array_key_exists($inputKeys->page, $routeParams)) {
+            unset($routeParams[$inputKeys->page]);
         }
 
         $url = $this->router->generate($pagination->getCurrentRoute(), $routeParams);
