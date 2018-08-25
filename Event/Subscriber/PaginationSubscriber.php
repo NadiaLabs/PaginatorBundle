@@ -8,7 +8,6 @@ use Nadia\Bundle\PaginatorBundle\Event\PaginationEvent;
 use Nadia\Bundle\PaginatorBundle\Factory\PaginatorFormFactory;
 use Nadia\Bundle\PaginatorBundle\Input\Input;
 use Nadia\Bundle\PaginatorBundle\Input\InputFactory;
-use Nadia\Bundle\PaginatorBundle\Input\InputKeys;
 use Nadia\Bundle\PaginatorBundle\Pagination\Pagination;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormInterface;
