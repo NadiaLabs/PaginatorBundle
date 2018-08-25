@@ -2,6 +2,9 @@
 
 namespace Nadia\Bundle\PaginatorBundle\Pagination;
 
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
+
 /**
  * Class Pagination
  */
@@ -15,6 +18,16 @@ class Pagination extends AbstractPagination
      * @var array
      */
     private $routeParams = array();
+
+    /**
+     * @var FormInterface
+     */
+    private $form;
+
+    /**
+     * @var FormView
+     */
+    private $formView;
 
     /**
      * Get current route name
@@ -62,5 +75,115 @@ class Pagination extends AbstractPagination
         $this->routeParams = $params;
 
         return $this;
+    }
+
+    /**
+     * @return FormInterface
+     */
+    public function getForm()
+    {
+        return $this->form;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setForm(FormInterface $form)
+    {
+        $this->form = $form;
+
+        return $this;
+    }
+
+    /**
+     * @return FormView
+     */
+    public function getFormView()
+    {
+        if (!$this->formView instanceof FormView) {
+            $this->formView = $this->form->createView();
+        }
+
+        return $this->formView;
+    }
+
+    /**
+     * @param FormView $form
+     *
+     * @return bool
+     */
+    public function hasFilterForm(FormView $form)
+    {
+        return isset($form[$this->getInputKeys()->filter]);
+    }
+
+    /**
+     * @param FormView $form
+     *
+     * @return FormView
+     */
+    public function getFilterForm(FormView $form)
+    {
+        return $form[$this->getInputKeys()->filter];
+    }
+
+    /**
+     * @param FormView $form
+     *
+     * @return bool
+     */
+    public function hasSearchForm(FormView $form)
+    {
+        return isset($form[$this->getInputKeys()->search]);
+    }
+
+    /**
+     * @param FormView $form
+     *
+     * @return FormView
+     */
+    public function getSearchForm(FormView $form)
+    {
+        return $form[$this->getInputKeys()->search];
+    }
+
+    /**
+     * @param FormView $form
+     *
+     * @return bool
+     */
+    public function hasSortForm(FormView $form)
+    {
+        return isset($form[$this->getInputKeys()->sort]);
+    }
+
+    /**
+     * @param FormView $form
+     *
+     * @return FormView
+     */
+    public function getSortForm(FormView $form)
+    {
+        return $form[$this->getInputKeys()->sort];
+    }
+
+    /**
+     * @param FormView $form
+     *
+     * @return bool
+     */
+    public function hasPageSizeForm(FormView $form)
+    {
+        return isset($form[$this->getInputKeys()->pageSize]);
+    }
+
+    /**
+     * @param FormView $form
+     *
+     * @return FormView
+     */
+    public function getPageSizeForm(FormView $form)
+    {
+        return $form[$this->getInputKeys()->pageSize];
     }
 }

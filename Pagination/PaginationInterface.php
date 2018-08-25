@@ -4,8 +4,6 @@ namespace Nadia\Bundle\PaginatorBundle\Pagination;
 
 use Nadia\Bundle\PaginatorBundle\Configuration\PaginatorBuilder;
 use Nadia\Bundle\PaginatorBundle\Input\Input;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormView;
 
 /**
  * Interface PaginationInterface
@@ -47,23 +45,6 @@ interface PaginationInterface
      * @return $this
      */
     public function setInput(Input $input);
-
-    /**
-     * @return FormInterface
-     */
-    public function getForm();
-
-    /**
-     * @param FormInterface $form
-     *
-     * @return $this
-     */
-    public function setForm(FormInterface $form);
-
-    /**
-     * @return FormView
-     */
-    public function getFormView();
 
     /**
      * @return int

@@ -2,7 +2,7 @@
 
 namespace Nadia\Bundle\PaginatorBundle\Event;
 
-use Nadia\Bundle\PaginatorBundle\Pagination\PaginationInterface;
+use Nadia\Bundle\PaginatorBundle\Pagination\Pagination;
 use Symfony\Component\EventDispatcher\Event;
 
 /**
@@ -25,20 +25,20 @@ class PaginationEvent extends Event
     public $options;
 
     /**
-     * @var PaginationInterface
+     * @var Pagination
      */
     private $pagination;
 
     /**
-     * @param PaginationInterface $pagination
+     * @param Pagination $pagination
      */
-    public function setPagination(PaginationInterface $pagination)
+    public function setPagination(Pagination $pagination)
     {
         $this->pagination = $pagination;
     }
 
     /**
-     * @return PaginationInterface
+     * @return Pagination
      */
     public function getPagination()
     {
