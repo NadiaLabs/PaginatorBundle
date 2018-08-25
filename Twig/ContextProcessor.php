@@ -63,7 +63,7 @@ class ContextProcessor
         ], $options);
         $count = $pagination->getCount();
         $current = $input->getPage();
-        $maxPage = (int) ceil($count / $input->getLimit());
+        $maxPage = (int) ceil($count / $input->getPageSize());
         $maxPage = $maxPage < 1 ? 1 : $maxPage;
         $range = $options['range'];
         $rangeLevel = intval($current / $range);
@@ -245,7 +245,7 @@ class ContextProcessor
     public function pageSizes(Pagination $pagination)
     {
         return array(
-            'limitForm' => $pagination->getFormView()->children[$pagination->getInputKeys()->limit],
+            'pageSizeForm' => $pagination->getFormView()->children[$pagination->getInputKeys()->pageSize],
         );
     }
 }

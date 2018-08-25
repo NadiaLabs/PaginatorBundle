@@ -3,9 +3,9 @@
 namespace Nadia\Bundle\PaginatorBundle\Configuration;
 
 /**
- * Class LimitBuilder
+ * Class PageSizeBuilder
  */
-class LimitBuilder
+class PageSizeBuilder
 {
     /**
      * @var array
@@ -13,7 +13,7 @@ class LimitBuilder
     private $pageSizes = array();
 
     /**
-     * Limit Form options
+     * PageSize Form options
      *
      * @var array
      */
@@ -80,7 +80,7 @@ class LimitBuilder
     /**
      * @param array $formOptions
      *
-     * @return LimitBuilder
+     * @return PageSizeBuilder
      */
     public function setFormOptions(array $formOptions)
     {

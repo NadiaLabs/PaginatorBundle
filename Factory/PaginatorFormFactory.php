@@ -83,15 +83,15 @@ class PaginatorFormFactory
             $form->add($inputKeys->sort, ChoiceType::class, $sortFormOptions);
         }
 
-        if ($builder->hasLimit()) {
-            $limitFormOptions = array_merge(array(
+        if ($builder->hasPageSize()) {
+            $pageSizeFormOptions = array_merge(array(
                 'label' => 'Page size',
                 'required' => false,
                 'placeholder' => false,
-                'choices' => $builder->getLimitBuilder()->all(),
-            ), $builder->getLimitBuilder()->getFormOptions());
+                'choices' => $builder->getPageSizeBuilder()->all(),
+            ), $builder->getPageSizeBuilder()->getFormOptions());
 
-            $form->add($inputKeys->limit, ChoiceType::class, $limitFormOptions);
+            $form->add($inputKeys->pageSize, ChoiceType::class, $pageSizeFormOptions);
         }
 
         return $form;

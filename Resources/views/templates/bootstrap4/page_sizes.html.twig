@@ -1,8 +1,8 @@
 <div>
-    {% if limitForm.vars.label is empty %}
-        {{ limitForm.vars.name|replace({':':'.'})|capitalize }}
+    {% if pageSizeForm.vars.label is empty %}
+        {{ pageSizeForm.vars.name|replace({':':'.'})|capitalize }}
     {% else %}
-        {{ limitForm.vars.label }}
+        {{ pageSizeForm.vars.label }}
     {% endif %}
 </div>
-{{ form_widget(limitForm) }}
+{{ form_widget(pageSizeForm) }}

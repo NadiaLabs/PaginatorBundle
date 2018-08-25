@@ -28,7 +28,7 @@ class Input
     /**
      * @var int
      */
-    private $limit;
+    private $pageSize;
     /**
      * @var int
      */
@@ -41,15 +41,15 @@ class Input
      * @param array       $search
      * @param string|null $sort
      * @param int|null    $page
-     * @param int|null    $limit
+     * @param int|null    $pageSize
      */
-    public function __construct(array $filter = array(), array $search = array(), $sort = null, $page = null, $limit = null)
+    public function __construct(array $filter = array(), array $search = array(), $sort = null, $page = null, $pageSize = null)
     {
         $this->filter = $filter;
         $this->search = $search;
         $this->page = $page;
-        $this->limit = $limit;
-        $this->offset = $this->calculateOffset($this->page, $this->limit);
+        $this->pageSize = $pageSize;
+        $this->offset = $this->calculateOffset($this->page, $this->pageSize);
 
         $this->setSort($sort);
     }
@@ -153,7 +153,7 @@ class Input
     {
         $this->page = $page;
 
-        $this->setOffset($this->calculateOffset($this->page, $this->limit));
+        $this->setOffset($this->calculateOffset($this->page, $this->pageSize));
 
         return $this;
     }
@@ -161,21 +161,21 @@ class Input
     /**
      * @return int|null
      */
-    public function getLimit()
+    public function getPageSize()
     {
-        return $this->limit;
+        return $this->pageSize;
     }
 
     /**
-     * @param int $limit
+     * @param int $pageSize
      *
      * @return $this
      */
-    public function setLimit($limit)
+    public function setPageSize($pageSize)
     {
-        $this->limit = $limit;
+        $this->pageSize = $pageSize;
 
-        $this->setOffset($this->calculateOffset($this->page, $this->limit));
+        $this->setOffset($this->calculateOffset($this->page, $this->pageSize));
 
         return $this;
     }
@@ -202,12 +202,12 @@ class Input
 
     /**
      * @param int $page
-     * @param int $limit
+     * @param int $pageSize
      *
      * @return int
      */
-    private function calculateOffset($page, $limit)
+    private function calculateOffset($page, $pageSize)
     {
-        return ($page - 1) * $limit;
+        return ($page - 1) * $pageSize;
     }
 }

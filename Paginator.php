@@ -71,11 +71,11 @@ class Paginator
      *
      * @param mixed    $target Paginating target, retrieve data from this target instance
      * @param int|null $page
-     * @param int|null $limit
+     * @param int|null $pageSize
      *
      * @return PaginationInterface
      */
-    public function paginate($target, $page = null, $limit = null)
+    public function paginate($target, $page = null, $pageSize = null)
     {
         $beforeEvent = new BeforeEvent($this->eventDispatcher);
         $this->eventDispatcher->dispatch('nadia_paginator.before', $beforeEvent);
@@ -83,8 +83,8 @@ class Paginator
         if (!is_null($page) && is_numeric($page)) {
             $this->input->setPage((int) $page);
         }
-        if (!is_null($limit) && is_numeric($limit)) {
-            $this->input->setLimit((int) $limit);
+        if (!is_null($pageSize) && is_numeric($pageSize)) {
+            $this->input->setPageSize((int) $pageSize);
         }
 
         $itemsEvent = new ItemsEvent($this->builder, $this->input);

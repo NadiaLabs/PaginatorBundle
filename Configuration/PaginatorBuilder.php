@@ -35,9 +35,9 @@ class PaginatorBuilder
     private $sortBuilder;
 
     /**
-     * @var LimitBuilder
+     * @var PageSizeBuilder
      */
-    private $limitBuilder;
+    private $pageSizeBuilder;
 
     /**
      * @var array
@@ -107,17 +107,17 @@ class PaginatorBuilder
     }
 
     /**
-     * Setup LimitBuilder
+     * Setup PageSizeBuilder
      *
-     * @param LimitInterface $limit Limit instance
+     * @param PageSizeInterface $pageSize PageSize instance
      *
      * @return PaginatorBuilder
      */
-    public function setLimit(LimitInterface $limit)
+    public function setPageSize(PageSizeInterface $pageSize)
     {
-        $this->limitBuilder = new LimitBuilder();
+        $this->pageSizeBuilder = new PageSizeBuilder();
 
-        $limit->build($this->limitBuilder);
+        $pageSize->build($this->pageSizeBuilder);
 
         return $this;
     }
@@ -147,11 +147,11 @@ class PaginatorBuilder
     }
 
     /**
-     * @return LimitBuilder
+     * @return PageSizeBuilder
      */
-    public function getLimitBuilder()
+    public function getPageSizeBuilder()
     {
-        return $this->limitBuilder;
+        return $this->pageSizeBuilder;
     }
 
     /**
@@ -217,8 +217,8 @@ class PaginatorBuilder
     /**
      * @return bool
      */
-    public function hasLimit()
+    public function hasPageSize()
     {
-        return $this->limitBuilder instanceof LimitBuilder && $this->limitBuilder->count();
+        return $this->pageSizeBuilder instanceof PageSizeBuilder && $this->pageSizeBuilder->count();
     }
 }

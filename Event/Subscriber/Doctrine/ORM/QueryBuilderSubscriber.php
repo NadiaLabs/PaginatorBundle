@@ -27,15 +27,15 @@ class QueryBuilderSubscriber implements EventSubscriberInterface
         $builder = $event->getBuilder();
         $input = $event->getInput();
 
-        $limit = $input->getLimit();
+        $pageSize = $input->getPageSize();
         $offset = $input->getOffset();
 
         $this->buildFilter($builder, $qb, $input->getFilter());
         $this->buildSearch($builder, $qb, $input->getSearch());
         $this->buildSort($builder, $qb, $input->getSort());
 
-        if (!empty($limit)) {
-            $qb->setMaxResults($limit);
+        if (!empty($pageSize)) {
+            $qb->setMaxResults($pageSize);
         }
         if (!empty($offset)) {
             $qb->setFirstResult($offset);

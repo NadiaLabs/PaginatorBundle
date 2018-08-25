@@ -139,7 +139,7 @@ class PaginatorExtension extends \Twig_Extension
             return '';
         }
 
-        $template = $pagination->getOption('sortFormTemplate');
+        $template = $pagination->getOption('sortsFormTemplate');
         $viewData = $this->processor->sorts($pagination);
 
         return $env->render($template, $viewData);
@@ -189,11 +189,11 @@ class PaginatorExtension extends \Twig_Extension
      */
     public function pageSizes(\Twig_Environment $env, Pagination $pagination)
     {
-        if (!$pagination->getBuilder()->hasLimit()) {
+        if (!$pagination->getBuilder()->hasPageSize()) {
             return '';
         }
 
-        $template = $pagination->getOption('limitFormTemplate');
+        $template = $pagination->getOption('pageSizesTemplate');
         $viewData = $this->processor->pageSizes($pagination);
 
         return $env->render($template, $viewData);

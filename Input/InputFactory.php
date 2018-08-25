@@ -36,7 +36,7 @@ class InputFactory
         $clear = array_key_exists($inputKeys->clear, $params);
         $filter = $search = array();
         $sort = null;
-        $limit = $options['defaultPageSize'];
+        $pageSize = $options['defaultPageSize'];
         $page = 1;
 
         if (!$clear) {
@@ -47,16 +47,16 @@ class InputFactory
                 $states = array();
             }
 
-            $this->processParams($states, $params, $inputKeys, $filter, $search, $sort, $limit, $page);
+            $this->processParams($states, $params, $inputKeys, $filter, $search, $sort, $pageSize, $page);
         }
 
-        $this->processParamsWithForm($form, $params, $inputKeys, $filter, $search, $sort, $limit);
+        $this->processParamsWithForm($form, $params, $inputKeys, $filter, $search, $sort, $pageSize);
 
         if ($sessionEnabled) {
             $request->getSession()->set($sessionKey, $params);
         }
 
-        return new Input($filter, $search, $sort, $page, $limit);
+        return new Input($filter, $search, $sort, $page, $pageSize);
     }
 
     /**
@@ -66,11 +66,11 @@ class InputFactory
      * @param array     $filter
      * @param array     $search
      * @param string    $sort
-     * @param int       $limit
+     * @param int       $pageSize
      * @param int       $page
      */
     private function processParams(array &$states, array &$params, InputKeys $inputKeys,
-                                   array &$filter, array &$search, &$sort, &$limit, &$page)
+                                   array &$filter, array &$search, &$sort, &$pageSize, &$page)
     {
         $filter = $this->getValue($inputKeys->filter, $states, $params, $filter);
         $filter = is_array($filter) ? $filter : array();
@@ -80,7 +80,7 @@ class InputFactory
 
         $sort = $this->getValue($inputKeys->sort, $states, $params, $sort);
 
-        $limit = (int) $this->getValue($inputKeys->limit, $states, $params, $limit);
+        $pageSize = (int) $this->getValue($inputKeys->pageSize, $states, $params, $pageSize);
 
         $page = (int) (array_key_exists($inputKeys->page, $params) ? $params[$inputKeys->page] : $page);
     }
@@ -92,16 +92,16 @@ class InputFactory
      * @param array         $filter
      * @param array         $search
      * @param string        $sort
-     * @param int           $limit
+     * @param int           $pageSize
      */
     private function processParamsWithForm(FormInterface $form, array &$params, InputKeys $inputKeys,
-                                           array &$filter, array &$search, &$sort, &$limit)
+                                           array &$filter, array &$search, &$sort, &$pageSize)
     {
         $params = array(
             $inputKeys->filter => $filter,
             $inputKeys->search => $search,
             $inputKeys->sort   => $sort,
-            $inputKeys->limit  => $limit,
+            $inputKeys->pageSize  => $pageSize,
         );
         $params = $form->submit($params)->getData();
 
@@ -118,7 +118,7 @@ class InputFactory
         }
 
         $sort = array_key_exists($inputKeys->sort, $params) ? $params[$inputKeys->sort] : $sort;
-        $limit = array_key_exists($inputKeys->limit, $params) ? $params[$inputKeys->limit] : $limit;
+        $pageSize = array_key_exists($inputKeys->pageSize, $params) ? $params[$inputKeys->pageSize] : $pageSize;
     }
 
     /**

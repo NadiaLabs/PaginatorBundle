@@ -26,7 +26,7 @@ class InputKeys
     /**
      * @var string
      */
-    public $limit = '_l';
+    public $pageSize = '_l';
     /**
      * @var string
      */

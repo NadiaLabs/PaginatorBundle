@@ -208,9 +208,9 @@ abstract class AbstractPagination implements PaginationInterface, \Countable, \I
      *
      * @return bool
      */
-    public function hasLimitForm(FormView $form)
+    public function hasPageSizeForm(FormView $form)
     {
-        return isset($form[$this->getInputKeys()->limit]);
+        return isset($form[$this->getInputKeys()->pageSize]);
     }
 
     /**
@@ -218,9 +218,9 @@ abstract class AbstractPagination implements PaginationInterface, \Countable, \I
      *
      * @return FormView
      */
-    public function getLimitForm(FormView $form)
+    public function getPageSizeForm(FormView $form)
     {
-        return $form[$this->getInputKeys()->limit];
+        return $form[$this->getInputKeys()->pageSize];
     }
 
     /**
