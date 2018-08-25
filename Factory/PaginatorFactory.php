@@ -69,7 +69,7 @@ class PaginatorFactory
     {
         $type = $this->getType($type);
         $options = $this->resolveOptions($type, $options);
-        $builder = new PaginatorBuilder();
+        $builder = new PaginatorBuilder($type);
 
         $type->build($builder, $options);
 
@@ -77,7 +77,7 @@ class PaginatorFactory
 
         $this->eventDispatcher->dispatch('nadia_paginator.input', $inputEvent);
 
-        return new Paginator($builder, $options, $inputEvent->form, $inputEvent->input, $this->eventDispatcher);
+        return new Paginator($builder, $options, $this->eventDispatcher);
     }
 
     /**

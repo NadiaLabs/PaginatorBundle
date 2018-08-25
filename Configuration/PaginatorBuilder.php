@@ -10,6 +10,11 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class PaginatorBuilder
 {
     /**
+     * @var PaginatorTypeInterface
+     */
+    private $type;
+
+    /**
      * @var FilterBuilder
      */
     private $filterBuilder;
@@ -43,6 +48,24 @@ class PaginatorBuilder
      * @var array
      */
     private $formOptions;
+
+    /**
+     * PaginatorBuilder constructor.
+     *
+     * @param PaginatorTypeInterface $type
+     */
+    public function __construct(PaginatorTypeInterface $type)
+    {
+        $this->type = $type;
+    }
+
+    /**
+     * @return PaginatorTypeInterface
+     */
+    public function getType()
+    {
+        return $this->type;
+    }
 
     /**
      * Setup FilterBuilder

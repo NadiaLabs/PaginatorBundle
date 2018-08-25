@@ -2,6 +2,8 @@
 
 namespace Nadia\Bundle\PaginatorBundle\Event\Subscriber;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Nadia\Bundle\PaginatorBundle\Event\BeforeEvent;
 use Nadia\Bundle\PaginatorBundle\Event\InputEvent;
 use Nadia\Bundle\PaginatorBundle\Event\PaginationEvent;
@@ -41,14 +43,14 @@ class PaginationSubscriber implements EventSubscriberInterface
     private $isLoaded = false;
 
     /**
-     * @var Input
+     * @var FormInterface[]|Collection
      */
-    private $input;
+    private $forms;
 
     /**
-     * @var FormInterface
+     * @var Input[]|Collection
      */
-    private $form;
+    private $inputs;
 
     /**
      * PaginatorFactory constructor.
@@ -60,6 +62,8 @@ class PaginationSubscriber implements EventSubscriberInterface
     {
         $this->formFactory = $formFactory;
         $this->inputFactory = $inputFactory;
+        $this->forms = new ArrayCollection();
+        $this->inputs = new ArrayCollection();
     }
 
     /**
@@ -81,12 +85,13 @@ class PaginationSubscriber implements EventSubscriberInterface
     {
         $builder = $event->getBuilder();
         $options = $event->getOptions();
+        $typeName = get_class($builder->getType());
 
         $form = $this->formFactory->create($builder, $options);
         $input = $this->inputFactory->create($this->request, $form, $options);
 
-        $event->form = $form;
-        $event->input = $input;
+        $this->forms->set($typeName, $form);
+        $this->inputs->set($typeName, $input);
     }
 
     /**
@@ -101,6 +106,10 @@ class PaginationSubscriber implements EventSubscriberInterface
         $dispatcher = $event->getEventDispatcher();
 
         $dispatcher->addSubscriber(new Doctrine\ORM\QueryBuilderSubscriber());
+
+        $typeName = get_class($event->getBuilder()->getType());
+        $event->form = $this->forms->get($typeName);
+        $event->input = $this->inputs->get($typeName);
 
         $this->isLoaded = true;
     }
