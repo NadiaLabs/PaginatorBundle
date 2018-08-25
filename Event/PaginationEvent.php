@@ -11,20 +11,6 @@ use Symfony\Component\EventDispatcher\Event;
 class PaginationEvent extends Event
 {
     /**
-     * A target being paginated
-     *
-     * @var mixed
-     */
-    public $target;
-
-    /**
-     * List of options
-     *
-     * @var array
-     */
-    public $options;
-
-    /**
      * @var Pagination
      */
     private $pagination;
