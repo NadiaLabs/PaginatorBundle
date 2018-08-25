@@ -1,7 +1,9 @@
 {% for form in filterForm %}
     <div {% for key, value in attributes %}{{ key }}="{{ value }}"{% endfor %}>
         <div>
-            {{ form.vars.label }}
+            <small>
+                {{ form.vars.label }}
+            </small>
         </div>
         {{ form_widget(form) }}
     </div>
