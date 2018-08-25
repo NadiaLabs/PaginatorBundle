@@ -3,14 +3,14 @@
 namespace Nadia\Bundle\PaginatorBundle\Event\Subscriber\Doctrine\ORM;
 
 use Doctrine\ORM\Query;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\CountOutputWalker;
 use Nadia\Bundle\PaginatorBundle\Configuration\PaginatorBuilder;
-use Nadia\Bundle\PaginatorBundle\Configuration\SortInterface;
+use Nadia\Bundle\PaginatorBundle\Configuration\Sort;
 use Nadia\Bundle\PaginatorBundle\Doctrine\ORM\DefaultSearchQueryProcessor;
 use Nadia\Bundle\PaginatorBundle\Doctrine\ORM\Query\Hydrator\CountHydrator;
 use Nadia\Bundle\PaginatorBundle\Event\ItemsEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Doctrine\ORM\QueryBuilder;
 
 class QueryBuilderSubscriber implements EventSubscriberInterface
 {
@@ -30,8 +30,8 @@ class QueryBuilderSubscriber implements EventSubscriberInterface
         $pageSize = $input->getPageSize();
         $offset = $input->getOffset();
 
-        $this->buildFilter($builder, $qb, $input->getFilter());
         $this->buildSearch($builder, $qb, $input->getSearch());
+        $this->buildFilter($builder, $qb, $input->getFilter());
         $this->buildSort($builder, $qb, $input->getSort());
 
         if (!empty($pageSize)) {
@@ -43,47 +43,6 @@ class QueryBuilderSubscriber implements EventSubscriberInterface
 
         $event->count = $this->count($qb);
         $event->items = $qb->getQuery()->getResult();
-    }
-
-    /**
-     * @param PaginatorBuilder $builder
-     * @param QueryBuilder     $qb
-     * @param array            $filter
-     */
-    private function buildFilter(PaginatorBuilder $builder, QueryBuilder $qb, array $filter)
-    {
-        if (!$builder->hasFilter() || empty($filter)) {
-            return;
-        }
-
-        $filterBuilder = $builder->getFilterBuilder();
-        $filterProcessors = $builder->getFilterQueryProcessors();
-        $parameterCount = 0;
-
-        foreach ($filter as $fieldName => $value) {
-            if ('' === $value || null === $value || !$filterBuilder->has($fieldName)) {
-                continue;
-            }
-
-            if ($filterProcessors->has($fieldName) && is_callable($filterProcessors[$fieldName])) {
-                call_user_func($filterProcessors[$fieldName], $qb, $fieldName, $value);
-            } else {
-                if (is_array($value)) {
-                    $bindParameters = array();
-
-                    foreach ($value as $v) {
-                        $bindParameters[] = '?' . $parameterCount;
-
-                        $qb->setParameter($parameterCount++, $v);
-                    }
-
-                    $qb->andWhere($qb->expr()->in($fieldName, $bindParameters));
-                } else {
-                    $qb->andWhere($qb->expr()->eq($fieldName, '?' . $parameterCount));
-                    $qb->setParameter($parameterCount++, $value);
-                }
-            }
-        }
     }
 
     /**
@@ -107,10 +66,51 @@ class QueryBuilderSubscriber implements EventSubscriberInterface
 
             $params = $searchBuilder->get($name);
 
-            if ($searchProcessors->has($name) && is_callable($searchProcessors[$name])) {
+            if ($searchProcessors->containsKey($name) && is_callable($searchProcessors[$name])) {
                 call_user_func($searchProcessors[$name], $qb, $params['fields'], $value);
             } else {
                 DefaultSearchQueryProcessor::process($qb, $params['fields'], $value);
+            }
+        }
+    }
+
+    /**
+     * @param PaginatorBuilder $builder
+     * @param QueryBuilder     $qb
+     * @param array            $filter
+     */
+    private function buildFilter(PaginatorBuilder $builder, QueryBuilder $qb, array $filter)
+    {
+        if (!$builder->hasFilter() || empty($filter)) {
+            return;
+        }
+
+        $filterBuilder = $builder->getFilterBuilder();
+        $filterProcessors = $builder->getFilterQueryProcessors();
+        $parameterCount = 0;
+
+        foreach ($filter as $fieldName => $value) {
+            if ('' === $value || null === $value || !$filterBuilder->has($fieldName)) {
+                continue;
+            }
+
+            if ($filterProcessors->containsKey($fieldName) && is_callable($filterProcessors[$fieldName])) {
+                call_user_func($filterProcessors[$fieldName], $qb, $fieldName, $value);
+            } else {
+                if (is_array($value)) {
+                    $bindParameters = array();
+
+                    foreach ($value as $v) {
+                        $bindParameters[] = '?' . $parameterCount;
+
+                        $qb->setParameter($parameterCount++, $v);
+                    }
+
+                    $qb->andWhere($qb->expr()->in($fieldName, $bindParameters));
+                } else {
+                    $qb->andWhere($qb->expr()->eq($fieldName, '?' . $parameterCount));
+                    $qb->setParameter($parameterCount++, $value);
+                }
             }
         }
     }
@@ -133,7 +133,7 @@ class QueryBuilderSubscriber implements EventSubscriberInterface
 
             if (1 === count($parts)) {
                 // Default order direction
-                $parts[] = SortInterface::ASC;
+                $parts[] = Sort::ASC;
             }
 
             return array(

@@ -1,8 +1,4 @@
 <div>
-    {% if pageSizeForm.vars.label is empty %}
-        {{ pageSizeForm.vars.name|replace({':':'.'})|capitalize }}
-    {% else %}
-        {{ pageSizeForm.vars.label }}
-    {% endif %}
+    {{ pageSizeForm.vars.label }}
 </div>
 {{ form_widget(pageSizeForm) }}

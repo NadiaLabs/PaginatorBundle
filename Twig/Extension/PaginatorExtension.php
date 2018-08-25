@@ -2,7 +2,7 @@
 
 namespace Nadia\Bundle\PaginatorBundle\Twig\Extension;
 
-use Nadia\Bundle\PaginatorBundle\Configuration\SortInterface;
+use Nadia\Bundle\PaginatorBundle\Configuration\Sort;
 use Nadia\Bundle\PaginatorBundle\Pagination\Pagination;
 use Nadia\Bundle\PaginatorBundle\Twig\ContextProcessor;
 
@@ -163,7 +163,7 @@ class PaginatorExtension extends \Twig_Extension
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
      */
-    public function sortLink(\Twig_Environment $env, Pagination $pagination, $title, $key, $direction = SortInterface::ASC, array $options = array())
+    public function sortLink(\Twig_Environment $env, Pagination $pagination, $title, $key, $direction = Sort::ASC, array $options = array())
     {
         if (!$pagination->getBuilder()->hasSort()) {
             return $title;

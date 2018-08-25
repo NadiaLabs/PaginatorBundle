@@ -2,7 +2,7 @@
 
 namespace Nadia\Bundle\PaginatorBundle\Configuration;
 
-use Symfony\Component\OptionsResolver\OptionsResolver;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * Class PaginatorBuilder
@@ -20,7 +20,7 @@ class PaginatorBuilder
     private $filterBuilder;
 
     /**
-     * @var QueryProcessorCollection
+     * @var ArrayCollection
      */
     private $filterQueryProcessors;
 
@@ -30,7 +30,7 @@ class PaginatorBuilder
     private $searchBuilder;
 
     /**
-     * @var QueryProcessorCollection
+     * @var ArrayCollection
      */
     private $searchQueryProcessors;
 
@@ -57,6 +57,12 @@ class PaginatorBuilder
     public function __construct(PaginatorTypeInterface $type)
     {
         $this->type = $type;
+        $this->filterBuilder = new FilterBuilder();
+        $this->filterQueryProcessors = new ArrayCollection();
+        $this->searchBuilder = new SearchBuilder();
+        $this->searchQueryProcessors = new ArrayCollection();
+        $this->sortBuilder = new SortBuilder();
+        $this->pageSizeBuilder = new PageSizeBuilder();
     }
 
     /**
@@ -65,84 +71,6 @@ class PaginatorBuilder
     public function getType()
     {
         return $this->type;
-    }
-
-    /**
-     * Setup FilterBuilder
-     *
-     * @param FilterInterface $filter  Filter instance
-     * @param array           $options Filter options
-     *
-     * @return PaginatorBuilder
-     */
-    public function setFilter(FilterInterface $filter, array $options = array())
-    {
-        $this->filterBuilder = new FilterBuilder();
-        $this->filterQueryProcessors = new QueryProcessorCollection();
-        $optionResolver = new OptionsResolver();
-
-        $filter->configureOptions($optionResolver);
-
-        $options = $optionResolver->resolve($options);
-
-        $filter->build($this->filterBuilder, $this->filterQueryProcessors, $options);
-
-        return $this;
-    }
-
-    /**
-     * Setup SearchBuilder
-     *
-     * @param SearchInterface $search  Search instance
-     * @param array           $options Search options
-     *
-     * @return PaginatorBuilder
-     */
-    public function setSearch(SearchInterface $search, array $options = array())
-    {
-        $this->searchBuilder = new SearchBuilder();
-        $this->searchQueryProcessors = new QueryProcessorCollection();
-        $optionResolver = new OptionsResolver();
-
-        $search->configureOptions($optionResolver);
-
-        $options = $optionResolver->resolve($options);
-
-        $search->build($this->searchBuilder, $this->searchQueryProcessors, $options);
-
-        return $this;
-    }
-
-    /**
-     * Setup SortBuilder
-     *
-     * @param SortInterface $sort Sort instance
-     *
-     * @return PaginatorBuilder
-     */
-    public function setSort(SortInterface $sort)
-    {
-        $this->sortBuilder = new SortBuilder();
-
-        $sort->build($this->sortBuilder);
-
-        return $this;
-    }
-
-    /**
-     * Setup PageSizeBuilder
-     *
-     * @param PageSizeInterface $pageSize PageSize instance
-     *
-     * @return PaginatorBuilder
-     */
-    public function setPageSize(PageSizeInterface $pageSize)
-    {
-        $this->pageSizeBuilder = new PageSizeBuilder();
-
-        $pageSize->build($this->pageSizeBuilder);
-
-        return $this;
     }
 
     /**
@@ -178,7 +106,7 @@ class PaginatorBuilder
     }
 
     /**
-     * @return QueryProcessorCollection
+     * @return ArrayCollection
      */
     public function getFilterQueryProcessors()
     {
@@ -186,7 +114,7 @@ class PaginatorBuilder
     }
 
     /**
-     * @return QueryProcessorCollection
+     * @return ArrayCollection
      */
     public function getSearchQueryProcessors()
     {

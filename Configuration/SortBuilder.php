@@ -77,18 +77,26 @@ class SortBuilder
      *
      * @return $this
      */
-    public function add($key, $direction, $statement, $title = '')
+    public function add($key, $direction, $statement = '', $title = '')
     {
         if (!array_key_exists($key, $this->sorts)) {
             $this->sorts[$key] = array();
         }
 
-        if (!in_array($direction, array(SortInterface::ASC, SortInterface::DESC))) {
-            $direction = SortInterface::ASC;
+        if (!in_array($direction, array(Sort::ASC, Sort::DESC))) {
+            $direction = Sort::ASC;
         }
 
         if (!array_key_exists($direction, $this->sorts[$key])) {
             $this->sorts[$key][$direction] = array();
+        }
+
+        if (empty($statement)) {
+            $statement = $key.' '.$direction;
+        }
+
+        if (empty($title)) {
+            $title = ucfirst($key).' '.$direction;
         }
 
         $this->sorts[$key][$direction] = compact('statement', 'title', 'direction');
@@ -105,7 +113,7 @@ class SortBuilder
      *
      * @return array Format: array('statement' => 'foo ASC sort title', 'title' => 'foo ASC sort title', 'direction' => 'ASC')
      */
-    public function get($key, $direction = SortInterface::ASC)
+    public function get($key, $direction = Sort::ASC)
     {
         if (empty($this->sorts[$key])) {
             throw new \InvalidArgumentException('The sort key "'.$key.'" is not exists!');
@@ -125,9 +133,9 @@ class SortBuilder
      *
      * @return array Format: array('statement' => 'foo ASC sort title', 'title' => 'foo ASC sort title', 'direction' => 'ASC')
      */
-    public function getReversed($key, $direction = SortInterface::ASC)
+    public function getReversed($key, $direction = Sort::ASC)
     {
-        $direction = $direction !== SortInterface::DESC ? SortInterface::DESC : SortInterface::ASC;
+        $direction = $direction !== Sort::DESC ? Sort::DESC : Sort::ASC;
 
         return $this->get($key, $direction);
     }
@@ -186,6 +194,6 @@ class SortBuilder
      */
     private function getMapKey($key, $direction)
     {
-        return $key . ' ' . $direction;
+        return $key.' '.$direction;
     }
 }

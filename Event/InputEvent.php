@@ -11,25 +11,23 @@ use Symfony\Component\EventDispatcher\Event;
 class InputEvent extends Event
 {
     /**
+     * @var array
+     */
+    public $options;
+
+    /**
      * @var PaginatorBuilder
      */
     private $builder;
 
     /**
-     * @var array
-     */
-    private $options;
-
-    /**
      * InputEvent constructor.
      *
      * @param PaginatorBuilder $builder
-     * @param array            $options
      */
-    public function __construct(PaginatorBuilder $builder, array $options)
+    public function __construct(PaginatorBuilder $builder)
     {
         $this->builder = $builder;
-        $this->options = $options;
     }
 
     /**
@@ -38,13 +36,5 @@ class InputEvent extends Event
     public function getBuilder()
     {
         return $this->builder;
-    }
-
-    /**
-     * @return array
-     */
-    public function getOptions()
-    {
-        return $this->options;
     }
 }

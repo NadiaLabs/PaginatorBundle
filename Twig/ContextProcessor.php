@@ -2,10 +2,9 @@
 
 namespace Nadia\Bundle\PaginatorBundle\Twig;
 
-use Nadia\Bundle\PaginatorBundle\Configuration\SortInterface;
+use Nadia\Bundle\PaginatorBundle\Configuration\Sort;
 use Nadia\Bundle\PaginatorBundle\Pagination\Pagination;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Translation\TranslatorInterface;
 
 /**
  * Processor for Twig context (An array of parameters to pass to the Twig template)
@@ -18,20 +17,13 @@ class ContextProcessor
     protected $router;
 
     /**
-     * @var TranslatorInterface
-     */
-    protected $translator;
-
-    /**
      * ContextProcessor constructor.
      *
      * @param UrlGeneratorInterface $router
-     * @param TranslatorInterface   $translator
      */
-    public function __construct(UrlGeneratorInterface $router, TranslatorInterface $translator)
+    public function __construct(UrlGeneratorInterface $router)
     {
         $this->router = $router;
-        $this->translator = $translator;
     }
 
     /**
@@ -189,11 +181,11 @@ class ContextProcessor
      *
      * @return array
      */
-    public function sortLink(Pagination $pagination, $title, $key, $direction = SortInterface::ASC, array $options = array())
+    public function sortLink(Pagination $pagination, $title, $key, $direction = Sort::ASC, array $options = array())
     {
         $input = $pagination->getInput();
         $sortBuilder = $pagination->getBuilder()->getSortBuilder();
-        $reversedDirection = $direction !== SortInterface::DESC ? SortInterface::DESC : SortInterface::ASC;
+        $reversedDirection = $direction !== Sort::DESC ? Sort::DESC : Sort::ASC;
         $sort = $key . ' ' . $direction;
         $showDirection = false;
 

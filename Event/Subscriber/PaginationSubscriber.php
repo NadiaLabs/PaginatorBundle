@@ -25,7 +25,7 @@ class PaginationSubscriber implements EventSubscriberInterface
     /**
      * @var PaginatorFormFactory
      */
-    private $formFactory;
+    private $paginatorFormFactory;
 
     /**
      * @var InputFactory
@@ -55,12 +55,12 @@ class PaginationSubscriber implements EventSubscriberInterface
     /**
      * PaginatorFactory constructor.
      *
-     * @param PaginatorFormFactory $formFactory
+     * @param PaginatorFormFactory $paginatorFormFactory
      * @param InputFactory         $inputFactory
      */
-    public function __construct(PaginatorFormFactory $formFactory, InputFactory $inputFactory)
+    public function __construct(PaginatorFormFactory $paginatorFormFactory, InputFactory $inputFactory)
     {
-        $this->formFactory = $formFactory;
+        $this->paginatorFormFactory = $paginatorFormFactory;
         $this->inputFactory = $inputFactory;
         $this->forms = new ArrayCollection();
         $this->inputs = new ArrayCollection();
@@ -84,11 +84,10 @@ class PaginationSubscriber implements EventSubscriberInterface
     public function input(InputEvent $event)
     {
         $builder = $event->getBuilder();
-        $options = $event->getOptions();
         $typeName = get_class($builder->getType());
 
-        $form = $this->formFactory->create($builder, $options);
-        $input = $this->inputFactory->create($this->request, $form, $options);
+        $form = $this->paginatorFormFactory->create($builder, $event->options);
+        $input = $this->inputFactory->create($this->request, $form, $event->options);
 
         $this->forms->set($typeName, $form);
         $this->inputs->set($typeName, $input);

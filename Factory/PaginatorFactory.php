@@ -71,9 +71,15 @@ class PaginatorFactory
         $options = $this->resolveOptions($type, $options);
         $builder = new PaginatorBuilder($type);
 
-        $type->build($builder, $options);
+        $type->buildSearch($builder->getSearchBuilder(), $builder->getSearchQueryProcessors(), $options);
+        $type->buildFilter($builder->getFilterBuilder(), $builder->getFilterQueryProcessors(), $options);
+        $type->buildSort($builder->getSortBuilder(), $options);
+        $type->buildPageSize($builder->getPageSizeBuilder(), $options);
 
-        $inputEvent = new InputEvent($builder, $options);
+        $builder->setFormOptions($type->getFormOptions());
+
+        $inputEvent = new InputEvent($builder);
+        $inputEvent->options =& $options;
 
         $this->eventDispatcher->dispatch('nadia_paginator.input', $inputEvent);
 

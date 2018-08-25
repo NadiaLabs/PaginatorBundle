@@ -36,7 +36,7 @@ class PaginatorFormFactory
      * @param array            $options
      * @return FormInterface
      */
-    public function create(PaginatorBuilder $builder, array $options)
+    public function create(PaginatorBuilder $builder, array &$options)
     {
         $formOptions = array(
             'csrf_protection' => false,
@@ -52,8 +52,12 @@ class PaginatorFormFactory
             $filterForm = $this->formFactory->createNamed($inputKeys->filter, FormType::class, null, array('auto_initialize' => false));
 
             foreach ($builder->getFilterBuilder()->all() as $filter) {
-                $filterOptions = array_merge(array('required' => false), $filter['options']);
                 $fieldName = str_replace('.', ':', $filter['name']);
+                $filterOptions = array(
+                    'label' => ucfirst($fieldName),
+                    'required' => false,
+                );
+                $filterOptions = array_merge($filterOptions, $filter['options']);
 
                 $filterForm->add($fieldName, $filter['type'], $filterOptions);
             }
@@ -65,8 +69,12 @@ class PaginatorFormFactory
             $searchForm = $this->formFactory->createNamed($inputKeys->search, FormType::class, null, array('auto_initialize' => false));
 
             foreach ($builder->getSearchBuilder()->all() as $search) {
-                $searchOptions = array_merge(array('required' => false), $search['options']);
                 $fieldName = str_replace('.', ':', $search['name']);
+                $searchOptions = array(
+                    'label' => ucfirst($fieldName),
+                    'required' => false,
+                );
+                $searchOptions = array_merge($searchOptions, $search['options']);
 
                 $searchForm->add($fieldName, $search['type'], $searchOptions);
             }

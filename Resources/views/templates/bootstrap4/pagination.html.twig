@@ -2,96 +2,95 @@
 {% set resetKey = pagination.inputKeys.clear %}
 {% set input = pagination.input %}
 
-<div class="container-fluid">
-    {{ form_start(form) }}
+{{ form_start(form) }}
 
-    <div class="row mb-3">
-        <div class="col-md-8 col-xl-9">
-            <div class="row">
-                {{ nadia_paginator_searches(pagination, {attr: {class: 'col-md-6 col-xl-4 search'}}) }}
+<div class="row mb-3">
+    <div class="col-md-8 col-xl-9">
+        <div class="row">
+            {{ nadia_paginator_searches(pagination, {attr: {class: 'col-md-6 col-xl-4 search'}}) }}
 
-                <div class="col-md-6 col-xl-4">
-                    <div>&nbsp;</div>
-                    <div>
-                        <button class="btn btn-primary">Search</button>
+            <div class="col-md-6 col-xl-4">
+                <div>&nbsp;</div>
+                <div>
+                    <button class="btn btn-primary">Search</button>
 
-                        {% if pagination.builder.filter %}
-                        <button type="button" class="btn btn-info"
-                                onclick="
-                                    var filters = document.getElementById('filters');
-                                    var symbol = document.getElementById('filter-open-close-symbol');
-                                    var isHide = filters.classList.contains('d-none');
-                                    isHide ? filters.classList.remove('d-none') : filters.classList.add('d-none');
-                                    symbol.innerHTML = (isHide ? '&#9650;' : '&#9660;');
-                                "
-                        >
-                            Filters
-                            <span id="filter-open-close-symbol">
-                                {% if input.filter is empty %}&#9660;{% else %}&#9650;{% endif %}
-                            </span>
-                        </button>
-                        {% endif %}
+                    {% if pagination.builder.filter %}
+                    <button type="button" class="btn btn-info"
+                            onclick="
+                                var filters = document.getElementById('filters');
+                                var symbol = document.getElementById('filter-open-close-symbol');
+                                var isHide = filters.classList.contains('d-none');
+                                isHide ? filters.classList.remove('d-none') : filters.classList.add('d-none');
+                                symbol.innerHTML = (isHide ? '&#9650;' : '&#9660;');
+                            "
+                    >
+                        Filters
+                        <span id="filter-open-close-symbol">
+                            {% if input.filter is empty %}&#9660;{% else %}&#9650;{% endif %}
+                        </span>
+                    </button>
+                    {% endif %}
 
-                        <input type="submit" class="btn btn-secondary" name="{{ resetKey }}" value="Clear" />
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-4 col-xl-3 d-none d-md-block">
-            <div class="row">
-                <div class="col-md-7 col-xl-8">
-                    {{ nadia_paginator_sorts(pagination) }}
-                </div>
-                <div class="col-md-5 col-xl-4">
-                    {{ nadia_paginator_page_sizes(pagination) }}
+                    <input type="submit" class="btn btn-secondary" name="{{ resetKey }}" value="Clear" />
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="row mb-3 {% if input.filter is empty %}d-none{% endif %}" id="filters">
-        {{ nadia_paginator_filters(pagination, {attr: {class: 'col-md-4 col-xl-3 mb-1 filter'}}) }}
+    <div class="col-md-4 col-xl-3 d-none d-md-block">
+        <div class="row">
+            <div class="col-md-7 col-xl-8">
+                {{ nadia_paginator_sorts(pagination) }}
+            </div>
+            <div class="col-md-5 col-xl-4">
+                {{ nadia_paginator_page_sizes(pagination) }}
+            </div>
+        </div>
     </div>
-
-    <div class="pt-3 mb-3 table-responsive">
-    {% block tableContent %}
-        <table class="table">
-            <thead>
-            <tr>
-                <th>Demo</th>
-                <th>Demo</th>
-                <th>Demo</th>
-                <th>Demo</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-                <td>Demo</td>
-                <td>Demo</td>
-                <td>Demo</td>
-                <td>Demo</td>
-            </tr>
-            <tr>
-                <td>Demo</td>
-                <td>Demo</td>
-                <td>Demo</td>
-                <td>Demo</td>
-            </tr>
-            <tr>
-                <td>Demo</td>
-                <td>Demo</td>
-                <td>Demo</td>
-                <td>Demo</td>
-            </tr>
-            </tbody>
-        </table>
-    {% endblock tableContent %}
-    </div>
-
-    <div class="d-flex justify-content-center">
-        {{ nadia_paginator_pages(pagination) }}
-    </div>
-
-    {{ form_end(form) }}
 </div>
+
+<div class="row mb-2 {% if input.filter is empty %}d-none{% endif %}" id="filters">
+    {{ nadia_paginator_filters(pagination, {attr: {class: 'col-md-4 col-xl-3 mb-1 filter'}}) }}
+</div>
+
+<div class="table-responsive">
+{% block tableContent %}
+    <!-- Example table contents -->
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Demo</th>
+            <th>Demo</th>
+            <th>Demo</th>
+            <th>Demo</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>Demo</td>
+            <td>Demo</td>
+            <td>Demo</td>
+            <td>Demo</td>
+        </tr>
+        <tr>
+            <td>Demo</td>
+            <td>Demo</td>
+            <td>Demo</td>
+            <td>Demo</td>
+        </tr>
+        <tr>
+            <td>Demo</td>
+            <td>Demo</td>
+            <td>Demo</td>
+            <td>Demo</td>
+        </tr>
+        </tbody>
+    </table>
+{% endblock tableContent %}
+</div>
+
+<div class="d-flex justify-content-center">
+    {{ nadia_paginator_pages(pagination) }}
+</div>
+
+{{ form_end(form) }}

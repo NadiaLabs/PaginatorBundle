@@ -1,11 +1,7 @@
 {% for form in filterForm %}
     <div {% for key, value in attributes %}{{ key }}="{{ value }}"{% endfor %}>
         <div>
-            {% if form.vars.label is empty %}
-                {{ form.vars.name|replace({':':'.'})|capitalize }}
-            {% else %}
-                {{ form.vars.label }}
-            {% endif %}
+            {{ form.vars.label }}
         </div>
         {{ form_widget(form) }}
     </div>

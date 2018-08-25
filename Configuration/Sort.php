@@ -3,14 +3,10 @@
 namespace Nadia\Bundle\PaginatorBundle\Configuration;
 
 /**
- * Class Sort
+ * Sort interface
  */
-class Sort implements SortInterface
+interface Sort
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function build(SortBuilder $builder)
-    {
-    }
+    const ASC = 'ASC';
+    const DESC = 'DESC';
 }

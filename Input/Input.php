@@ -2,7 +2,7 @@
 
 namespace Nadia\Bundle\PaginatorBundle\Input;
 
-use Nadia\Bundle\PaginatorBundle\Configuration\SortInterface;
+use Nadia\Bundle\PaginatorBundle\Configuration\Sort;
 
 /**
  * class Input
@@ -118,11 +118,11 @@ class Input
         $parts = explode(' ', $sort, 2);
 
         if (2 === count($parts)) {
-            $direction = $parts[1] === SortInterface::DESC ? SortInterface::DESC : SortInterface::ASC;
+            $direction = $parts[1] === Sort::DESC ? Sort::DESC : Sort::ASC;
 
             $this->sort = array('key' => $parts[0], 'direction' => $direction);
         } else {
-            $this->sort = array('key' => $parts[0], 'direction' => SortInterface::ASC);
+            $this->sort = array('key' => $parts[0], 'direction' => Sort::ASC);
         }
 
         return $this;

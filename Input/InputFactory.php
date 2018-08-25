@@ -26,7 +26,7 @@ class InputFactory
      *
      * @return Input
      */
-    public function create(Request $request, FormInterface $form, array $options)
+    public function create(Request $request, FormInterface $form, array &$options)
     {
         $params = $request->isMethod('POST') ? array_merge($request->query->all(), $request->request->all()) : $request->query->all();
         /** @var InputKeys $inputKeys */
