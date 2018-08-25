@@ -163,13 +163,13 @@ class ContextProcessor
     }
 
     /**
-     * Get sort form view variables
+     * Get sort selection view variables
      *
      * @param Pagination $pagination A Pagination instance
      *
      * @return array
      */
-    public function sortForm(Pagination $pagination)
+    public function sorts(Pagination $pagination)
     {
         return array(
             'sortForm' => $pagination->getFormView()->children[$pagination->getInputKeys()->sort],
@@ -236,13 +236,13 @@ class ContextProcessor
     }
 
     /**
-     * Get limit form view variables
+     * Get page sizes view variables
      *
      * @param Pagination $pagination A Pagination instance
      *
      * @return array
      */
-    public function limitForm(Pagination $pagination)
+    public function pageSizes(Pagination $pagination)
     {
         return array(
             'limitForm' => $pagination->getFormView()->children[$pagination->getInputKeys()->limit],

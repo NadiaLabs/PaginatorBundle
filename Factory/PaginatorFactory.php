@@ -50,7 +50,18 @@ class PaginatorFactory
 
     /**
      * @param string $type
-     * @param array  $options
+     * @param array  $options {
+     *     @var string $inputKeysClass    @see \Nadia\Bundle\PaginatorBundle\Input\InputKeys
+     *     @var int    $defaultPageSize   Default page size
+     *     @var int    $defaultPageRange  Default page range (control page link amounts)
+     *     @var bool   $sessionEnabled    Enable session support or not
+     *     @var string $pagesTemplate     Template for rendering pages
+     *     @var string $searchesTemplate  Template for rendering searches block
+     *     @var string $filtersTemplate   Template for rendering filters block
+     *     @var string $sortsTemplate     Template for rendering sort selection block
+     *     @var string $sortLinkTemplate  Template for rendering sort link
+     *     @var string $pageSizesTemplate Template for rendering page size selection block
+     * }
      *
      * @return Paginator
      */

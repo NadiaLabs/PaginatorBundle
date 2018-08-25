@@ -17,11 +17,11 @@ class InputFactory
      * @param Request       $request A Request instance
      * @param FormInterface $form    A FormInterface instance for validating input params
      * @param array         $options Format: {
-     *     @var $inputKeys      InputKeys
-     *     @var $defaultLimit   int
-     *     @var $sessionEnabled bool
-     *     @var $sessionKey     string
-     *     @var $session        SessionInterface
+     *     @var $inputKeys       InputKeys
+     *     @var $defaultPageSize int
+     *     @var $sessionEnabled  bool
+     *     @var $sessionKey      string
+     *     @var $session         SessionInterface
      * }
      *
      * @return Input
@@ -36,7 +36,7 @@ class InputFactory
         $clear = array_key_exists($inputKeys->clear, $params);
         $filter = $search = array();
         $sort = null;
-        $limit = $options['defaultLimit'];
+        $limit = $options['defaultPageSize'];
         $page = 1;
 
         if (!$clear) {

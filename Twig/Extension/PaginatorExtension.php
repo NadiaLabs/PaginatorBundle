@@ -34,9 +34,9 @@ class PaginatorExtension extends \Twig_Extension
             new \Twig_SimpleFunction('nadia_paginator_pages',      array($this, 'pages'),     $options),
             new \Twig_SimpleFunction('nadia_paginator_searches',   array($this, 'searches'),  $options),
             new \Twig_SimpleFunction('nadia_paginator_filters',    array($this, 'filters'),   $options),
-            new \Twig_SimpleFunction('nadia_paginator_sort_form',  array($this, 'sortForm'),  $options),
+            new \Twig_SimpleFunction('nadia_paginator_sorts',      array($this, 'sorts'),     $options),
             new \Twig_SimpleFunction('nadia_paginator_sort_link',  array($this, 'sortLink'),  $options),
-            new \Twig_SimpleFunction('nadia_paginator_limit_form', array($this, 'limitForm'), $options),
+            new \Twig_SimpleFunction('nadia_paginator_page_sizes', array($this, 'pageSizes'), $options),
         );
     }
 
@@ -122,7 +122,7 @@ class PaginatorExtension extends \Twig_Extension
     }
 
     /**
-     * Renders the sort form template
+     * Renders the sort selection template
      *
      * @param \Twig_Environment $env
      * @param Pagination $pagination
@@ -133,14 +133,14 @@ class PaginatorExtension extends \Twig_Extension
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
      */
-    public function sortForm(\Twig_Environment $env, Pagination $pagination)
+    public function sorts(\Twig_Environment $env, Pagination $pagination)
     {
         if (!$pagination->getBuilder()->hasSort()) {
             return '';
         }
 
         $template = $pagination->getOption('sortFormTemplate');
-        $viewData = $this->processor->sortForm($pagination);
+        $viewData = $this->processor->sorts($pagination);
 
         return $env->render($template, $viewData);
     }
@@ -176,7 +176,7 @@ class PaginatorExtension extends \Twig_Extension
     }
 
     /**
-     * Renders the limit form template
+     * Renders the page sizes template
      *
      * @param \Twig_Environment $env
      * @param Pagination $pagination
@@ -187,14 +187,14 @@ class PaginatorExtension extends \Twig_Extension
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
      */
-    public function limitForm(\Twig_Environment $env, Pagination $pagination)
+    public function pageSizes(\Twig_Environment $env, Pagination $pagination)
     {
         if (!$pagination->getBuilder()->hasLimit()) {
             return '';
         }
 
         $template = $pagination->getOption('limitFormTemplate');
-        $viewData = $this->processor->limitForm($pagination);
+        $viewData = $this->processor->pageSizes($pagination);
 
         return $env->render($template, $viewData);
     }

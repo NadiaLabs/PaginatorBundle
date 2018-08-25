@@ -29,15 +29,15 @@ class NadiaPaginatorExtension extends Extension
         $paginatorFactoryDef = $container->getDefinition('nadia_paginator.paginator_factory');
         $defaultOptions = array(
             'inputKeysClass'    => $config['default_options']['input_key_class'],
-            'defaultLimit'      => $config['default_options']['default_limit'],
+            'defaultPageSize'   => $config['default_options']['default_page_size'],
             'defaultPageRange'  => $config['default_options']['default_page_range'],
             'sessionEnabled'    => $config['default_options']['session_enabled'],
             'pagesTemplate'     => $config['templates']['pages'],
             'searchesTemplate'  => $config['templates']['searches'],
             'filtersTemplate'   => $config['templates']['filters'],
-            'sortFormTemplate'  => $config['templates']['sort_form'],
+            'sortsTemplate'     => $config['templates']['sorts'],
             'sortLinkTemplate'  => $config['templates']['sort_link'],
-            'limitFormTemplate' => $config['templates']['limit_form'],
+            'pageSizesTemplate' => $config['templates']['page_sizes'],
         );
 
         $paginatorFactoryDef->replaceArgument(2, $defaultOptions);
