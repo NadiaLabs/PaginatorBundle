@@ -139,7 +139,7 @@ class PaginatorExtension extends \Twig_Extension
             return '';
         }
 
-        $template = $pagination->getOption('sortsFormTemplate');
+        $template = $pagination->getOption('sortsTemplate');
         $viewData = $this->processor->sorts($pagination);
 
         return $env->render($template, $viewData);
