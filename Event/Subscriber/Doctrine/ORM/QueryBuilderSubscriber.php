@@ -30,8 +30,8 @@ class QueryBuilderSubscriber implements EventSubscriberInterface
         $pageSize = $input->getPageSize();
         $offset = $input->getOffset();
 
-        $this->buildSearch($builder, $qb, $input->getSearch());
         $this->buildFilter($builder, $qb, $input->getFilter());
+        $this->buildSearch($builder, $qb, $input->getSearch());
         $this->buildSort($builder, $qb, $input->getSort());
 
         if (!empty($pageSize)) {
