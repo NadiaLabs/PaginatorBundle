@@ -30,5 +30,5 @@ class InputKeys
     /**
      * @var string
      */
-    public $clear = '_c';
+    public $reset = '_r';
 }

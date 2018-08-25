@@ -33,7 +33,7 @@ class InputFactory
         $inputKeys = $options['inputKeys'];
         $sessionKey = $options['sessionKey'];
         $sessionEnabled = $options['sessionEnabled'];
-        $clear = array_key_exists($inputKeys->clear, $params);
+        $clear = array_key_exists($inputKeys->reset, $params);
         $filter = $search = array();
         $sort = null;
         $pageSize = $options['defaultPageSize'];
