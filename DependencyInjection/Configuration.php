@@ -5,9 +5,6 @@ namespace Nadia\Bundle\PaginatorBundle\DependencyInjection;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
-/**
- * PaginatorBundle configuration structure.
- */
 class Configuration implements ConfigurationInterface
 {
     /**
