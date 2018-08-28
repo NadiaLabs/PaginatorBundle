@@ -17,11 +17,6 @@ abstract class AbstractPagination implements PaginationInterface, \Countable, \I
     private $builder;
 
     /**
-     * @var array
-     */
-    private $options = [];
-
-    /**
      * @var Input
      */
     private $input;
@@ -34,7 +29,17 @@ abstract class AbstractPagination implements PaginationInterface, \Countable, \I
     /**
      * @var array
      */
-    private $items;
+    private $items = [];
+
+    /**
+     * AbstractPagination constructor.
+     *
+     * @param PaginatorBuilder $builder
+     */
+    public function __construct(PaginatorBuilder $builder)
+    {
+        $this->builder = $builder;
+    }
 
     /**
      * @return PaginatorBuilder
@@ -45,31 +50,11 @@ abstract class AbstractPagination implements PaginationInterface, \Countable, \I
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function setBuilder(PaginatorBuilder $builder)
-    {
-        $this->builder = $builder;
-
-        return $this;
-    }
-
-    /**
      * @return array
      */
     public function getOptions()
     {
-        return $this->options;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setOptions(array $options)
-    {
-        $this->options = $options;
-
-        return $this;
+        return $this->builder->getTypeOptions();
     }
 
     /**
@@ -80,7 +65,7 @@ abstract class AbstractPagination implements PaginationInterface, \Countable, \I
      */
     public function getOption($name, $default = null)
     {
-        return array_key_exists($name, $this->options) ? $this->options[$name] : $default;
+        return $this->builder->getTypeOption($name, $default);
     }
 
     /**
@@ -140,7 +125,7 @@ abstract class AbstractPagination implements PaginationInterface, \Countable, \I
      */
     public function getInputKeys()
     {
-        return $this->options['inputKeys'];
+        return $this->getOption('inputKeys');
     }
 
     /**

@@ -16,23 +16,17 @@ interface PaginationInterface
     public function getBuilder();
 
     /**
-     * @param PaginatorBuilder $builder
-     *
-     * @return $this
-     */
-    public function setBuilder(PaginatorBuilder $builder);
-
-    /**
-     * @return array PaginatorType options
+     * @return array PaginatorType's options
      */
     public function getOptions();
 
     /**
-     * @param array $options PaginatorType options
+     * @param string $name
+     * @param mixed  $default
      *
-     * @return $this
+     * @return mixed
      */
-    public function setOptions(array $options);
+    public function getOption($name, $default = null);
 
     /**
      * @return Input
