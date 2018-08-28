@@ -47,12 +47,14 @@ abstract class AbstractFilterQueryCompiler implements QueryCompilerInterface
      */
     private function defaultCallback(QueryBuilder $qb, $fieldName, $value)
     {
+        $parameterName = str_replace('.', '_', $fieldName);
+
         if (is_array($value)) {
-            $qb->andWhere(sprintf('%s IN (:%s)', $fieldName, $fieldName));
-            $qb->setParameter($fieldName, $value, Connection::PARAM_STR_ARRAY);
+            $qb->andWhere(sprintf('%s IN (:%s)', $fieldName, $parameterName));
+            $qb->setParameter($parameterName, $value, Connection::PARAM_STR_ARRAY);
         } else {
-            $qb->andWhere(sprintf('%s = :%s', $fieldName, $fieldName));
-            $qb->setParameter($fieldName, $value);
+            $qb->andWhere(sprintf('%s = :%s', $fieldName, $parameterName));
+            $qb->setParameter($parameterName, $value);
         }
     }
 }
