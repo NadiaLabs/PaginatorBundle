@@ -6,9 +6,6 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
-/**
- * Class InputFactory
- */
 class InputFactory
 {
     /**
@@ -17,16 +14,16 @@ class InputFactory
      * @param Request       $request A Request instance
      * @param FormInterface $form    A FormInterface instance for validating input params
      * @param array         $options Format: {
-     *     @var $inputKeys       InputKeys
-     *     @var $defaultPageSize int
-     *     @var $sessionEnabled  bool
-     *     @var $sessionKey      string
-     *     @var $session         SessionInterface
+     *     @var InputKeys        $inputKeys
+     *     @var int              $defaultPageSize
+     *     @var bool             $sessionEnabled
+     *     @var string           $sessionKey
+     *     @var SessionInterface $session
      * }
      *
      * @return Input
      */
-    public function create(Request $request, FormInterface $form, array &$options)
+    public function create(Request $request, FormInterface $form, array $options)
     {
         $params = $request->isMethod('POST') ? array_merge($request->query->all(), $request->request->all()) : $request->query->all();
         /** @var InputKeys $inputKeys */
@@ -34,7 +31,7 @@ class InputFactory
         $sessionKey = $options['sessionKey'];
         $sessionEnabled = $options['sessionEnabled'];
         $clear = array_key_exists($inputKeys->reset, $params);
-        $filter = $search = array();
+        $search = $filter = array();
         $sort = null;
         $pageSize = $options['defaultPageSize'];
         $page = 1;
@@ -47,10 +44,10 @@ class InputFactory
                 $states = array();
             }
 
-            $this->processParams($states, $params, $inputKeys, $filter, $search, $sort, $pageSize, $page);
+            $this->processParams($states, $params, $inputKeys, $search, $filter, $sort, $pageSize, $page);
         }
 
-        $this->processParamsWithForm($form, $params, $inputKeys, $filter, $search, $sort, $pageSize);
+        $this->processParamsWithForm($form, $params, $inputKeys, $search, $filter, $sort, $pageSize);
 
         if ($sessionEnabled) {
             $request->getSession()->set($sessionKey, $params);
@@ -63,20 +60,20 @@ class InputFactory
      * @param array     $states
      * @param array     $params
      * @param InputKeys $inputKeys
-     * @param array     $filter
      * @param array     $search
+     * @param array     $filter
      * @param string    $sort
      * @param int       $pageSize
      * @param int       $page
      */
     private function processParams(array &$states, array &$params, InputKeys $inputKeys,
-                                   array &$filter, array &$search, &$sort, &$pageSize, &$page)
+                                   array &$search, array &$filter, &$sort, &$pageSize, &$page)
     {
-        $filter = $this->getValue($inputKeys->filter, $states, $params, $filter);
-        $filter = is_array($filter) ? $filter : array();
-
         $search = $this->getValue($inputKeys->search, $states, $params, $search);
         $search = is_array($search) ? $search : array();
+
+        $filter = $this->getValue($inputKeys->filter, $states, $params, $filter);
+        $filter = is_array($filter) ? $filter : array();
 
         $sort = $this->getValue($inputKeys->sort, $states, $params, $sort);
 
@@ -89,13 +86,13 @@ class InputFactory
      * @param FormInterface $form
      * @param array         $params
      * @param InputKeys     $inputKeys
-     * @param array         $filter
      * @param array         $search
+     * @param array         $filter
      * @param string        $sort
      * @param int           $pageSize
      */
     private function processParamsWithForm(FormInterface $form, array &$params, InputKeys $inputKeys,
-                                           array &$filter, array &$search, &$sort, &$pageSize)
+                                           array &$search, array &$filter, &$sort, &$pageSize)
     {
         $params = array(
             $inputKeys->filter => $filter,
@@ -105,16 +102,16 @@ class InputFactory
         );
         $params = $form->submit($params)->getData();
 
-        if (array_key_exists($inputKeys->filter, $params) && is_array($params[$inputKeys->filter])) {
-            $this->modifyFilter($params[$inputKeys->filter]);
-
-            $filter = $params[$inputKeys->filter];
-        }
-
         if (array_key_exists($inputKeys->search, $params) && is_array($params[$inputKeys->search])) {
             $this->modifyFilter($params[$inputKeys->search]);
 
             $search = $params[$inputKeys->search];
+        }
+
+        if (array_key_exists($inputKeys->filter, $params) && is_array($params[$inputKeys->filter])) {
+            $this->modifyFilter($params[$inputKeys->filter]);
+
+            $filter = $params[$inputKeys->filter];
         }
 
         $sort = array_key_exists($inputKeys->sort, $params) ? $params[$inputKeys->sort] : $sort;
@@ -122,18 +119,18 @@ class InputFactory
     }
 
     /**
-     * Modify filter data
+     * Modify search & filter data
      *
      * 1. Remove empty values
-     * 2. Replace ':' to '.' in filter & search array keys
+     * 2. Modify search & filter array keys, replace ':' to '.'
      *
-     * @param array $filter
+     * @param array $data
      */
-    private function modifyFilter(array &$filter)
+    private function modifyFilter(array &$data)
     {
         $output = array();
 
-        foreach ($filter as $key => $value) {
+        foreach ($data as $key => $value) {
             if (null === $value || '' === $value) {
                 continue;
             }
@@ -141,7 +138,7 @@ class InputFactory
             $output[str_replace(':', '.', $key)] = $value;
         }
 
-        $filter = $output;
+        $data = $output;
     }
 
     /**
