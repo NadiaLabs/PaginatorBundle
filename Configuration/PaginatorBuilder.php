@@ -2,8 +2,6 @@
 
 namespace Nadia\Bundle\PaginatorBundle\Configuration;
 
-use Doctrine\Common\Collections\ArrayCollection;
-
 /**
  * Class PaginatorBuilder
  */
@@ -15,14 +13,9 @@ class PaginatorBuilder
     private $type;
 
     /**
-     * @var FilterBuilder
+     * @var array
      */
-    private $filterBuilder;
-
-    /**
-     * @var ArrayCollection
-     */
-    private $filterQueryProcessors;
+    private $typeOptions;
 
     /**
      * @var SearchBuilder
@@ -30,9 +23,9 @@ class PaginatorBuilder
     private $searchBuilder;
 
     /**
-     * @var ArrayCollection
+     * @var FilterBuilder
      */
-    private $searchQueryProcessors;
+    private $filterBuilder;
 
     /**
      * @var SortBuilder
@@ -47,22 +40,47 @@ class PaginatorBuilder
     /**
      * @var array
      */
-    private $formOptions;
+    private $formOptions = array();
+
+    /**
+     * @var bool
+     */
+    private $locked = false;
 
     /**
      * PaginatorBuilder constructor.
      *
+     * Parameters @see \Nadia\Bundle\PaginatorBundle\Factory\PaginatorFactory::create
+     *
      * @param PaginatorTypeInterface $type
+     * @param array                  $typeOptions
      */
-    public function __construct(PaginatorTypeInterface $type)
+    public function __construct(PaginatorTypeInterface $type, array $typeOptions)
     {
         $this->type = $type;
-        $this->filterBuilder = new FilterBuilder();
-        $this->filterQueryProcessors = new ArrayCollection();
-        $this->searchBuilder = new SearchBuilder();
-        $this->searchQueryProcessors = new ArrayCollection();
-        $this->sortBuilder = new SortBuilder();
-        $this->pageSizeBuilder = new PageSizeBuilder();
+        $this->typeOptions = $typeOptions;
+    }
+
+    /**
+     * Build PaginatorBuilder properties (Only build once)
+     */
+    public function build()
+    {
+        if ($this->locked) {
+            return;
+        }
+
+        $this->searchBuilder = $searchBuilder = new SearchBuilder();
+        $this->filterBuilder = $filterBuilder = new FilterBuilder();
+        $this->sortBuilder =  $sortBuilder = new SortBuilder();
+        $this->pageSizeBuilder = $pageSizeBuilder = new PageSizeBuilder();
+
+        $this->type->buildSearch($searchBuilder, $this->typeOptions);
+        $this->type->buildFilter($filterBuilder, $this->typeOptions);
+        $this->type->buildSort($sortBuilder, $this->typeOptions);
+        $this->type->buildPageSize($pageSizeBuilder, $this->typeOptions);
+
+        $this->locked = true;
     }
 
     /**
@@ -74,11 +92,24 @@ class PaginatorBuilder
     }
 
     /**
-     * @return FilterBuilder
+     * @see \Nadia\Bundle\PaginatorBundle\Factory\PaginatorFactory::create
+     *
+     * @return array
      */
-    public function getFilterBuilder()
+    public function getTypeOptions()
     {
-        return $this->filterBuilder;
+        return $this->typeOptions;
+    }
+
+    /**
+     * @param string $name
+     * @param mixed  $default
+     *
+     * @return mixed
+     */
+    public function getTypeOption($name, $default = null)
+    {
+        return array_key_exists($name, $this->typeOptions) ? $this->typeOptions[$name] : $default;
     }
 
     /**
@@ -87,6 +118,14 @@ class PaginatorBuilder
     public function getSearchBuilder()
     {
         return $this->searchBuilder;
+    }
+
+    /**
+     * @return FilterBuilder
+     */
+    public function getFilterBuilder()
+    {
+        return $this->filterBuilder;
     }
 
     /**
@@ -106,39 +145,11 @@ class PaginatorBuilder
     }
 
     /**
-     * @return ArrayCollection
-     */
-    public function getFilterQueryProcessors()
-    {
-        return $this->filterQueryProcessors;
-    }
-
-    /**
-     * @return ArrayCollection
-     */
-    public function getSearchQueryProcessors()
-    {
-        return $this->searchQueryProcessors;
-    }
-
-    /**
      * @return array
      */
     public function getFormOptions()
     {
         return $this->formOptions;
-    }
-
-    /**
-     * @param array $options
-     *
-     * @return PaginatorBuilder
-     */
-    public function setFormOptions(array $options)
-    {
-        $this->formOptions = $options;
-
-        return $this;
     }
 
     /**

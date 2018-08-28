@@ -9,20 +9,12 @@ use Nadia\Bundle\PaginatorBundle\Event\PaginationEvent;
 use Nadia\Bundle\PaginatorBundle\Pagination\PaginationInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-/**
- * Class Paginator
- */
 class Paginator
 {
     /**
      * @var PaginatorBuilder
      */
     private $builder;
-
-    /**
-     * @var array
-     */
-    private $options;
 
     /**
      * @var EventDispatcherInterface
@@ -32,14 +24,12 @@ class Paginator
     /**
      * Paginator constructor.
      *
-     * @param PaginatorBuilder         $builder         PaginatorBuilder instance
-     * @param array                    $options         PaginatorType options
-     * @param EventDispatcherInterface $eventDispatcher EventDispatcher instance
+     * @param PaginatorBuilder         $builder
+     * @param EventDispatcherInterface $eventDispatcher
      */
-    public function __construct(PaginatorBuilder $builder, array $options, EventDispatcherInterface $eventDispatcher)
+    public function __construct(PaginatorBuilder $builder,EventDispatcherInterface $eventDispatcher)
     {
         $this->builder = $builder;
-        $this->options = $options;
         $this->eventDispatcher = $eventDispatcher;
     }
 
@@ -68,13 +58,11 @@ class Paginator
         $itemsEvent->target =& $target;
         $this->eventDispatcher->dispatch('nadia_paginator.items', $itemsEvent);
 
-        $paginationEvent = new PaginationEvent();
+        $paginationEvent = new PaginationEvent($this->builder);
         $this->eventDispatcher->dispatch('nadia_paginator.pagination', $paginationEvent);
 
-        $pagination = $paginationEvent->getPagination();
+        $pagination = $paginationEvent->pagination;
 
-        $pagination->setBuilder($this->builder);
-        $pagination->setOptions($this->options);
         $pagination->setCount($itemsEvent->count);
         $pagination->setItems($itemsEvent->items);
         $pagination->setForm($beforeEvent->form);

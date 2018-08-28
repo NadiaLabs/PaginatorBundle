@@ -2,6 +2,7 @@
 
 namespace Nadia\Bundle\PaginatorBundle\Event;
 
+use Nadia\Bundle\PaginatorBundle\Configuration\PaginatorBuilder;
 use Nadia\Bundle\PaginatorBundle\Pagination\Pagination;
 use Symfony\Component\EventDispatcher\Event;
 
@@ -13,21 +14,28 @@ class PaginationEvent extends Event
     /**
      * @var Pagination
      */
-    private $pagination;
+    public $pagination;
 
     /**
-     * @param Pagination $pagination
+     * @var PaginatorBuilder
      */
-    public function setPagination(Pagination $pagination)
+    private $builder;
+
+    /**
+     * PaginationEvent constructor.
+     *
+     * @param PaginatorBuilder $builder
+     */
+    public function __construct(PaginatorBuilder $builder)
     {
-        $this->pagination = $pagination;
+        $this->builder = $builder;
     }
 
     /**
-     * @return Pagination
+     * @return PaginatorBuilder
      */
-    public function getPagination()
+    public function getBuilder()
     {
-        return $this->pagination;
+        return $this->builder;
     }
 }
