@@ -15,6 +15,11 @@ class SearchBuilder
     private $forms = array();
 
     /**
+     * @var QueryCompilerInterface
+     */
+    private $queryCompiler;
+
+    /**
      * Add a search form parameters
      *
      * @param string $name     Search name, ex: article.title, article.createdAt, ...
@@ -82,5 +87,25 @@ class SearchBuilder
     public function count()
     {
         return count($this->forms);
+    }
+
+    /**
+     * @return QueryCompilerInterface
+     */
+    public function getQueryCompiler()
+    {
+        return $this->queryCompiler;
+    }
+
+    /**
+     * @param QueryCompilerInterface $queryCompiler
+     *
+     * @return $this
+     */
+    public function setQueryCompiler(QueryCompilerInterface $queryCompiler)
+    {
+        $this->queryCompiler = $queryCompiler;
+
+        return $this;
     }
 }

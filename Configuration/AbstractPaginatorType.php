@@ -2,7 +2,6 @@
 
 namespace Nadia\Bundle\PaginatorBundle\Configuration;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
@@ -13,14 +12,14 @@ abstract class AbstractPaginatorType implements PaginatorTypeInterface
     /**
      * {@inheritdoc}
      */
-    public function buildSearch(SearchBuilder $builder, ArrayCollection $queryProcessors, array &$options)
+    public function buildSearch(SearchBuilder $builder, array &$options)
     {
     }
 
     /**
      * {@inheritdoc}
      */
-    public function buildFilter(FilterBuilder $builder, ArrayCollection $queryProcessors, array &$options)
+    public function buildFilter(FilterBuilder $builder, array &$options)
     {
     }
 
@@ -41,7 +40,7 @@ abstract class AbstractPaginatorType implements PaginatorTypeInterface
     /**
      * {@inheritdoc}
      */
-    public function getFormOptions()
+    public function getFormOptions(array &$options)
     {
         return array();
     }

@@ -6,9 +6,8 @@ use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Tools\Pagination\CountOutputWalker;
 use Nadia\Bundle\PaginatorBundle\Configuration\PaginatorBuilder;
+use Nadia\Bundle\PaginatorBundle\Configuration\QueryCompilerInterface;
 use Nadia\Bundle\PaginatorBundle\Configuration\Sort;
-use Nadia\Bundle\PaginatorBundle\Doctrine\ORM\DefaultSearchQueryProcessor;
-use Nadia\Bundle\PaginatorBundle\Doctrine\ORM\Query\Hydrator\CountHydrator;
 use Nadia\Bundle\PaginatorBundle\Event\ItemsEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -56,21 +55,10 @@ class QueryBuilderSubscriber implements EventSubscriberInterface
             return;
         }
 
-        $searchBuilder = $builder->getSearchBuilder();
-        $searchProcessors = $builder->getSearchQueryProcessors();
+        $compiler = $builder->getSearchBuilder()->getQueryCompiler();
 
-        foreach ($search as $name => $value) {
-            if ('' === $value || null === $value || !$searchBuilder->has($name)) {
-                continue;
-            }
-
-            $params = $searchBuilder->get($name);
-
-            if ($searchProcessors->containsKey($name) && is_callable($searchProcessors[$name])) {
-                call_user_func($searchProcessors[$name], $qb, $params['fields'], $value);
-            } else {
-                DefaultSearchQueryProcessor::process($qb, $params['fields'], $value);
-            }
+        if ($compiler instanceof QueryCompilerInterface) {
+            $compiler->compile($builder, $qb, $search);
         }
     }
 
@@ -85,33 +73,10 @@ class QueryBuilderSubscriber implements EventSubscriberInterface
             return;
         }
 
-        $filterBuilder = $builder->getFilterBuilder();
-        $filterProcessors = $builder->getFilterQueryProcessors();
-        $parameterCount = 0;
+        $compiler = $builder->getFilterBuilder()->getQueryCompiler();
 
-        foreach ($filter as $fieldName => $value) {
-            if ('' === $value || null === $value || !$filterBuilder->has($fieldName)) {
-                continue;
-            }
-
-            if ($filterProcessors->containsKey($fieldName) && is_callable($filterProcessors[$fieldName])) {
-                call_user_func($filterProcessors[$fieldName], $qb, $fieldName, $value);
-            } else {
-                if (is_array($value)) {
-                    $bindParameters = array();
-
-                    foreach ($value as $v) {
-                        $bindParameters[] = '?' . $parameterCount;
-
-                        $qb->setParameter($parameterCount++, $v);
-                    }
-
-                    $qb->andWhere($qb->expr()->in($fieldName, $bindParameters));
-                } else {
-                    $qb->andWhere($qb->expr()->eq($fieldName, '?' . $parameterCount));
-                    $qb->setParameter($parameterCount++, $value);
-                }
-            }
+        if ($compiler instanceof QueryCompilerInterface) {
+            $compiler->compile($builder, $qb, $filter);
         }
     }
 

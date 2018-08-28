@@ -15,6 +15,13 @@ class FilterBuilder
     private $forms = array();
 
     /**
+     * A QueryCompiler class name
+     *
+     * @var QueryCompilerInterface
+     */
+    private $queryCompiler;
+
+    /**
      * Add a filter form parameters
      *
      * @param string $name     Filter name, ex: article.title, article.createdAt, ...
@@ -74,5 +81,25 @@ class FilterBuilder
     public function count()
     {
         return count($this->forms);
+    }
+
+    /**
+     * @return QueryCompilerInterface
+     */
+    public function getQueryCompiler()
+    {
+        return $this->queryCompiler;
+    }
+
+    /**
+     * @param QueryCompilerInterface $queryCompiler
+     *
+     * @return $this
+     */
+    public function setQueryCompiler(QueryCompilerInterface $queryCompiler)
+    {
+        $this->queryCompiler = $queryCompiler;
+
+        return $this;
     }
 }
