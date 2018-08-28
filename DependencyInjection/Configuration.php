@@ -2,7 +2,6 @@
 
 namespace Nadia\Bundle\PaginatorBundle\DependencyInjection;
 
-use Nadia\Bundle\PaginatorBundle\Input\InputKeys;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
@@ -25,7 +24,7 @@ class Configuration implements ConfigurationInterface
                 ->arrayNode('default_options')
                     ->addDefaultsIfNotSet()
                     ->children()
-                        ->scalarNode('input_key_class')->defaultValue(InputKeys::class)->end()
+                        ->scalarNode('input_key_class')->defaultValue('Nadia\Bundle\PaginatorBundle\Input\InputKeys')->end()
                         ->scalarNode('default_page_size')->defaultValue(10)->end()
                         ->scalarNode('default_page_range')->defaultValue(8)->end()
                         ->scalarNode('session_enabled')->defaultFalse()->end()

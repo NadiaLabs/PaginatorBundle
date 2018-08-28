@@ -4,7 +4,6 @@ namespace Nadia\Bundle\PaginatorBundle\Event\Subscriber\Doctrine\ORM;
 
 use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
-use Doctrine\ORM\Tools\Pagination\CountOutputWalker;
 use Nadia\Bundle\PaginatorBundle\Configuration\PaginatorBuilder;
 use Nadia\Bundle\PaginatorBundle\Configuration\QueryCompilerInterface;
 use Nadia\Bundle\PaginatorBundle\Configuration\Sort;
@@ -121,10 +120,10 @@ class QueryBuilderSubscriber implements EventSubscriberInterface
     {
         $countQuery = (clone $qb)->resetDQLPart('orderBy')->getQuery();
 
-        $countQuery->setHint(Query::HINT_CUSTOM_OUTPUT_WALKER, CountOutputWalker::class);
+        $countQuery->setHint(Query::HINT_CUSTOM_OUTPUT_WALKER, 'Doctrine\ORM\Tools\Pagination\CountOutputWalker');
         $countQuery->setFirstResult(null);
         $countQuery->setMaxResults(null);
-        $countQuery->getEntityManager()->getConfiguration()->addCustomHydrationMode('count', CountHydrator::class);
+        $countQuery->getEntityManager()->getConfiguration()->addCustomHydrationMode('count', 'Nadia\Bundle\PaginatorBundle\Doctrine\ORM\Query\Hydrator\CountHydrator');
 
         $countResult = $countQuery->getResult('count');
 
