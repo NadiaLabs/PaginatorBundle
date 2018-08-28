@@ -12,7 +12,7 @@ class PaginatorTypePass implements CompilerPassInterface
     /**
      * @var string
      */
-    private $paginatorTypeLoaderService;
+    private $paginatorTypeContainerService;
 
     /**
      * @var string
@@ -22,22 +22,22 @@ class PaginatorTypePass implements CompilerPassInterface
     /**
      * PaginatorTypePass constructor.
      *
-     * @param string $paginatorTypeLoaderService
+     * @param string $paginatorTypeContainerService
      * @param string $paginatorTypeTag
      */
-    public function __construct($paginatorTypeLoaderService = 'nadia_paginator.type_loader', $paginatorTypeTag = 'nadia_paginator.type')
+    public function __construct($paginatorTypeContainerService = 'nadia_paginator.type_container', $paginatorTypeTag = 'nadia_paginator.type')
     {
-        $this->paginatorTypeLoaderService = $paginatorTypeLoaderService;
+        $this->paginatorTypeContainerService = $paginatorTypeContainerService;
         $this->paginatorTypeTag = $paginatorTypeTag;
     }
 
     public function process(ContainerBuilder $container)
     {
-        if (!$container->hasDefinition($this->paginatorTypeLoaderService)) {
+        if (!$container->hasDefinition($this->paginatorTypeContainerService)) {
             return;
         }
 
-        $definition = $container->getDefinition($this->paginatorTypeLoaderService);
+        $definition = $container->getDefinition($this->paginatorTypeContainerService);
 
         $definition->replaceArgument(0, $this->processPaginatorTypes($container));
     }

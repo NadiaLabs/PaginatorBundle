@@ -2,7 +2,6 @@
 
 namespace Nadia\Bundle\PaginatorBundle\Configuration;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
@@ -13,30 +12,28 @@ interface PaginatorTypeInterface
     /**
      * Build search configuration
      *
-     * @param SearchBuilder   $builder
-     * @param ArrayCollection $queryProcessors
-     * @param array           $options
+     * @param SearchBuilder $builder
+     * @param array         $options The options for this PaginatorType
      *
      * @return void
      */
-    public function buildSearch(SearchBuilder $builder, ArrayCollection $queryProcessors, array &$options);
+    public function buildSearch(SearchBuilder $builder, array &$options);
 
     /**
      * Build filter configuration
      *
-     * @param FilterBuilder   $builder
-     * @param ArrayCollection $queryProcessors
-     * @param array           $options
+     * @param FilterBuilder $builder
+     * @param array         $options The options for this PaginatorType
      *
      * @return void
      */
-    public function buildFilter(FilterBuilder $builder, ArrayCollection $queryProcessors, array &$options);
+    public function buildFilter(FilterBuilder $builder, array &$options);
 
     /**
      * Build sort configuration
      *
      * @param SortBuilder $builder
-     * @param array       $options
+     * @param array       $options The options for this PaginatorType
      *
      * @return void
      */
@@ -46,7 +43,7 @@ interface PaginatorTypeInterface
      * Build page size configuration
      *
      * @param PageSizeBuilder $builder
-     * @param array           $options
+     * @param array           $options The options for this PaginatorType
      *
      * @return void
      */
@@ -55,9 +52,11 @@ interface PaginatorTypeInterface
     /**
      * Configure paginator form options
      *
+     * @param array $options The options for this PaginatorType
+     *
      * @return array
      */
-    public function getFormOptions();
+    public function getFormOptions(array &$options);
 
     /**
      * Configures the options for this PaginatorType configuration.
