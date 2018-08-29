@@ -7,7 +7,7 @@ use Doctrine\ORM\QueryBuilder;
 use Nadia\Bundle\PaginatorBundle\Configuration\PaginatorBuilder;
 use Nadia\Bundle\PaginatorBundle\Configuration\QueryCompilerInterface;
 
-abstract class AbstractFilterQueryCompiler implements QueryCompilerInterface
+class FilterQueryCompiler implements QueryCompilerInterface
 {
     /**
      * {@inheritdoc}

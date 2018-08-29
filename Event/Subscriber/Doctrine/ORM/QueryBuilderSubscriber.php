@@ -7,6 +7,8 @@ use Doctrine\ORM\QueryBuilder;
 use Nadia\Bundle\PaginatorBundle\Configuration\PaginatorBuilder;
 use Nadia\Bundle\PaginatorBundle\Configuration\QueryCompilerInterface;
 use Nadia\Bundle\PaginatorBundle\Configuration\Sort;
+use Nadia\Bundle\PaginatorBundle\Doctrine\ORM\FilterQueryCompiler;
+use Nadia\Bundle\PaginatorBundle\Doctrine\ORM\SearchQueryCompiler;
 use Nadia\Bundle\PaginatorBundle\Event\ItemsEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -56,9 +58,11 @@ class QueryBuilderSubscriber implements EventSubscriberInterface
 
         $compiler = $builder->getSearchBuilder()->getQueryCompiler();
 
-        if ($compiler instanceof QueryCompilerInterface) {
-            $compiler->compile($builder, $qb, $search);
+        if (!$compiler instanceof QueryCompilerInterface) {
+            $compiler = new SearchQueryCompiler();
         }
+
+        $compiler->compile($builder, $qb, $search);
     }
 
     /**
@@ -74,9 +78,11 @@ class QueryBuilderSubscriber implements EventSubscriberInterface
 
         $compiler = $builder->getFilterBuilder()->getQueryCompiler();
 
-        if ($compiler instanceof QueryCompilerInterface) {
-            $compiler->compile($builder, $qb, $filter);
+        if (!$compiler instanceof QueryCompilerInterface) {
+            $compiler = new FilterQueryCompiler();
         }
+
+        $compiler->compile($builder, $qb, $filter);
     }
 
     /**
