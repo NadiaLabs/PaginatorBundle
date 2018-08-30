@@ -3,6 +3,8 @@ NadiaPaginatorBundle
 
 NadiaPaginatorBundle can help you build pagination UI quickly. You can design your filter and search UI with Symfony Form component, and easily validate input parameters with Form.
 
+![Example Image](Resources/examples/example.png)
+
 ## Installation
 
 Install with composer , run:
