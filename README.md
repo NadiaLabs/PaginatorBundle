@@ -147,15 +147,19 @@ $pagination = $paginator->paginate($qb);
 ```
 
 
-## Rendering with Twig
+## Rendering HTML with Twig
 
 You can easily render a list page with this template [`@NadiaPaginator/templates/bootstrap4/pagination.html.twig`](Resources/views/templates/bootstrap4/pagination.html.twig)  
 Use twig [`embed`](https://twig.symfony.com/doc/2.x/tags/embed.html) tag to overwrite `tableContent` block and put your table contents in `tableContent` block.
 
 Example twig file: [`index.html.twig`](Resources/examples/AppBundle/Resources/views/Movie/index.html.twig)
 
+```php
+// Render view
+$this->render('@App/Movie/index.html.twig', ['pagination' => $pagination]);
+```
 ```twig
-# Example view file
+{# Example view file #}
 
 <div class="container-fluid">
     {% embed '@NadiaPaginator/templates/bootstrap4/pagination.html.twig' %}
@@ -191,4 +195,42 @@ Example twig file: [`index.html.twig`](Resources/examples/AppBundle/Resources/vi
         {% endblock tableContent %}
     {% endembed %}
 </div>
+```
+
+### Rendering searches block in Twig
+
+Use `nadia_paginator_searches` method to render search block in Twig template.
+
+```twig
+{{ nadia_paginator_searches(pagination, {attr: {class: 'col-md-6 col-xl-4 search'}}) }}
+```
+
+### Rendering filters block in Twig
+
+Use `nadia_paginator_filters` method to render filter block in Twig template.
+
+```twig
+{{ nadia_paginator_filters(pagination, {attr: {class: 'col-md-4 col-xl-3 mb-1 filter'}}) }}
+```
+
+### Rendering sorts block in Twig
+
+Use `nadia_paginator_sorts` method to render sorting block in Twig template.
+
+```twig
+{{ nadia_paginator_sorts(pagination) }}
+```
+
+### Rendering page sizes block in Twig
+
+Use `nadia_paginator_page_sizes` method to render page sizes block in Twig template.
+
+```twig
+{{ nadia_paginator_page_sizes(pagination) }}
+```
+
+### Rendering sort link in Twig
+
+```twig
+{{ nadia_paginator_sort_link(pagination, 'title', 'movie.title', 'ASC') }}
 ```
