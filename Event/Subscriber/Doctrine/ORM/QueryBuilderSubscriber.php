@@ -10,6 +10,7 @@ use Nadia\Bundle\PaginatorBundle\Configuration\Sort;
 use Nadia\Bundle\PaginatorBundle\Doctrine\ORM\FilterQueryCompiler;
 use Nadia\Bundle\PaginatorBundle\Doctrine\ORM\SearchQueryCompiler;
 use Nadia\Bundle\PaginatorBundle\Event\ItemsEvent;
+use Nadia\Bundle\PaginatorBundle\Input\Input;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class QueryBuilderSubscriber implements EventSubscriberInterface
@@ -30,9 +31,9 @@ class QueryBuilderSubscriber implements EventSubscriberInterface
         $pageSize = $input->getPageSize();
         $offset = $input->getOffset();
 
-        $this->buildSearch($builder, $qb, $input->getSearch());
-        $this->buildFilter($builder, $qb, $input->getFilter());
-        $this->buildSort($builder, $qb, $input->getSort());
+        $this->buildSearch($qb, $input, $builder);
+        $this->buildFilter($qb, $input, $builder);
+        $this->buildSort($qb, $input, $builder);
 
         if (!empty($pageSize)) {
             $qb->setMaxResults($pageSize);
@@ -46,12 +47,14 @@ class QueryBuilderSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * @param PaginatorBuilder $builder
      * @param QueryBuilder     $qb
-     * @param array            $search
+     * @param Input            $input
+     * @param PaginatorBuilder $builder
      */
-    private function buildSearch(PaginatorBuilder $builder, QueryBuilder $qb, array $search)
+    private function buildSearch(QueryBuilder $qb, Input $input, PaginatorBuilder $builder)
     {
+        $search = $input->getSearch();
+
         if (!$builder->hasSearch() || empty($search)) {
             return;
         }
@@ -62,16 +65,18 @@ class QueryBuilderSubscriber implements EventSubscriberInterface
             $compiler = new SearchQueryCompiler();
         }
 
-        $compiler->compile($builder, $qb, $search);
+        $compiler->compile($qb, $input, $builder);
     }
 
     /**
-     * @param PaginatorBuilder $builder
      * @param QueryBuilder     $qb
-     * @param array            $filter
+     * @param Input            $input
+     * @param PaginatorBuilder $builder
      */
-    private function buildFilter(PaginatorBuilder $builder, QueryBuilder $qb, array $filter)
+    private function buildFilter(QueryBuilder $qb, Input $input, PaginatorBuilder $builder)
     {
+        $filter = $input->getFilter();
+
         if (!$builder->hasFilter() || empty($filter)) {
             return;
         }
@@ -82,16 +87,18 @@ class QueryBuilderSubscriber implements EventSubscriberInterface
             $compiler = new FilterQueryCompiler();
         }
 
-        $compiler->compile($builder, $qb, $filter);
+        $compiler->compile($qb, $input, $builder);
     }
 
     /**
-     * @param PaginatorBuilder $builder
      * @param QueryBuilder     $qb
-     * @param array            $sort
+     * @param Input            $input
+     * @param PaginatorBuilder $builder
      */
-    private function buildSort(PaginatorBuilder $builder, QueryBuilder $qb, array $sort = array())
+    private function buildSort(QueryBuilder $qb, Input $input, PaginatorBuilder $builder)
     {
+        $sort = $input->getSort();
+
         if (!$builder->hasSort() || empty($sort) || empty($sort['key']) || empty($sort['direction'])) {
             return;
         }

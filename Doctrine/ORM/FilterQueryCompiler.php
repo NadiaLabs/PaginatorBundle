@@ -6,17 +6,18 @@ use Doctrine\DBAL\Connection;
 use Doctrine\ORM\QueryBuilder;
 use Nadia\Bundle\PaginatorBundle\Configuration\PaginatorBuilder;
 use Nadia\Bundle\PaginatorBundle\Configuration\QueryCompilerInterface;
+use Nadia\Bundle\PaginatorBundle\Input\Input;
 
 class FilterQueryCompiler implements QueryCompilerInterface
 {
     /**
      * {@inheritdoc}
      */
-    public function compile(PaginatorBuilder $builder, $qb, $filter)
+    public function compile($qb, Input $input, PaginatorBuilder $builder)
     {
         /** @var QueryBuilder $qb */
-        /** @var array $filter */
 
+        $filter = $input->getFilter();
         $callbacks = $this->getCallbacks();
 
         foreach ($filter as $fieldName => $value) {

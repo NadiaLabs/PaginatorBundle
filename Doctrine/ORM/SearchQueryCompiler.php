@@ -5,17 +5,18 @@ namespace Nadia\Bundle\PaginatorBundle\Doctrine\ORM;
 use Doctrine\ORM\QueryBuilder;
 use Nadia\Bundle\PaginatorBundle\Configuration\PaginatorBuilder;
 use Nadia\Bundle\PaginatorBundle\Configuration\QueryCompilerInterface;
+use Nadia\Bundle\PaginatorBundle\Input\Input;
 
 class SearchQueryCompiler implements QueryCompilerInterface
 {
     /**
      * {@inheritdoc}
      */
-    public function compile(PaginatorBuilder $builder, $qb, $search)
+    public function compile($qb, Input $input, PaginatorBuilder $builder)
     {
         /** @var QueryBuilder $qb */
-        /** @var array $search */
 
+        $search = $input->getSearch();
         $searchBuilder = $builder->getSearchBuilder();
         $callbacks = $this->getCallbacks();
 

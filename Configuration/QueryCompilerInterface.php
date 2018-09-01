@@ -2,18 +2,20 @@
 
 namespace Nadia\Bundle\PaginatorBundle\Configuration;
 
+use Nadia\Bundle\PaginatorBundle\Input\Input;
+
 interface QueryCompilerInterface
 {
     /**
      * Compile a query target before fetching db data
      *
-     * @param PaginatorBuilder $builder
      * @param mixed            $target  Target query instance to compile
-     * @param mixed            $data    Data for query parameters
+     * @param Input            $input   Data for query parameters
+     * @param PaginatorBuilder $builder
      *
      * @return void
      */
-    public function compile(PaginatorBuilder $builder, $target, $data);
+    public function compile($target, Input $input, PaginatorBuilder $builder);
 
     /**
      * Return an array of callbacks for compiling the query target
