@@ -61,12 +61,12 @@ class ContextProcessor
         $rangeLevel = intval($current / $range);
         $pages = array();
 
-        if (array_key_exists($inputKeys->reset, $routeParams)) {
-            unset($routeParams[$inputKeys->reset]);
-            unset($routeParams[$inputKeys->search]);
-            unset($routeParams[$inputKeys->filter]);
-            unset($routeParams[$inputKeys->sort]);
-            unset($routeParams[$inputKeys->page]);
+        if (array_key_exists($inputKeys->getReset(), $routeParams)) {
+            unset($routeParams[$inputKeys->getReset()]);
+            unset($routeParams[$inputKeys->getSearch()]);
+            unset($routeParams[$inputKeys->getFilter()]);
+            unset($routeParams[$inputKeys->getSort()]);
+            unset($routeParams[$inputKeys->getPage()]);
         }
 
         $firstPage = [
@@ -75,7 +75,7 @@ class ContextProcessor
         ];
         $firstPage['text'] = empty($options['firstPageText']) ? $firstPage['number'] : $options['firstPageText'];
         if ($firstPage['number'] != $current) {
-            $firstPage['url'] = $this->router->generate($route, array_merge($routeParams, [$inputKeys->page => 1]));
+            $firstPage['url'] = $this->router->generate($route, array_merge($routeParams, [$inputKeys->getPage() => 1]));
         }
 
         $lastPageNumber = $range * ($rangeLevel + 1);
@@ -86,7 +86,7 @@ class ContextProcessor
         ];
         $lastPage['text'] = empty($options['lastPageText']) ? $lastPage['number'] : $options['lastPageText'];
         if ($lastPage['number'] != $current) {
-            $lastPage['url'] = $this->router->generate($route, array_merge($routeParams, [$inputKeys->page => $lastPageNumber]));
+            $lastPage['url'] = $this->router->generate($route, array_merge($routeParams, [$inputKeys->getPage() => $lastPageNumber]));
         }
 
         $previousPage = [
@@ -95,7 +95,7 @@ class ContextProcessor
         ];
         $previousPage['text'] = empty($options['previousPageText']) ? $previousPage['number'] : $options['previousPageText'];
         if ($previousPage['number'] >= 1 && $previousPage['number'] != $current) {
-            $previousPage['url'] = $this->router->generate($route, array_merge($routeParams, [$inputKeys->page => $previousPage['number']]));
+            $previousPage['url'] = $this->router->generate($route, array_merge($routeParams, [$inputKeys->getPage() => $previousPage['number']]));
         }
 
         $nextPage = [
@@ -104,13 +104,13 @@ class ContextProcessor
         ];
         $nextPage['text'] = empty($options['nextPageText']) ? $nextPage['number'] : $options['nextPageText'];
         if ($nextPage['number'] <= $maxPage && $nextPage['number'] != $current) {
-            $nextPage['url'] = $this->router->generate($route, array_merge($routeParams, [$inputKeys->page => $nextPage['number']]));
+            $nextPage['url'] = $this->router->generate($route, array_merge($routeParams, [$inputKeys->getPage() => $nextPage['number']]));
         }
 
         for ($i = $firstPage['number']; $i <= $lastPage['number']; ++$i) {
             $pages[] = [
                 'number' => $i,
-                'url' => $this->router->generate($route, array_merge($routeParams, [$inputKeys->page => $i])),
+                'url' => $this->router->generate($route, array_merge($routeParams, [$inputKeys->getPage() => $i])),
                 'text' => $i,
             ];
         }
@@ -139,7 +139,7 @@ class ContextProcessor
     public function searches(Pagination $pagination, array $options = array())
     {
         return array(
-            'filterForm' => $pagination->getFormView()->children[$pagination->getInputKeys()->search],
+            'filterForm' => $pagination->getFormView()->children[$pagination->getInputKeys()->getSearch()],
             'attributes' => (!empty($options['attr']) && is_array($options['attr'])) ? $options['attr'] : array(),
         );
     }
@@ -157,7 +157,7 @@ class ContextProcessor
     public function filters(Pagination $pagination, array $options = array())
     {
         return array(
-            'filterForm' => $pagination->getFormView()->children[$pagination->getInputKeys()->filter],
+            'filterForm' => $pagination->getFormView()->children[$pagination->getInputKeys()->getFilter()],
             'attributes' => (!empty($options['attr']) && is_array($options['attr'])) ? $options['attr'] : array(),
         );
     }
@@ -172,7 +172,7 @@ class ContextProcessor
     public function sorts(Pagination $pagination)
     {
         return array(
-            'sortForm' => $pagination->getFormView()->children[$pagination->getInputKeys()->sort],
+            'sortForm' => $pagination->getFormView()->children[$pagination->getInputKeys()->getSort()],
         );
     }
 
@@ -211,19 +211,19 @@ class ContextProcessor
 
         $sessionEnabled = $pagination->getOption('sessionEnabled', false);
         $inputKeys = $pagination->getInputKeys();
-        $routeParams = [$inputKeys->sort => $sort];
+        $routeParams = [$inputKeys->getSort() => $sort];
 
         if (!$sessionEnabled) {
             $routeParams = array_merge($pagination->getCurrentRouteParams(), $routeParams);
         }
-        if (array_key_exists($inputKeys->reset, $routeParams)) {
-            unset($routeParams[$inputKeys->reset]);
-            unset($routeParams[$inputKeys->search]);
-            unset($routeParams[$inputKeys->filter]);
-            unset($routeParams[$inputKeys->page]);
+        if (array_key_exists($inputKeys->getReset(), $routeParams)) {
+            unset($routeParams[$inputKeys->getReset()]);
+            unset($routeParams[$inputKeys->getSearch()]);
+            unset($routeParams[$inputKeys->getFilter()]);
+            unset($routeParams[$inputKeys->getPage()]);
         }
-        if (array_key_exists($inputKeys->page, $routeParams)) {
-            unset($routeParams[$inputKeys->page]);
+        if (array_key_exists($inputKeys->getPage(), $routeParams)) {
+            unset($routeParams[$inputKeys->getPage()]);
         }
 
         $url = $this->router->generate($pagination->getCurrentRoute(), $routeParams);
@@ -254,7 +254,7 @@ class ContextProcessor
     public function pageSizes(Pagination $pagination)
     {
         return array(
-            'pageSizeForm' => $pagination->getFormView()->children[$pagination->getInputKeys()->pageSize],
+            'pageSizeForm' => $pagination->getFormView()->children[$pagination->getInputKeys()->getPageSize()],
         );
     }
 }

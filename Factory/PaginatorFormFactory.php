@@ -48,7 +48,7 @@ class PaginatorFormFactory
         $inputKeys = $options['inputKeys'];
 
         if ($builder->hasFilter()) {
-            $filterForm = $this->formFactory->createNamed($inputKeys->filter, 'Symfony\Component\Form\Extension\Core\Type\FormType', null, array('auto_initialize' => false));
+            $filterForm = $this->formFactory->createNamed($inputKeys->getFilter(), 'Symfony\Component\Form\Extension\Core\Type\FormType', null, array('auto_initialize' => false));
 
             foreach ($builder->getFilterBuilder()->all() as $filter) {
                 $fieldName = str_replace('.', ':', $filter['name']);
@@ -65,7 +65,7 @@ class PaginatorFormFactory
         }
 
         if ($builder->hasSearch()) {
-            $searchForm = $this->formFactory->createNamed($inputKeys->search, 'Symfony\Component\Form\Extension\Core\Type\FormType', null, array('auto_initialize' => false));
+            $searchForm = $this->formFactory->createNamed($inputKeys->getSearch(), 'Symfony\Component\Form\Extension\Core\Type\FormType', null, array('auto_initialize' => false));
 
             foreach ($builder->getSearchBuilder()->all() as $search) {
                 $fieldName = str_replace('.', ':', $search['name']);
@@ -87,7 +87,7 @@ class PaginatorFormFactory
                 'required' => false,
                 'choices' => $builder->getSortBuilder()->getChoices(),
             ), $builder->getSortBuilder()->getFormOptions());
-            $form->add($inputKeys->sort, 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', $sortFormOptions);
+            $form->add($inputKeys->getSort(), 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', $sortFormOptions);
         }
 
         if ($builder->hasPageSize()) {
@@ -98,7 +98,7 @@ class PaginatorFormFactory
                 'choices' => $builder->getPageSizeBuilder()->all(),
             ), $builder->getPageSizeBuilder()->getFormOptions());
 
-            $form->add($inputKeys->pageSize, 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', $pageSizeFormOptions);
+            $form->add($inputKeys->getPageSize(), 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', $pageSizeFormOptions);
         }
 
         return $form;

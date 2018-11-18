@@ -114,7 +114,7 @@ class Pagination extends AbstractPagination
      */
     public function hasFilterForm(FormView $form)
     {
-        return isset($form[$this->getInputKeys()->filter]);
+        return isset($form[$this->getInputKeys()->getFilter()]);
     }
 
     /**
@@ -124,7 +124,7 @@ class Pagination extends AbstractPagination
      */
     public function getFilterForm(FormView $form)
     {
-        return $form[$this->getInputKeys()->filter];
+        return $form[$this->getInputKeys()->getFilter()];
     }
 
     /**
@@ -134,7 +134,7 @@ class Pagination extends AbstractPagination
      */
     public function hasSearchForm(FormView $form)
     {
-        return isset($form[$this->getInputKeys()->search]);
+        return isset($form[$this->getInputKeys()->getSearch()]);
     }
 
     /**
@@ -144,7 +144,7 @@ class Pagination extends AbstractPagination
      */
     public function getSearchForm(FormView $form)
     {
-        return $form[$this->getInputKeys()->search];
+        return $form[$this->getInputKeys()->getSearch()];
     }
 
     /**
@@ -154,7 +154,7 @@ class Pagination extends AbstractPagination
      */
     public function hasSortForm(FormView $form)
     {
-        return isset($form[$this->getInputKeys()->sort]);
+        return isset($form[$this->getInputKeys()->getSort()]);
     }
 
     /**
@@ -164,7 +164,7 @@ class Pagination extends AbstractPagination
      */
     public function getSortForm(FormView $form)
     {
-        return $form[$this->getInputKeys()->sort];
+        return $form[$this->getInputKeys()->getSort()];
     }
 
     /**
@@ -174,7 +174,7 @@ class Pagination extends AbstractPagination
      */
     public function hasPageSizeForm(FormView $form)
     {
-        return isset($form[$this->getInputKeys()->pageSize]);
+        return isset($form[$this->getInputKeys()->getPageSize()]);
     }
 
     /**
@@ -184,6 +184,6 @@ class Pagination extends AbstractPagination
      */
     public function getPageSizeForm(FormView $form)
     {
-        return $form[$this->getInputKeys()->pageSize];
+        return $form[$this->getInputKeys()->getPageSize()];
     }
 }

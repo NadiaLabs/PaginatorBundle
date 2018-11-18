@@ -5,30 +5,60 @@ namespace Nadia\Bundle\PaginatorBundle\Input;
 /**
  * The definition of URL query parameter names
  */
-class InputKeys
+class InputKeys implements InputKeysInterface
 {
+    const FILTER = '_f';
+    const SEARCH = '_q';
+    const SORT = '_s';
+    const PAGE = '_p';
+    const PAGE_SIZE = '_l';
+    const RESET = '_r';
+
     /**
-     * @var string
+     * @return string
      */
-    public $filter = '_f';
+    public function getFilter()
+    {
+        return self::FILTER;
+    }
+
     /**
-     * @var string
+     * @return string
      */
-    public $search = '_q';
+    public function getSearch()
+    {
+        return self::SEARCH;
+    }
+
     /**
-     * @var string
+     * @return string
      */
-    public $sort = '_s';
+    public function getSort()
+    {
+        return self::SORT;
+    }
+
     /**
-     * @var string
+     * @return string
      */
-    public $page = '_p';
+    public function getPage()
+    {
+        return self::PAGE;
+    }
+
     /**
-     * @var string
+     * @return string
      */
-    public $pageSize = '_l';
+    public function getPageSize()
+    {
+        return self::PAGE_SIZE;
+    }
+
     /**
-     * @var string
+     * @return string
      */
-    public $reset = '_r';
+    public function getReset()
+    {
+        return self::RESET;
+    }
 }
