@@ -9,6 +9,7 @@ services:
         class: '%nadia_paginator.type_container_class%'
         arguments:
             - ~
+        public: true
 
     nadia_paginator.paginator_factory:
         class: Nadia\Bundle\PaginatorBundle\Factory\PaginatorFactory
