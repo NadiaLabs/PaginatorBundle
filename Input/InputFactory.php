@@ -94,6 +94,10 @@ class InputFactory
     private function processParamsWithForm(FormInterface $form, array &$params, InputKeys $inputKeys,
                                            array &$search, array &$filter, &$sort, &$pageSize)
     {
+        if (0 === count($form)) {
+            return;
+        }
+
         $params = array(
             $inputKeys->getFilter() => $filter,
             $inputKeys->getSearch() => $search,
