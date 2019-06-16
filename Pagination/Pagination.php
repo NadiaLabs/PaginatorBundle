@@ -108,82 +108,82 @@ class Pagination extends AbstractPagination
     }
 
     /**
-     * @param FormView $form
-     *
      * @return bool
      */
-    public function hasFilterForm(FormView $form)
+    public function hasFilterForm()
     {
+        $form = $this->getFormView();
+
         return isset($form[$this->getInputKeys()->getFilter()]);
     }
 
     /**
-     * @param FormView $form
-     *
      * @return FormView
      */
-    public function getFilterForm(FormView $form)
+    public function getFilterForm()
     {
+        $form = $this->getFormView();
+
         return $form[$this->getInputKeys()->getFilter()];
     }
 
     /**
-     * @param FormView $form
-     *
      * @return bool
      */
-    public function hasSearchForm(FormView $form)
+    public function hasSearchForm()
     {
+        $form = $this->getFormView();
+
         return isset($form[$this->getInputKeys()->getSearch()]);
     }
 
     /**
-     * @param FormView $form
-     *
      * @return FormView
      */
-    public function getSearchForm(FormView $form)
+    public function getSearchForm()
     {
+        $form = $this->getFormView();
+
         return $form[$this->getInputKeys()->getSearch()];
     }
 
     /**
-     * @param FormView $form
-     *
      * @return bool
      */
-    public function hasSortForm(FormView $form)
+    public function hasSortForm()
     {
+        $form = $this->getFormView();
+
         return isset($form[$this->getInputKeys()->getSort()]);
     }
 
     /**
-     * @param FormView $form
-     *
      * @return FormView
      */
-    public function getSortForm(FormView $form)
+    public function getSortForm()
     {
+        $form = $this->getFormView();
+
         return $form[$this->getInputKeys()->getSort()];
     }
 
     /**
-     * @param FormView $form
-     *
      * @return bool
      */
-    public function hasPageSizeForm(FormView $form)
+    public function hasPageSizeForm()
     {
+        $form = $this->getFormView();
+
         return isset($form[$this->getInputKeys()->getPageSize()]);
     }
 
     /**
-     * @param FormView $form
-     *
      * @return FormView
      */
-    public function getPageSizeForm(FormView $form)
+    public function getPageSizeForm()
     {
+        $form = $this->getFormView();
+
         return $form[$this->getInputKeys()->getPageSize()];
     }
 }
