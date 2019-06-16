@@ -1,5 +1,5 @@
-{% for form in filterForm %}
-    <div {% for key, value in attributes %}{{ key }}="{{ value }}"{% endfor %}>
+{% for name, form in filterForm if name in validColumns %}
+    <div {% for key, value in options.attributes|default({}) %}{{ key }}="{{ value }}"{% endfor %}>
         <div>
             <small>
                 {{ form.vars.label }}

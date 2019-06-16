@@ -1,96 +1,164 @@
-{% set form = pagination.formView %}
-{% set resetKey = pagination.inputKeys.reset %}
-{% set input = pagination.input %}
+{% block pagination %}
+    {% set form = pagination.formView %}
+    {% set resetKey = pagination.inputKeys.reset %}
+    {% set input = pagination.input %}
+    {% set showFiltersCookieName = 'paginationShowFilters_' ~ pagination.currentRoute %}
+    {% set gridStyles = gridStyles is defined ? gridStyles : {} %}
+    {% set gridStyles = {
+        searchBlock: 'col-md-9',
+        search: 'col-md-6 col-xl-4',
+        buttons: 'col-md-6 col-xl-4',
+        sortBlock: 'col-md-3',
+        sorts: 'col-md-7 col-xl-8',
+        pageSizes: 'col-md-5 col-xl-4',
+        filter: 'col-md-3'
+    }|merge(gridStyles) %}
 
-{{ form_start(form) }}
+    {{ form_start(form) }}
 
-<div class="row mb-3">
-    <div class="col-md-8 col-xl-9">
-        <div class="row">
-            {{ nadia_paginator_searches(pagination, {attr: {class: 'col-md-6 col-xl-4 search'}}) }}
+    <div class="row mb-1 mb-md-3">
+        <div class="{{ gridStyles.searchBlock }}">
+            <div class="row">
+            {% block paginationSearches %}
+                {{ nadia_paginator_searches(pagination, {attributes: {class: gridStyles.search ~ ' search'}}) }}
+            {% endblock paginationSearches %}
 
-            <div class="col-md-6 col-xl-4">
-                <div>&nbsp;</div>
-                <div>
-                    <button class="btn btn-primary">Search</button>
+            {% block paginationButtons %}
+                <div class="{{ gridStyles.buttons }} {% if hide is defined %}d-md-none my-3 row{% else %}d-none d-md-block{% endif %}">
+                {% if hide is not defined %}
+                    <div>&nbsp;</div>
+                {% endif %}
+                    <div>
+                    {% block paginationButtonSearch %}
+                        <button class="btn btn-primary">Search</button>
+                    {% endblock paginationButtonSearch %}
 
-                    {% if pagination.builder.filter %}
-                    <button type="button" class="btn btn-info"
-                            onclick="
-                                var filters = document.getElementById('filters');
-                                var symbol = document.getElementById('filter-open-close-symbol');
-                                var isHide = filters.classList.contains('d-none');
-                                isHide ? filters.classList.remove('d-none') : filters.classList.add('d-none');
-                                symbol.innerHTML = (isHide ? '&#9650;' : '&#9660;');
-                            "
-                    >
-                        Filters
-                        <span id="filter-open-close-symbol">
-                            {% if input.filter is empty %}&#9660;{% else %}&#9650;{% endif %}
-                        </span>
-                    </button>
-                    {% endif %}
+                    {% block paginationButtonFilters %}
+                        {% if pagination.builder.filter %}
+                        <button type="button" class="btn btn-info btn-display-filters">
+                            Filters
+                            <span class="filter-open-close-symbol">
+                                {% if input.filter is empty %}&#9660;{% else %}&#9650;{% endif %}
+                            </span>
+                        </button>
+                        {% endif %}
+                    {% endblock paginationButtonFilters %}
 
-                    <input type="submit" class="btn btn-secondary" name="{{ resetKey }}" value="Clear" />
+                    {% block paginationButtonReset %}
+                        <input type="submit" class="btn btn-secondary" name="{{ resetKey }}" value="Clear" />
+                    {% endblock paginationButtonReset %}
+                    </div>
                 </div>
+            {% endblock paginationButtons %}
+            </div>
+        </div>
+
+        <div class="{{ gridStyles.sortBlock }} d-none d-md-block">
+            <div class="row">
+            {% block paginationSorts %}
+                <div class="{{ gridStyles.sorts }}">
+                    {{ nadia_paginator_sorts(pagination) }}
+                </div>
+            {% endblock paginationSorts %}
+            {% block paginationPageSizes %}
+                <div class="{{ gridStyles.pageSizes }}">
+                    {{ nadia_paginator_page_sizes(pagination) }}
+                </div>
+            {% endblock paginationPageSizes %}
             </div>
         </div>
     </div>
 
-    <div class="col-md-4 col-xl-3 d-none d-md-block">
-        <div class="row">
-            <div class="col-md-7 col-xl-8">
-                {{ nadia_paginator_sorts(pagination) }}
-            </div>
-            <div class="col-md-5 col-xl-4">
-                {{ nadia_paginator_page_sizes(pagination) }}
-            </div>
-        </div>
+    {% block paginationFilters %}
+    <div class="row mb-0 mb-md-3 {% if input.filter is empty %}d-none{% endif %}" id="filters">
+        {{ nadia_paginator_filters(pagination, {
+            attributes: {class: gridStyles.filter ~ ' mb-1 filter'},
+            excludes: excludeFilterColumns|default([]),
+            includes: includeFilterColumns|default([])
+        }) }}
     </div>
-</div>
+    {% endblock paginationFilters %}
 
-<div class="row mb-2 {% if input.filter is empty %}d-none{% endif %}" id="filters">
-    {{ nadia_paginator_filters(pagination, {attr: {class: 'col-md-4 col-xl-3 mb-1 filter'}}) }}
-</div>
+    {% with {hide: true} %}
+        {{ block('paginationButtons') }}
+    {% endwith %}
 
-<div class="table-responsive">
-{% block tableContent %}
-    <!-- Example table contents -->
-    <table class="table">
-        <thead>
-        <tr>
-            <th>Demo</th>
-            <th>Demo</th>
-            <th>Demo</th>
-            <th>Demo</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-            <td>Demo</td>
-            <td>Demo</td>
-            <td>Demo</td>
-            <td>Demo</td>
-        </tr>
-        <tr>
-            <td>Demo</td>
-            <td>Demo</td>
-            <td>Demo</td>
-            <td>Demo</td>
-        </tr>
-        <tr>
-            <td>Demo</td>
-            <td>Demo</td>
-            <td>Demo</td>
-            <td>Demo</td>
-        </tr>
-        </tbody>
-    </table>
-{% endblock tableContent %}
-</div>
+    {% block paginationFiltersJavascript %}
+    <script type="text/javascript">
+        if (document.cookie.split(';').filter(function (item) {
+            return item.trim().indexOf('{{ showFiltersCookieName }}=1') >= 0;
+        }).length) {
+            document.getElementById('filters').classList.remove('d-none');
+            document.querySelectorAll('.filter-open-close-symbol').forEach(function (symbol) {
+                symbol.innerHTML = '&#9660;';
+            });
+        }
 
-<div class="d-flex justify-content-center">
-    {{ nadia_paginator_pages(pagination) }}
-</div>
+        document.querySelectorAll('.btn-display-filters').forEach(function (button) {
+            button.addEventListener('click', function () {
+                var filters = document.getElementById('filters');
+                var symbols = document.querySelectorAll('.filter-open-close-symbol');
 
-{{ form_end(form) }}
+                if (filters.classList.contains('d-none')) {
+                    filters.classList.remove('d-none');
+                    symbols.forEach(function (symbol) {
+                        symbol.innerHTML = '&#9660;';
+                    });
+                    document.cookie = '{{ showFiltersCookieName }}=1';
+                } else {
+                    filters.classList.add('d-none');
+                    symbols.forEach(function (symbol) {
+                        symbol.innerHTML = '&#9650;';
+                    });
+                    document.cookie = '{{ showFiltersCookieName }}=';
+                }
+            })
+        });
+    </script>
+    {% endblock paginationFiltersJavascript %}
+
+
+    <div class="table-responsive">
+    {% block tableContent %}
+        <!-- Example table contents -->
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Demo</th>
+                <th>Demo</th>
+                <th>Demo</th>
+                <th>Demo</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>Demo</td>
+                <td>Demo</td>
+                <td>Demo</td>
+                <td>Demo</td>
+            </tr>
+            <tr>
+                <td>Demo</td>
+                <td>Demo</td>
+                <td>Demo</td>
+                <td>Demo</td>
+            </tr>
+            <tr>
+                <td>Demo</td>
+                <td>Demo</td>
+                <td>Demo</td>
+                <td>Demo</td>
+            </tr>
+            </tbody>
+        </table>
+    {% endblock tableContent %}
+    </div>
+
+    <div class="d-flex justify-content-center">
+    {% block paginationPages %}
+        {{ nadia_paginator_pages(pagination) }}
+    {% endblock paginationPages %}
+    </div>
+
+    {{ form_end(form) }}
+{% endblock pagination %}

@@ -123,6 +123,7 @@ class ContextProcessor
             'previousPage' => $previousPage,
             'nextPage' => $nextPage,
             'pages' => $pages,
+            'options' => $options,
         );
     }
 
@@ -130,17 +131,15 @@ class ContextProcessor
      * Get sort form view variables
      *
      * @param Pagination $pagination A Pagination instance
-     * @param array      $options    Format: {
-     *     @var array $attr Attributes for each filter's div container, ex: array('class' => 'foobar', ...)
-     * }
+     * @param array      $options
      *
      * @return array
      */
     public function searches(Pagination $pagination, array $options = array())
     {
         return array(
-            'filterForm' => $pagination->getFormView()->children[$pagination->getInputKeys()->getSearch()],
-            'attributes' => (!empty($options['attr']) && is_array($options['attr'])) ? $options['attr'] : array(),
+            'searchForm' => $pagination->getSearchForm(),
+            'options' => $options,
         );
     }
 
@@ -149,30 +148,54 @@ class ContextProcessor
      *
      * @param Pagination $pagination A Pagination instance
      * @param array      $options    Format: {
-     *     @var array $attr Attributes for each filter's div container, ex: array('class' => 'foobar', ...)
+     *     @var string[] $excludes Excluded column names, hide those column names
+     *     @var string[] $includes Included column names, show those column names
      * }
      *
      * @return array
      */
     public function filters(Pagination $pagination, array $options = array())
     {
+        $form = $pagination->getFilterForm();
+        $includes = empty($options['includes']) ? [] : (array) $options['includes'];
+        $excludes = empty($options['excludes']) ? [] : (array) $options['excludes'];
+
+        $includes = array_map([$this, 'replaceDot2colon'], $includes);
+        $includes = empty($includes) ? array_keys($form->children) : $includes;
+        $excludes = array_map([$this, 'replaceDot2colon'], $excludes);
+
         return array(
-            'filterForm' => $pagination->getFormView()->children[$pagination->getInputKeys()->getFilter()],
-            'attributes' => (!empty($options['attr']) && is_array($options['attr'])) ? $options['attr'] : array(),
+            'filterForm' => $form,
+            'options' => $options,
+            'validColumns' => array_diff($includes, $excludes),
         );
+    }
+
+    /**
+     * Replace . (dot) to : (colon)
+     *
+     * @param string $string
+     *
+     * @return array
+     */
+    private function replaceDot2colon($string)
+    {
+        return str_replace('.', ':', $string);
     }
 
     /**
      * Get sort selection view variables
      *
      * @param Pagination $pagination A Pagination instance
+     * @param array      $options
      *
      * @return array
      */
-    public function sorts(Pagination $pagination)
+    public function sorts(Pagination $pagination, $options = array())
     {
         return array(
             'sortForm' => $pagination->getFormView()->children[$pagination->getInputKeys()->getSort()],
+            'options' => $options,
         );
     }
 
@@ -183,9 +206,7 @@ class ContextProcessor
      * @param string     $title      Sort title
      * @param string     $key        Sort key
      * @param string     $direction  Sort default direction (SortInterface::ASC or SortInterface::DESC)
-     * @param array      $options    Format: {
-     *     @var array $attr Html tag attributes, ex: array('class' => 'foobar', 'alt' => 'balabalabala...', ...)
-     * }
+     * @param array      $options
      *
      * @return array
      */
@@ -227,11 +248,6 @@ class ContextProcessor
         }
 
         $url = $this->router->generate($pagination->getCurrentRoute(), $routeParams);
-        $attributes = array('href' => $url);
-
-        if (!empty($options['attr']) && is_array($options['attr'])) {
-            $attributes = array_merge($attributes, $options['attr']);
-        }
 
         return array(
             'title' => $title,
@@ -240,7 +256,7 @@ class ContextProcessor
             'reversedDirection' => $reversedDirection,
             'showDirection' => $showDirection,
             'url' => $url,
-            'attributes' => $attributes,
+            'options' => $options,
         );
     }
 
@@ -248,13 +264,15 @@ class ContextProcessor
      * Get page sizes view variables
      *
      * @param Pagination $pagination A Pagination instance
+     * @param array      $options
      *
      * @return array
      */
-    public function pageSizes(Pagination $pagination)
+    public function pageSizes(Pagination $pagination, $options = array())
     {
         return array(
             'pageSizeForm' => $pagination->getFormView()->children[$pagination->getInputKeys()->getPageSize()],
+            'options' => $options,
         );
     }
 }
