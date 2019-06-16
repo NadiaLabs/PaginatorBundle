@@ -161,40 +161,43 @@ $this->render('@App/Movie/index.html.twig', ['pagination' => $pagination]);
 ```twig
 {# Example view file #}
 
+{% use '@NadiaPaginator/templates/bootstrap4/pagination.html.twig' %}
+
 <div class="container-fluid">
-    {% embed '@NadiaPaginator/templates/bootstrap4/pagination.html.twig' %}
-        {% block tableContent %}
-            <table class="table table-bordered table-striped">
-                <thead>
-                <tr>
-                    <th>
-                        {{ nadia_paginator_sort_link(pagination, 'title', 'movie.title', 'ASC') }}
-                    </th>
-                    <th>
-                        {{ nadia_paginator_sort_link(pagination, 'description', 'movie.description', 'ASC') }}
-                    </th>
-                    <th>
-                        {{ nadia_paginator_sort_link(pagination, 'releasedAt', 'movie.releasedAt', 'DESC') }}
-                    </th>
-                    <th>Director</th>
-                    <th>Company</th>
-                </tr>
-                </thead>
-                <tbody>
-            {% for movie in pagination %}
-                <tr>
-                    <td>{{ movie.title }}</td>
-                    <td>{{ movie.description }}</td>
-                    <td>{{ movie.releasedAt|date('Y-m-d') }}</td>
-                    <td>{{ movie.director.name }}</td>
-                    <td>{{ movie.company }}</td>
-                </tr>
-            {% endfor %}
-                </tbody>
-            </table>
-        {% endblock tableContent %}
-    {% endembed %}
+    {{ block('pagination') }}
 </div>
+
+{% block tableContent %}
+    <table class="table table-bordered table-striped">
+        <thead>
+        <tr>
+            <th>
+                {{ nadia_paginator_sort_link(pagination, 'title', 'movie.title', 'ASC') }}
+            </th>
+            <th>
+                {{ nadia_paginator_sort_link(pagination, 'description', 'movie.description', 'ASC') }}
+            </th>
+            <th>
+                {{ nadia_paginator_sort_link(pagination, 'releasedAt', 'movie.releasedAt', 'DESC') }}
+            </th>
+            <th>Director</th>
+            <th>Company</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for movie in pagination %}
+            <tr>
+                <td>{{ movie.title }}</td>
+                <td>{{ movie.description }}</td>
+                <td>{{ movie.releasedAt|date('Y-m-d') }}</td>
+                <td>{{ movie.director.name }}</td>
+                <td>{{ movie.company }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock tableContent %}
+
 ```
 
 ### Rendering searches block in Twig
@@ -202,7 +205,7 @@ $this->render('@App/Movie/index.html.twig', ['pagination' => $pagination]);
 Use `nadia_paginator_searches` method to render search block in Twig template.
 
 ```twig
-{{ nadia_paginator_searches(pagination, {attr: {class: 'col-md-6 col-xl-4 search'}}) }}
+{{ nadia_paginator_searches(pagination, {attributes: {class: 'col-md-6 col-xl-4 search'}}) }}
 ```
 
 ### Rendering filters block in Twig
@@ -210,7 +213,7 @@ Use `nadia_paginator_searches` method to render search block in Twig template.
 Use `nadia_paginator_filters` method to render filter block in Twig template.
 
 ```twig
-{{ nadia_paginator_filters(pagination, {attr: {class: 'col-md-4 col-xl-3 mb-1 filter'}}) }}
+{{ nadia_paginator_filters(pagination, {attributes: {class: 'col-md-4 col-xl-3 mb-1 filter'}}) }}
 ```
 
 ### Rendering sorts block in Twig
