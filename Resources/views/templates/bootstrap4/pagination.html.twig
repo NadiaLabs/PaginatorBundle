@@ -101,23 +101,25 @@
             });
         }
 
-        document.querySelector('.btn-display-filters').addEventListener('click', function () {
-            var filters = document.getElementById('filters');
-            var symbols = document.querySelectorAll('.filter-open-close-symbol');
+        document.querySelectorAll('.btn-display-filters').forEach(function (button) {
+            button.addEventListener('click', function () {
+                var filters = document.getElementById('filters');
+                var symbols = document.querySelectorAll('.filter-open-close-symbol');
 
-            if (filters.classList.contains('d-none')) {
-                filters.classList.remove('d-none');
-                symbols.forEach(function (symbol) {
-                    symbol.innerHTML = '&#9660;';
-                });
-                document.cookie = '{{ showFiltersCookieName }}=1';
-            } else {
-                filters.classList.add('d-none');
-                symbols.forEach(function (symbol) {
-                    symbol.innerHTML = '&#9650;';
-                });
-                document.cookie = '{{ showFiltersCookieName }}=';
-            }
+                if (filters.classList.contains('d-none')) {
+                    filters.classList.remove('d-none');
+                    symbols.forEach(function (symbol) {
+                        symbol.innerHTML = '&#9660;';
+                    });
+                    document.cookie = '{{ showFiltersCookieName }}=1';
+                } else {
+                    filters.classList.add('d-none');
+                    symbols.forEach(function (symbol) {
+                        symbol.innerHTML = '&#9650;';
+                    });
+                    document.cookie = '{{ showFiltersCookieName }}=';
+                }
+            })
         });
 
         document.querySelectorAll('{{ idListForBindOnChangeEvent }}'.replace(/:/g, '\\:')).forEach(function (elm) {
