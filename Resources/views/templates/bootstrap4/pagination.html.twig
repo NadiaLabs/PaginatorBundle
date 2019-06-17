@@ -11,8 +11,13 @@
         sortBlock: 'col-md-offset-9 col-md-3',
         sorts: 'col-md-7 col-xl-8',
         pageSizes: 'col-md-5 col-xl-4',
-        filter: 'col-md-3'
+        filter: 'col-md-4 col-xl-3'
     }|merge(gridStyles) %}
+    {% set idListForBindOnChangeEvent = '#' ~ pagination.filterForm|map(f => f.vars.id)
+        |merge([pagination.SortForm.vars.id])
+        |merge([pagination.pageSizeForm.vars.id])
+        |join(',#')
+    %}
 
     {{ form_start(form) }}
 
@@ -30,7 +35,9 @@
                 {% endif %}
                     <div>
                     {% block paginationButtonSearch %}
+                        {% if pagination.builder.search %}
                         <button class="btn btn-primary">Search</button>
+                        {% endif %}
                     {% endblock paginationButtonSearch %}
 
                     {% block paginationButtonFilters %}
@@ -94,25 +101,29 @@
             });
         }
 
-        document.querySelectorAll('.btn-display-filters').forEach(function (button) {
-            button.addEventListener('click', function () {
-                var filters = document.getElementById('filters');
-                var symbols = document.querySelectorAll('.filter-open-close-symbol');
+        document.querySelector('.btn-display-filters').addEventListener('click', function () {
+            var filters = document.getElementById('filters');
+            var symbols = document.querySelectorAll('.filter-open-close-symbol');
 
-                if (filters.classList.contains('d-none')) {
-                    filters.classList.remove('d-none');
-                    symbols.forEach(function (symbol) {
-                        symbol.innerHTML = '&#9660;';
-                    });
-                    document.cookie = '{{ showFiltersCookieName }}=1';
-                } else {
-                    filters.classList.add('d-none');
-                    symbols.forEach(function (symbol) {
-                        symbol.innerHTML = '&#9650;';
-                    });
-                    document.cookie = '{{ showFiltersCookieName }}=';
-                }
-            })
+            if (filters.classList.contains('d-none')) {
+                filters.classList.remove('d-none');
+                symbols.forEach(function (symbol) {
+                    symbol.innerHTML = '&#9660;';
+                });
+                document.cookie = '{{ showFiltersCookieName }}=1';
+            } else {
+                filters.classList.add('d-none');
+                symbols.forEach(function (symbol) {
+                    symbol.innerHTML = '&#9650;';
+                });
+                document.cookie = '{{ showFiltersCookieName }}=';
+            }
+        });
+
+        document.querySelectorAll('{{ idListForBindOnChangeEvent }}'.replace(/:/g, '\\:')).forEach(function (elm) {
+            elm.addEventListener('change', function () {
+                document.getElementById('{{ form.vars.attr.id }}').submit();
+            });
         });
     </script>
     {% endblock paginationFiltersJavascript %}
