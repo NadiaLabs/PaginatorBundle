@@ -39,7 +39,10 @@ class PaginatorFormFactory
         $options = $builder->getTypeOptions();
         $formOptions = array(
             'csrf_protection' => false,
-            'method' => $options['sessionEnabled'] ? 'POST' : 'GET'
+            'method' => $options['sessionEnabled'] ? 'POST' : 'GET',
+            'attr' => array(
+                'id' => 'pagination-'.time(),
+            ),
         );
         $formOptions = array_merge($formOptions, $builder->getFormOptions());
         $form = $this->formFactory->createNamed(null, 'Symfony\Component\Form\Extension\Core\Type\FormType', null, $formOptions);
