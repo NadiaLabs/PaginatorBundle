@@ -38,19 +38,22 @@ class PaginatorFactory
     /**
      * @param PaginatorTypeInterface $type
      * @param array                  $options {
-     *     @var string $inputKeysClass    @see \Nadia\Bundle\PaginatorBundle\Input\InputKeys
-     *     @var int    $defaultPageSize   Default page size
-     *     @var int    $defaultPageRange  Default page range (control page link amounts)
-     *     @var bool   $sessionEnabled    Enable session support, store input data in session
-     *     @var string $pagesTemplate     Template for rendering pages
-     *     @var string $searchesTemplate  Template for rendering searches block
-     *     @var string $filtersTemplate   Template for rendering filters block
-     *     @var string $sortsTemplate     Template for rendering sort selection block
-     *     @var string $sortLinkTemplate  Template for rendering sort link
-     *     @var string $pageSizesTemplate Template for rendering page size selection block
+     *     @var string           $inputKeysClass
+     *     @var int              $defaultPageSize   Default page size
+     *     @var int              $defaultPageRange  Default page range (control page link amounts)
+     *     @var bool             $sessionEnabled    Enable session support, store input data in session
+     *     @var string           $pagesTemplate     Template for rendering pages
+     *     @var string           $searchesTemplate  Template for rendering searches block
+     *     @var string           $filtersTemplate   Template for rendering filters block
+     *     @var string           $sortsTemplate     Template for rendering sort selection block
+     *     @var string           $sortLinkTemplate  Template for rendering sort link
+     *     @var string           $pageSizesTemplate Template for rendering page size selection block
+     *     @var string|bool|null $translationDomain The form translation domain (default is null)
      * }
      *
      * @return Paginator
+     *
+     * @see \Nadia\Bundle\PaginatorBundle\Input\InputKeys
      */
     public function create(PaginatorTypeInterface $type, array $options = array())
     {

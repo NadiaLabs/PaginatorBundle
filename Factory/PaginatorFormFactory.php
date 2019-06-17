@@ -55,6 +55,7 @@ class PaginatorFormFactory
                 $filterOptions = array(
                     'label' => ucfirst($fieldName),
                     'required' => false,
+                    'translation_domain' => $options['translationDomain'],
                 );
                 $filterOptions = array_merge($filterOptions, $filter['options']);
 
@@ -72,6 +73,7 @@ class PaginatorFormFactory
                 $searchOptions = array(
                     'label' => ucfirst($fieldName),
                     'required' => false,
+                    'translation_domain' => $options['translationDomain'],
                 );
                 $searchOptions = array_merge($searchOptions, $search['options']);
 
@@ -86,6 +88,7 @@ class PaginatorFormFactory
                 'label' => 'Sort',
                 'required' => false,
                 'choices' => $builder->getSortBuilder()->getChoices(),
+                'translation_domain' => $options['translationDomain'],
             ), $builder->getSortBuilder()->getFormOptions());
             $form->add($inputKeys->getSort(), 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', $sortFormOptions);
         }
@@ -96,6 +99,7 @@ class PaginatorFormFactory
                 'required' => false,
                 'placeholder' => false,
                 'choices' => $builder->getPageSizeBuilder()->all(),
+                'translation_domain' => $options['translationDomain'],
             ), $builder->getPageSizeBuilder()->getFormOptions());
 
             $form->add($inputKeys->getPageSize(), 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', $pageSizeFormOptions);

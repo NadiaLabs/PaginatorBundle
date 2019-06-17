@@ -36,6 +36,7 @@ nadia_paginator:
         default_page_size: 10
         default_page_range: 8
         session_enabled: false
+        default_translation_domain: null
     templates:
         pages: '@NadiaPaginator/templates/bootstrap4/pages.html.twig'
         searches: '@NadiaPaginator/templates/bootstrap4/searches.html.twig'
@@ -52,6 +53,7 @@ nadia_paginator:
     - session_enabled: Enable session support, store input data in session.
                        You can use a clean URL without query string when enabled it.
                        Otherwise the filter, search, sort, page size, and page parameters will be part of URL query string, or transfer by POST request body.
+    - default_translation_domain: Default [`translation-domain`](https://symfony.com/doc/3.4/reference/forms/types/form.html#translation-domain) value for each Form.
 - templates
     - pages: Template for rendering pages
     - searches: Template for rendering searches block

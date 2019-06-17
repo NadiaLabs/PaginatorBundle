@@ -32,6 +32,7 @@ class NadiaPaginatorExtension extends Extension
             'defaultPageSize'   => $config['default_options']['default_page_size'],
             'defaultPageRange'  => $config['default_options']['default_page_range'],
             'sessionEnabled'    => $config['default_options']['session_enabled'],
+            'translationDomain' => $config['default_options']['default_translation_domain'],
             'pagesTemplate'     => $config['templates']['pages'],
             'searchesTemplate'  => $config['templates']['searches'],
             'filtersTemplate'   => $config['templates']['filters'],

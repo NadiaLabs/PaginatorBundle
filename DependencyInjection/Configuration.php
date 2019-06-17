@@ -25,6 +25,7 @@ class Configuration implements ConfigurationInterface
                         ->scalarNode('default_page_size')->defaultValue(10)->end()
                         ->scalarNode('default_page_range')->defaultValue(8)->end()
                         ->scalarNode('session_enabled')->defaultFalse()->end()
+                        ->scalarNode('default_translation_domain')->defaultNull()->end()
                     ->end()
                 ->end()
                 ->arrayNode('templates')
