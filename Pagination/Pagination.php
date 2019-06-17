@@ -123,8 +123,13 @@ class Pagination extends AbstractPagination
     public function getFilterForm()
     {
         $form = $this->getFormView();
+        $filterKey = $this->getInputKeys()->getFilter();
 
-        return $form[$this->getInputKeys()->getFilter()];
+        if (!isset($form[$filterKey])) {
+            return new FormView;
+        }
+
+        return $form[$filterKey];
     }
 
     /**
@@ -143,8 +148,13 @@ class Pagination extends AbstractPagination
     public function getSearchForm()
     {
         $form = $this->getFormView();
+        $searchKey = $this->getInputKeys()->getSearch();
 
-        return $form[$this->getInputKeys()->getSearch()];
+        if (!isset($form[$searchKey])) {
+            return new FormView;
+        }
+
+        return $form[$searchKey];
     }
 
     /**
@@ -163,8 +173,13 @@ class Pagination extends AbstractPagination
     public function getSortForm()
     {
         $form = $this->getFormView();
+        $sortKey = $this->getInputKeys()->getSort();
 
-        return $form[$this->getInputKeys()->getSort()];
+        if (!isset($form[$sortKey])) {
+            return new FormView;
+        }
+
+        return $form[$sortKey];
     }
 
     /**
@@ -183,7 +198,12 @@ class Pagination extends AbstractPagination
     public function getPageSizeForm()
     {
         $form = $this->getFormView();
+        $pageSizeKey = $this->getInputKeys()->getPageSize();
 
-        return $form[$this->getInputKeys()->getPageSize()];
+        if (!isset($form[$pageSizeKey])) {
+            return new FormView;
+        }
+
+        return $form[$pageSizeKey];
     }
 }
