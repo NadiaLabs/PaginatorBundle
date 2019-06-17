@@ -98,12 +98,21 @@ class InputFactory
             return;
         }
 
-        $params = array(
-            $inputKeys->getFilter() => $filter,
-            $inputKeys->getSearch() => $search,
-            $inputKeys->getSort()   => $sort,
-            $inputKeys->getPageSize()  => $pageSize,
-        );
+        $params = array();
+
+        if ($form->has($inputKeys->getFilter())) {
+            $params[$inputKeys->getFilter()] = $filter;
+        }
+        if ($form->has($inputKeys->getSearch())) {
+            $params[$inputKeys->getSearch()] = $search;
+        }
+        if ($form->has($inputKeys->getSort())) {
+            $params[$inputKeys->getSort()] = $sort;
+        }
+        if ($form->has($inputKeys->getPageSize())) {
+            $params[$inputKeys->getPageSize()] = $pageSize;
+        }
+
         $params = $form->submit($params)->getData();
 
         if (array_key_exists($inputKeys->getSearch(), $params) && is_array($params[$inputKeys->getSearch()])) {
