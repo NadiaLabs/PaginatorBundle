@@ -28,17 +28,18 @@ class NadiaPaginatorExtension extends Extension
 
         $paginatorFactoryDef = $container->getDefinition('nadia_paginator.paginator_factory');
         $defaultOptions = array(
-            'inputKeysClass'    => $config['default_options']['input_key_class'],
-            'defaultPageSize'   => $config['default_options']['default_page_size'],
-            'defaultPageRange'  => $config['default_options']['default_page_range'],
-            'sessionEnabled'    => $config['default_options']['session_enabled'],
-            'translationDomain' => $config['default_options']['default_translation_domain'],
-            'pagesTemplate'     => $config['templates']['pages'],
-            'searchesTemplate'  => $config['templates']['searches'],
-            'filtersTemplate'   => $config['templates']['filters'],
-            'sortsTemplate'     => $config['templates']['sorts'],
-            'sortLinkTemplate'  => $config['templates']['sort_link'],
-            'pageSizesTemplate' => $config['templates']['page_sizes'],
+            'inputKeysClass'             => $config['default_options']['input_key_class'],
+            'defaultPageSize'            => $config['default_options']['default_page_size'],
+            'defaultPageRange'           => $config['default_options']['default_page_range'],
+            'sessionEnabled'             => $config['default_options']['session_enabled'],
+            'translationDomain'          => $config['default_options']['default_translation_domain'],
+            'paginatorTranslationDomain' => $config['default_options']['default_paginator_translation_domain'],
+            'pagesTemplate'              => $config['templates']['pages'],
+            'searchesTemplate'           => $config['templates']['searches'],
+            'filtersTemplate'            => $config['templates']['filters'],
+            'sortsTemplate'              => $config['templates']['sorts'],
+            'sortLinkTemplate'           => $config['templates']['sort_link'],
+            'pageSizesTemplate'          => $config['templates']['page_sizes'],
         );
 
         $paginatorFactoryDef->replaceArgument(1, $defaultOptions);

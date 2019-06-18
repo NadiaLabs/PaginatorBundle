@@ -39,16 +39,17 @@ class PaginatorFactory
      * @param PaginatorTypeInterface $type
      * @param array                  $options {
      *     @var string           $inputKeysClass
-     *     @var int              $defaultPageSize   Default page size
-     *     @var int              $defaultPageRange  Default page range (control page link amounts)
-     *     @var bool             $sessionEnabled    Enable session support, store input data in session
-     *     @var string           $pagesTemplate     Template for rendering pages
-     *     @var string           $searchesTemplate  Template for rendering searches block
-     *     @var string           $filtersTemplate   Template for rendering filters block
-     *     @var string           $sortsTemplate     Template for rendering sort selection block
-     *     @var string           $sortLinkTemplate  Template for rendering sort link
-     *     @var string           $pageSizesTemplate Template for rendering page size selection block
-     *     @var string|bool|null $translationDomain The form translation domain (default is null)
+     *     @var int              $defaultPageSize            Default page size
+     *     @var int              $defaultPageRange           Default page range (control page link amounts)
+     *     @var bool             $sessionEnabled             Enable session support, store input data in session
+     *     @var string           $pagesTemplate              Template for rendering pages
+     *     @var string           $searchesTemplate           Template for rendering searches block
+     *     @var string           $filtersTemplate            Template for rendering filters block
+     *     @var string           $sortsTemplate              Template for rendering sort selection block
+     *     @var string           $sortLinkTemplate           Template for rendering sort link
+     *     @var string           $pageSizesTemplate          Template for rendering page size selection block
+     *     @var string|bool|null $translationDomain          The form translation domain (default is null)
+     *     @var string|bool|null $paginatorTranslationDomain The paginator translation domain (default is nadia_paginator)
      * }
      *
      * @return Paginator

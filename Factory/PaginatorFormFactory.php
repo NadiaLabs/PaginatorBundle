@@ -6,6 +6,7 @@ use Nadia\Bundle\PaginatorBundle\Configuration\PaginatorBuilder;
 use Nadia\Bundle\PaginatorBundle\Input\InputKeys;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Translation\TranslatorInterface;
 
 /**
  * Class PaginatorFormFactory
@@ -16,15 +17,21 @@ class PaginatorFormFactory
      * @var FormFactoryInterface
      */
     private $formFactory;
+    /**
+     * @var TranslatorInterface
+     */
+    private $translator;
 
     /**
      * PaginatorFactory constructor.
      *
      * @param FormFactoryInterface $formFactory
+     * @param TranslatorInterface  $translator
      */
-    public function __construct(FormFactoryInterface $formFactory)
+    public function __construct(FormFactoryInterface $formFactory, TranslatorInterface $translator)
     {
         $this->formFactory = $formFactory;
+        $this->translator =$translator;
     }
 
     /**
@@ -88,7 +95,7 @@ class PaginatorFormFactory
 
         if ($builder->hasSort()) {
             $sortFormOptions = array_merge(array(
-                'label' => 'Sort',
+                'label' => $this->translator->trans('Sort', [], $options['paginatorTranslationDomain']),
                 'required' => false,
                 'choices' => $builder->getSortBuilder()->getChoices(),
                 'translation_domain' => $options['translationDomain'],
@@ -98,7 +105,7 @@ class PaginatorFormFactory
 
         if ($builder->hasPageSize()) {
             $pageSizeFormOptions = array_merge(array(
-                'label' => 'Page size',
+                'label' => $this->translator->trans('Page size', [], $options['paginatorTranslationDomain']),
                 'required' => false,
                 'placeholder' => false,
                 'choices' => $builder->getPageSizeBuilder()->all(),

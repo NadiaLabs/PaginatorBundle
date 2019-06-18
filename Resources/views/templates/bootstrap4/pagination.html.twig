@@ -18,65 +18,69 @@
         |merge([pagination.pageSizeForm.vars.id])
         |join(',#')
     %}
+    {% set paginatorTranslationDomain = pagination.getOption('paginatorTranslationDomain') %}
 
     {{ form_start(form) }}
 
     <div class="row mb-1 mb-md-3">
         <div class="{{ gridStyles.searchBlock }}">
             <div class="row">
-            {% block paginationSearches %}
+            {% block pagination_searches %}
                 {{ nadia_paginator_searches(pagination, {attributes: {class: gridStyles.search ~ ' search'}}) }}
-            {% endblock paginationSearches %}
+            {% endblock pagination_searches %}
 
-            {% block paginationButtons %}
+            {% block pagination_buttons %}
                 <div class="{{ gridStyles.buttons }} {% if hide is defined %}d-md-none my-3 row{% else %}d-none d-md-block{% endif %}">
                 {% if hide is not defined %}
                     <div>&nbsp;</div>
                 {% endif %}
                     <div>
-                    {% block paginationButtonSearch %}
+                    {% block pagination_button_search %}
                         {% if pagination.builder.search %}
-                        <button class="btn btn-primary">Search</button>
+                        <button class="btn btn-primary">
+                            {% trans from paginatorTranslationDomain %}Search{% endtrans %}
+                        </button>
                         {% endif %}
-                    {% endblock paginationButtonSearch %}
+                    {% endblock pagination_button_search %}
 
-                    {% block paginationButtonFilters %}
+                    {% block pagination_button_filters %}
                         {% if pagination.builder.filter %}
                         <button type="button" class="btn btn-info btn-display-filters">
-                            Filters
+                            {% trans from paginatorTranslationDomain %}Filters{% endtrans %}
                             <span class="filter-open-close-symbol">
                                 {% if input.filter is empty %}&#9660;{% else %}&#9650;{% endif %}
                             </span>
                         </button>
                         {% endif %}
-                    {% endblock paginationButtonFilters %}
+                    {% endblock pagination_button_filters %}
 
-                    {% block paginationButtonReset %}
-                        <input type="submit" class="btn btn-secondary" name="{{ resetKey }}" value="Clear" />
-                    {% endblock paginationButtonReset %}
+                    {% block pagination_button_reset %}
+                        <input type="submit" class="btn btn-secondary" name="{{ resetKey }}"
+                               value="{% trans from paginatorTranslationDomain %}Clear{% endtrans %}" />
+                    {% endblock pagination_button_reset %}
                     </div>
                 </div>
-            {% endblock paginationButtons %}
+            {% endblock pagination_buttons %}
             </div>
         </div>
 
         <div class="{{ gridStyles.sortBlock }} d-none d-md-block">
             <div class="row">
-            {% block paginationSorts %}
+            {% block pagination_sorts %}
                 <div class="{{ gridStyles.sorts }}">
                     {{ nadia_paginator_sorts(pagination) }}
                 </div>
-            {% endblock paginationSorts %}
-            {% block paginationPageSizes %}
+            {% endblock pagination_sorts %}
+            {% block pagination_page_sizes %}
                 <div class="{{ gridStyles.pageSizes }}">
                     {{ nadia_paginator_page_sizes(pagination) }}
                 </div>
-            {% endblock paginationPageSizes %}
+            {% endblock pagination_page_sizes %}
             </div>
         </div>
     </div>
 
-    {% block paginationFilters %}
+    {% block pagination_filters %}
     <div class="row mb-0 mb-md-3 {% if input.filter is empty %}d-none{% endif %}" id="filters">
         {{ nadia_paginator_filters(pagination, {
             attributes: {class: gridStyles.filter ~ ' mb-1 filter'},
@@ -84,13 +88,13 @@
             includes: includeFilterColumns|default([])
         }) }}
     </div>
-    {% endblock paginationFilters %}
+    {% endblock pagination_filters %}
 
     {% with {hide: true} %}
-        {{ block('paginationButtons') }}
+        {{ block('pagination_buttons') }}
     {% endwith %}
 
-    {% block paginationFiltersJavascript %}
+    {% block pagination_filters_javascript %}
     <script type="text/javascript">
         if (document.cookie.split(';').filter(function (item) {
             return item.trim().indexOf('{{ showFiltersCookieName }}=1') >= 0;
@@ -128,11 +132,11 @@
             });
         });
     </script>
-    {% endblock paginationFiltersJavascript %}
+    {% endblock pagination_filters_javascript %}
 
 
     <div class="table-responsive">
-    {% block tableContent %}
+    {% block table_contents %}
         <!-- Example table contents -->
         <table class="table">
             <thead>
@@ -164,13 +168,13 @@
             </tr>
             </tbody>
         </table>
-    {% endblock tableContent %}
+    {% endblock table_contents %}
     </div>
 
     <div class="d-flex justify-content-center">
-    {% block paginationPages %}
+    {% block pagination_pages %}
         {{ nadia_paginator_pages(pagination) }}
-    {% endblock paginationPages %}
+    {% endblock pagination_pages %}
     </div>
 
     {{ form_end(form) }}

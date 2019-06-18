@@ -124,6 +124,7 @@ class ContextProcessor
             'nextPage' => $nextPage,
             'pages' => $pages,
             'options' => $options,
+            'paginatorTranslationDomain' => $pagination->getOption('paginatorTranslationDomain'),
         );
     }
 

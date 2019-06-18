@@ -22,6 +22,7 @@ services:
         class: Nadia\Bundle\PaginatorBundle\Factory\PaginatorFormFactory
         arguments:
             - '@form.factory'
+            - '@translator'
 
     nadia_paginator.input_factory:
         class: Nadia\Bundle\PaginatorBundle\Input\InputFactory
