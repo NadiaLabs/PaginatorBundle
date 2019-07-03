@@ -14,6 +14,7 @@ services:
     nadia_paginator.paginator_factory:
         class: Nadia\Bundle\PaginatorBundle\Factory\PaginatorFactory
         arguments:
+            - '@nadia_paginator.type_container'
             - '@event_dispatcher'
             - []
         public: true

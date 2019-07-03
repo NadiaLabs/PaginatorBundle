@@ -5,6 +5,7 @@ namespace Nadia\Bundle\PaginatorBundle\Factory;
 use Nadia\Bundle\PaginatorBundle\Configuration\PaginatorBuilder;
 use Nadia\Bundle\PaginatorBundle\Configuration\PaginatorTypeInterface;
 use Nadia\Bundle\PaginatorBundle\Paginator;
+use Psr\Container\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -13,6 +14,10 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class PaginatorFactory
 {
+    /**
+     * @var ContainerInterface
+     */
+    private $paginatorTypeContainer;
     /**
      * @var EventDispatcherInterface
      */
@@ -26,18 +31,24 @@ class PaginatorFactory
     /**
      * PaginatorFactory constructor.
      *
+     * @param ContainerInterface $paginatorTypeContainer
      * @param EventDispatcherInterface $eventDispatcher
-     * @param array                    $defaultOptions
+     * @param array $defaultOptions
      */
-    public function __construct(EventDispatcherInterface $eventDispatcher, array $defaultOptions = array())
+    public function __construct(ContainerInterface $paginatorTypeContainer,
+                                EventDispatcherInterface $eventDispatcher,
+                                array $defaultOptions = array())
     {
+        $this->paginatorTypeContainer = $paginatorTypeContainer;
         $this->eventDispatcher = $eventDispatcher;
         $this->defaultOptions = $defaultOptions;
     }
 
     /**
-     * @param PaginatorTypeInterface $type
-     * @param array                  $options {
+     * @param PaginatorTypeInterface|string $type    An PaginatorTypeInterface instance or
+     *                                               a class name that implement PaginatorTypeInterface or
+     *                                               a service id for an PaginatorTypeInterface service
+     * @param array                         $options {
      *     @var string           $inputKeysClass
      *     @var int              $defaultPageSize            Default page size
      *     @var int              $defaultPageRange           Default page range (control page link amounts)
@@ -56,8 +67,12 @@ class PaginatorFactory
      *
      * @see \Nadia\Bundle\PaginatorBundle\Input\InputKeys
      */
-    public function create(PaginatorTypeInterface $type, array $options = array())
+    public function create($type, array $options = array())
     {
+        if (!is_object($type) || !$type instanceof PaginatorTypeInterface) {
+            $type = $this->paginatorTypeContainer->get($type);
+        }
+
         $options = $this->resolveOptions($type, $options);
         $builder = new PaginatorBuilder($type, $options);
 

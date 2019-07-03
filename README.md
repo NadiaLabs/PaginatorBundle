@@ -136,8 +136,7 @@ $options = [
         'DreamWorks Pictures',
     ],
 ];
-$type = $this->get('nadia_paginator.type_container')->get(PaginatorType::class);
-$paginator = $this->get('nadia_paginator.paginator_factory')->create($type, $options);
+$paginator = $this->get('nadia_paginator.paginator_factory')->create(PaginatorType::class, $options);
 
 $qb = $this->getDoctrine()->getRepository(Movie::class)
     ->createQueryBuilder('movie')

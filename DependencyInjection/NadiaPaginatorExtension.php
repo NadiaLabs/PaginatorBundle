@@ -42,6 +42,6 @@ class NadiaPaginatorExtension extends Extension
             'pageSizesTemplate'          => $config['templates']['page_sizes'],
         );
 
-        $paginatorFactoryDef->replaceArgument(1, $defaultOptions);
+        $paginatorFactoryDef->replaceArgument(2, $defaultOptions);
     }
 }
