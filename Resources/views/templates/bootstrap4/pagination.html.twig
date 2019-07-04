@@ -14,8 +14,8 @@
         filter: 'col-md-4 col-xl-3'
     }|merge(gridStyles) %}
     {% set idListForBindOnChangeEvent = '#' ~ pagination.filterForm|map(f => f.vars.id)
-        |merge([pagination.SortForm.vars.id])
-        |merge([pagination.pageSizeForm.vars.id])
+        |merge(pagination.SortForm.vars.id is defined ? [pagination.SortForm.vars.id] : [])
+        |merge(pagination.pageSizeForm.vars.id is defined ? [pagination.pageSizeForm.vars.id] : [])
         |join(',#')
     %}
     {% set paginatorTranslationDomain = pagination.getOption('paginatorTranslationDomain') %}

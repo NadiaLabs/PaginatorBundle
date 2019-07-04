@@ -2,6 +2,7 @@
 
 namespace Nadia\Bundle\PaginatorBundle\Factory;
 
+use Nadia\Bundle\PaginatorBundle\Configuration\DefaultPaginatorType;
 use Nadia\Bundle\PaginatorBundle\Configuration\PaginatorBuilder;
 use Nadia\Bundle\PaginatorBundle\Configuration\PaginatorTypeInterface;
 use Nadia\Bundle\PaginatorBundle\Paginator;
@@ -45,10 +46,11 @@ class PaginatorFactory
     }
 
     /**
-     * @param PaginatorTypeInterface|string $type    An PaginatorTypeInterface instance or
-     *                                               a class name that implement PaginatorTypeInterface or
-     *                                               a service id for an PaginatorTypeInterface service
-     * @param array                         $options {
+     * @param PaginatorTypeInterface|string|null $type    An PaginatorTypeInterface instance or
+     *                                                    a class name that implement PaginatorTypeInterface or
+     *                                                    a service id for an PaginatorTypeInterface service or
+     *                                                    add null for DefaultPaginatorType
+     * @param array                              $options {
      *     @var string           $inputKeysClass
      *     @var int              $defaultPageSize            Default page size
      *     @var int              $defaultPageRange           Default page range (control page link amounts)
@@ -67,9 +69,11 @@ class PaginatorFactory
      *
      * @see \Nadia\Bundle\PaginatorBundle\Input\InputKeys
      */
-    public function create($type, array $options = array())
+    public function create($type = null, array $options = array())
     {
-        if (!is_object($type) || !$type instanceof PaginatorTypeInterface) {
+        if (is_null($type)) {
+            $type = new DefaultPaginatorType();
+        } elseif (!is_object($type) || !$type instanceof PaginatorTypeInterface) {
             $type = $this->paginatorTypeContainer->get($type);
         }
 
