@@ -99,36 +99,47 @@ class InputFactory
         }
 
         $params = array();
+        $filterKey = $inputKeys->getFilter();
+        $searchKey = $inputKeys->getSearch();
+        $sortKey = $inputKeys->getSort();
+        $pageSizeKey = $inputKeys->getPageSize();
 
-        if ($form->has($inputKeys->getFilter())) {
-            $params[$inputKeys->getFilter()] = $filter;
+        if ($form->has($filterKey)) {
+            $params[$filterKey] = $filter;
         }
-        if ($form->has($inputKeys->getSearch())) {
-            $params[$inputKeys->getSearch()] = $search;
+        if ($form->has($searchKey)) {
+            $params[$searchKey] = $search;
         }
-        if ($form->has($inputKeys->getSort())) {
-            $params[$inputKeys->getSort()] = $sort;
+        if ($form->has($sortKey)) {
+            $params[$sortKey] = $sort;
         }
-        if ($form->has($inputKeys->getPageSize())) {
-            $params[$inputKeys->getPageSize()] = $pageSize;
+        if ($form->has($pageSizeKey)) {
+            $params[$pageSizeKey] = $pageSize;
         }
 
         $params = $form->submit($params)->getData();
 
-        if (array_key_exists($inputKeys->getSearch(), $params) && is_array($params[$inputKeys->getSearch()])) {
-            $this->modifyFilter($params[$inputKeys->getSearch()]);
-
-            $search = $params[$inputKeys->getSearch()];
+        if ($form->has($filterKey)) {
+            /** @var FormInterface $filterForm */
+            foreach ($form[$filterKey] as $name => $filterForm) {
+                $params[$filterKey][$name] = $filterForm->getViewData();
+            }
         }
 
-        if (array_key_exists($inputKeys->getFilter(), $params) && is_array($params[$inputKeys->getFilter()])) {
-            $this->modifyFilter($params[$inputKeys->getFilter()]);
+        if (array_key_exists($searchKey, $params) && is_array($params[$searchKey])) {
+            $this->modifyFilter($params[$searchKey]);
 
-            $filter = $params[$inputKeys->getFilter()];
+            $search = $params[$searchKey];
         }
 
-        $sort = array_key_exists($inputKeys->getSort(), $params) ? $params[$inputKeys->getSort()] : $sort;
-        $pageSize = array_key_exists($inputKeys->getPageSize(), $params) ? $params[$inputKeys->getPageSize()] : $pageSize;
+        if (array_key_exists($filterKey, $params) && is_array($params[$filterKey])) {
+            $this->modifyFilter($params[$filterKey]);
+
+            $filter = $params[$filterKey];
+        }
+
+        $sort = array_key_exists($sortKey, $params) ? $params[$sortKey] : $sort;
+        $pageSize = array_key_exists($pageSizeKey, $params) ? $params[$pageSizeKey] : $pageSize;
     }
 
     /**
