@@ -19,7 +19,12 @@ class Paginator
     /**
      * @var EventDispatcherInterface
      */
-    protected $eventDispatcher;
+    private $eventDispatcher;
+
+    /**
+     * @var BeforeEvent
+     */
+    private $beforeEvent;
 
     /**
      * Paginator constructor.
@@ -27,10 +32,13 @@ class Paginator
      * @param PaginatorBuilder         $builder
      * @param EventDispatcherInterface $eventDispatcher
      */
-    public function __construct(PaginatorBuilder $builder,EventDispatcherInterface $eventDispatcher)
+    public function __construct(PaginatorBuilder $builder, EventDispatcherInterface $eventDispatcher)
     {
         $this->builder = $builder;
         $this->eventDispatcher = $eventDispatcher;
+
+        $this->beforeEvent = new BeforeEvent($this->builder, $this->eventDispatcher);
+        $this->eventDispatcher->dispatch('nadia_paginator.before', $this->beforeEvent);
     }
 
     /**
@@ -44,8 +52,7 @@ class Paginator
      */
     public function paginate($target, $page = null, $pageSize = null)
     {
-        $beforeEvent = new BeforeEvent($this->builder, $this->eventDispatcher);
-        $this->eventDispatcher->dispatch('nadia_paginator.before', $beforeEvent);
+        $beforeEvent = $this->beforeEvent;
 
         if (!is_null($page) && is_numeric($page)) {
             $beforeEvent->input->setPage((int) $page);
