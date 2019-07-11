@@ -127,15 +127,11 @@ class InputFactory
         }
 
         if (array_key_exists($searchKey, $params) && is_array($params[$searchKey])) {
-            $this->modifyFilter($params[$searchKey]);
-
-            $search = $params[$searchKey];
+            $search = $this->modifyFilter($params[$searchKey]);
         }
 
         if (array_key_exists($filterKey, $params) && is_array($params[$filterKey])) {
-            $this->modifyFilter($params[$filterKey]);
-
-            $filter = $params[$filterKey];
+            $filter = $this->modifyFilter($params[$filterKey]);
         }
 
         $sort = array_key_exists($sortKey, $params) ? $params[$sortKey] : $sort;
@@ -149,6 +145,8 @@ class InputFactory
      * 2. Modify search & filter array keys, replace ':' to '.'
      *
      * @param array $data
+     *
+     * @return array
      */
     private function modifyFilter(array &$data)
     {
@@ -162,7 +160,7 @@ class InputFactory
             $output[str_replace(':', '.', $key)] = $value;
         }
 
-        $data = $output;
+        return $output;
     }
 
     /**
