@@ -77,4 +77,12 @@ class Paginator
 
         return $pagination;
     }
+
+    /**
+     * @return PaginatorBuilder
+     */
+    public function getBuilder()
+    {
+        return $this->builder;
+    }
 }
