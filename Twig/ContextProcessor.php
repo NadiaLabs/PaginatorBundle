@@ -58,7 +58,6 @@ class ContextProcessor
         $maxPage = (int) ceil($count / $input->getPageSize());
         $maxPage = $maxPage < 1 ? 1 : $maxPage;
         $range = $options['range'];
-        $rangeLevel = intval($current / $range);
         $pages = array();
 
         if (array_key_exists($inputKeys->getReset(), $routeParams)) {
@@ -69,17 +68,20 @@ class ContextProcessor
             unset($routeParams[$inputKeys->getPage()]);
         }
 
+        $firstPageNumber = 1;
         $firstPage = [
-            'number' => $range * $rangeLevel + 1,
+            'number' => $firstPageNumber,
             'url' => '#',
         ];
         $firstPage['text'] = empty($options['firstPageText']) ? $firstPage['number'] : $options['firstPageText'];
         if ($firstPage['number'] != $current) {
-            $firstPage['url'] = $this->router->generate($route, array_merge($routeParams, [$inputKeys->getPage() => 1]));
+            $firstPage['url'] = $this->router->generate(
+                $route,
+                array_merge($routeParams, [$inputKeys->getPage() => $firstPageNumber])
+            );
         }
 
-        $lastPageNumber = $range * ($rangeLevel + 1);
-        $lastPageNumber = $lastPageNumber > $maxPage ? $maxPage : $lastPageNumber;
+        $lastPageNumber = $maxPage;
         $lastPage = [
             'number' => $lastPageNumber,
             'url' => '#',
@@ -107,7 +109,11 @@ class ContextProcessor
             $nextPage['url'] = $this->router->generate($route, array_merge($routeParams, [$inputKeys->getPage() => $nextPage['number']]));
         }
 
-        for ($i = $firstPage['number']; $i <= $lastPage['number']; ++$i) {
+        $rangeLevel = (int) ceil($current / $range) - 1;
+        $startPageNumber = $range * $rangeLevel + 1;
+        $endPageNumber = $range * ($rangeLevel + 1);
+        $endPageNumber = $endPageNumber > $maxPage ? $maxPage : $endPageNumber;dump($rangeLevel, $startPageNumber, $endPageNumber);
+        for ($i = $startPageNumber; $i <= $endPageNumber; ++$i) {
             $pages[] = [
                 'number' => $i,
                 'url' => $this->router->generate($route, array_merge($routeParams, [$inputKeys->getPage() => $i])),
