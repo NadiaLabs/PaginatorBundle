@@ -46,7 +46,7 @@ class FilterQueryCompiler implements QueryCompilerInterface
      * @param string       $fieldName
      * @param mixed        $value
      */
-    private function defaultCallback(QueryBuilder $qb, $fieldName, $value)
+    protected function defaultCallback(QueryBuilder $qb, $fieldName, $value)
     {
         $parameterName = str_replace('.', '_', $fieldName);
 
