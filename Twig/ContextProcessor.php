@@ -112,7 +112,7 @@ class ContextProcessor
         $rangeLevel = (int) ceil($current / $range) - 1;
         $startPageNumber = $range * $rangeLevel + 1;
         $endPageNumber = $range * ($rangeLevel + 1);
-        $endPageNumber = $endPageNumber > $maxPage ? $maxPage : $endPageNumber;dump($rangeLevel, $startPageNumber, $endPageNumber);
+        $endPageNumber = $endPageNumber > $maxPage ? $maxPage : $endPageNumber;
         for ($i = $startPageNumber; $i <= $endPageNumber; ++$i) {
             $pages[] = [
                 'number' => $i,
