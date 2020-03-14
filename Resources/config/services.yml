@@ -11,6 +11,10 @@ services:
             - ~
         public: true
 
+    Nadia\Bundle\PaginatorBundle\DependencyInjection\Container\PaginatorTypeContainer:
+        alias: nadia_paginator.type_container
+        public: true
+
     nadia_paginator.paginator_factory:
         class: Nadia\Bundle\PaginatorBundle\Factory\PaginatorFactory
         arguments:
@@ -18,21 +22,30 @@ services:
             - '@event_dispatcher'
             - []
         public: true
+    Nadia\Bundle\PaginatorBundle\Factory\PaginatorFactory:
+        alias: nadia_paginator.paginator_factory
+        public: true
 
     nadia_paginator.paginator_form_factory:
         class: Nadia\Bundle\PaginatorBundle\Factory\PaginatorFormFactory
         arguments:
             - '@form.factory'
             - '@translator'
+    Nadia\Bundle\PaginatorBundle\Factory\PaginatorFormFactory:
+        alias: nadia_paginator.paginator_form_factory
 
     nadia_paginator.input_factory:
         class: Nadia\Bundle\PaginatorBundle\Input\InputFactory
+    Nadia\Bundle\PaginatorBundle\Input\InputFactory:
+        alias: nadia_paginator.input_factory
 
     nadia_paginator.context_processor:
         class: '%nadia_paginator.context_processor_class%'
         arguments:
             - '@router'
             - '@translator'
+    Nadia\Bundle\PaginatorBundle\Twig\ContextProcessor:
+        alias: nadia_paginator.context_processor
 
     nadia_paginator.twig.extension:
         class: Nadia\Bundle\PaginatorBundle\Twig\Extension\PaginatorExtension
