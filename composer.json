@@ -26,7 +26,7 @@
         "symfony/http-kernel": "^3.4|^4.0",
         "symfony/options-resolver": "^3.4|^4.0",
         "symfony/routing": "^3.4|^4.0",
-        "twig/twig": "^2.0"
+        "twig/twig": "^2.0|^3.0"
     },
     "require-dev": {
     },
