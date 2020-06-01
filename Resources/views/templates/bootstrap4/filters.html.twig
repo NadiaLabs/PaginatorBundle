@@ -1,4 +1,5 @@
-{% for name, form in filterForm if name in validColumns %}
+{% for name, form in filterForm %}
+    {% if name in validColumns %}
     <div {% for key, value in options.attributes|default({}) %}{{ key }}="{{ value }}"{% endfor %}>
         <div>
             <small>
@@ -7,4 +8,5 @@
         </div>
         {{ form_widget(form) }}
     </div>
+    {% endif %}
 {% endfor %}
