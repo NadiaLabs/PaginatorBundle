@@ -10,6 +10,15 @@
                 {{ previousPage.text|trans([], paginatorTranslationDomain) }}
             </a>
         </li>
+
+        {% if nextPreviousPage.number > firstPage.number %}
+        <li class="page-item">
+            <a class="page-link" href="{{ nextPreviousPage.url }}" tabindex="-1">
+                {{ nextPreviousPage.text }}
+            </a>
+        </li>
+        {% endif %}
+
         {% for page in pages %}
         <li class="page-item {% if page.number == current %}active{% endif %}">
             <a class="page-link" href="{{ page.url }}">
@@ -17,6 +26,15 @@
             </a>
         </li>
         {% endfor %}
+
+        {% if nextNextPage.number < lastPage.number %}
+        <li class="page-item">
+            <a class="page-link" href="{{ nextNextPage.url }}" tabindex="-1">
+                {{ nextNextPage.text }}
+            </a>
+        </li>
+        {% endif %}
+
         <li class="page-item next-page {% if nextPage.url == '#' %}disabled{% endif %}">
             <a class="page-link" href="{{ nextPage.url }}" tabindex="-1">
                 {{ nextPage.text|trans([], paginatorTranslationDomain) }}

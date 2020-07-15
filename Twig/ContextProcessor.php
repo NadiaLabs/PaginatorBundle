@@ -121,6 +121,11 @@ class ContextProcessor
             ];
         }
 
+        $nextPreviousPage = ['number' => $startPageNumber - 1, 'text' => '...'];
+        $nextPreviousPage['url'] = $this->router->generate($route, array_merge($routeParams, [$inputKeys->getPage() => $nextPreviousPage['number']]));
+        $nextNextPage = ['number' => $endPageNumber + 1, 'text' => '...'];
+        $nextNextPage['url'] = $this->router->generate($route, array_merge($routeParams, [$inputKeys->getPage() => $nextNextPage['number']]));
+
         return array(
             'current' => $current,
             'maxPage' => $maxPage,
@@ -129,6 +134,8 @@ class ContextProcessor
             'previousPage' => $previousPage,
             'nextPage' => $nextPage,
             'pages' => $pages,
+            'nextPreviousPage' => $nextPreviousPage,
+            'nextNextPage' => $nextNextPage,
             'options' => $options,
             'paginatorTranslationDomain' => $pagination->getOption('paginatorTranslationDomain'),
         );
