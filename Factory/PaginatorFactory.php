@@ -63,6 +63,8 @@ class PaginatorFactory
      *     @var string           $pageSizesTemplate          Template for rendering page size selection block
      *     @var string|bool|null $translationDomain          The form translation domain (default is null)
      *     @var string|bool|null $paginatorTranslationDomain The paginator translation domain (default is nadia_paginator)
+     *     @var bool             $enableResultCache          Enable Doctrine ORM result cache support
+     *     @var int              $resultCacheLifetime        Doctrine ORM result cache lifetime (in seconds)
      * }
      *
      * @return Paginator
@@ -110,6 +112,8 @@ class PaginatorFactory
 
         $defaultOptions['sessionKey'] = 'nadia.paginator.session.' . hash('md5', get_class($type));
         $defaultOptions['inputKeys'] = new $defaultOptions['inputKeysClass'];
+        $defaultOptions['enableResultCache'] = false;
+        $defaultOptions['resultCacheLifetime'] = null;
 
         $resolver->setDefaults($defaultOptions);
     }

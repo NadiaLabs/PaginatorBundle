@@ -42,7 +42,7 @@ class QueryBuilderSubscriber implements EventSubscriberInterface
             $qb->setFirstResult($offset);
         }
 
-        $event->count = $this->count($qb);
+        $event->count = $this->count($qb, $event->getBuilder());
         $event->items = $qb->getQuery()->getResult();
     }
 
@@ -126,16 +126,22 @@ class QueryBuilderSubscriber implements EventSubscriberInterface
 
     /**
      * @param QueryBuilder $qb
+     * @param PaginatorBuilder $builder
      *
      * @return int
      */
-    private function count(QueryBuilder $qb)
+    private function count(QueryBuilder $qb, PaginatorBuilder $builder)
     {
         $countQuery = (clone $qb)->resetDQLPart('orderBy')->getQuery();
 
         $countQuery->setHint(Query::HINT_CUSTOM_OUTPUT_WALKER, 'Doctrine\ORM\Tools\Pagination\CountOutputWalker');
         $countQuery->setFirstResult(null);
         $countQuery->setMaxResults(null);
+
+        if ($builder->getTypeOption('enableResultCache')) {
+            $countQuery->enableResultCache($builder->getTypeOption('resultCacheLifetime', null));
+        }
+
         $countQuery->getEntityManager()->getConfiguration()->addCustomHydrationMode('count', 'Nadia\Bundle\PaginatorBundle\Doctrine\ORM\Query\Hydrator\CountHydrator');
 
         $countResult = $countQuery->getResult('count');
