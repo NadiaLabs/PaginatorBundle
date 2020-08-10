@@ -29,6 +29,8 @@
         "twig/twig": "^2.0|^3.0"
     },
     "require-dev": {
+        "doctrine/orm": "^2.6",
+        "doctrine/dbal": "^2.8"
     },
     "suggest": {
         "doctrine/orm": "^2.6",
