@@ -2,8 +2,9 @@
 
 namespace Nadia\Bundle\PaginatorBundle\Event\Subscriber\Doctrine\ORM;
 
-use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
+use Doctrine\ORM\Tools\Pagination\Paginator;
+use Exception;
 use Nadia\Bundle\PaginatorBundle\Configuration\PaginatorBuilder;
 use Nadia\Bundle\PaginatorBundle\Configuration\QueryCompilerInterface;
 use Nadia\Bundle\PaginatorBundle\Configuration\Sort;
@@ -17,6 +18,8 @@ class QueryBuilderSubscriber implements EventSubscriberInterface
 {
     /**
      * @param ItemsEvent $event
+     *
+     * @throws Exception
      */
     public function items(ItemsEvent $event)
     {
@@ -43,7 +46,7 @@ class QueryBuilderSubscriber implements EventSubscriberInterface
         }
 
         $event->count = $this->count($qb, $event->getBuilder());
-        $event->items = $qb->getQuery()->getResult();
+        $event->items = iterator_to_array((new Paginator($qb->getQuery()))->getIterator());
     }
 
     /**
@@ -134,19 +137,11 @@ class QueryBuilderSubscriber implements EventSubscriberInterface
     {
         $countQuery = (clone $qb)->resetDQLPart('orderBy')->getQuery();
 
-        $countQuery->setHint(Query::HINT_CUSTOM_OUTPUT_WALKER, 'Doctrine\ORM\Tools\Pagination\CountOutputWalker');
-        $countQuery->setFirstResult(null);
-        $countQuery->setMaxResults(null);
-
         if ($builder->getTypeOption('enableResultCache')) {
             $countQuery->enableResultCache($builder->getTypeOption('resultCacheLifetime', null));
         }
 
-        $countQuery->getEntityManager()->getConfiguration()->addCustomHydrationMode('count', 'Nadia\Bundle\PaginatorBundle\Doctrine\ORM\Query\Hydrator\CountHydrator');
-
-        $countResult = $countQuery->getResult('count');
-
-        return intval(current(current($countResult)));
+        return (new Paginator($countQuery))->count();
     }
 
     /**
