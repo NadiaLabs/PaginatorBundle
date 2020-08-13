@@ -45,8 +45,12 @@ class QueryBuilderSubscriber implements EventSubscriberInterface
             $qb->setFirstResult($offset);
         }
 
-        $event->count = $this->count($qb, $event->getBuilder());
-        $event->items = iterator_to_array((new Paginator($qb->getQuery()))->getIterator());
+        $event->count = function () use ($qb, $event) {
+            return $this->count($qb, $event->getBuilder());
+        };
+        $event->items = function () use ($qb) {
+            return iterator_to_array((new Paginator($qb->getQuery()))->getIterator());
+        };
     }
 
     /**

@@ -29,7 +29,7 @@ abstract class AbstractPagination implements PaginationInterface, \Countable, \I
     /**
      * @var array
      */
-    private $items = [];
+    private $items;
 
     /**
      * AbstractPagination constructor.
@@ -107,6 +107,10 @@ abstract class AbstractPagination implements PaginationInterface, \Countable, \I
      */
     public function getItems()
     {
+        if (is_callable($this->items)) {
+            $this->items = call_user_func($this->items);
+        }
+
         return $this->items;
     }
 
@@ -133,6 +137,8 @@ abstract class AbstractPagination implements PaginationInterface, \Countable, \I
      */
     public function rewind()
     {
+        $this->getItems();
+
         reset($this->items);
     }
 
@@ -141,6 +147,8 @@ abstract class AbstractPagination implements PaginationInterface, \Countable, \I
      */
     public function current()
     {
+        $this->getItems();
+
         return current($this->items);
     }
 
@@ -149,6 +157,8 @@ abstract class AbstractPagination implements PaginationInterface, \Countable, \I
      */
     public function key()
     {
+        $this->getItems();
+
         return key($this->items);
     }
 
@@ -157,6 +167,8 @@ abstract class AbstractPagination implements PaginationInterface, \Countable, \I
      */
     public function next()
     {
+        $this->getItems();
+
         next($this->items);
     }
 
@@ -165,6 +177,8 @@ abstract class AbstractPagination implements PaginationInterface, \Countable, \I
      */
     public function valid()
     {
+        $this->getItems();
+
         return key($this->items) !== null;
     }
 
@@ -173,6 +187,8 @@ abstract class AbstractPagination implements PaginationInterface, \Countable, \I
      */
     public function count()
     {
+        $this->getItems();
+
         return count($this->items);
     }
 
@@ -181,6 +197,8 @@ abstract class AbstractPagination implements PaginationInterface, \Countable, \I
      */
     public function offsetExists($offset)
     {
+        $this->getItems();
+
         return array_key_exists($offset, $this->items);
     }
 
@@ -189,6 +207,8 @@ abstract class AbstractPagination implements PaginationInterface, \Countable, \I
      */
     public function offsetGet($offset)
     {
+        $this->getItems();
+
         return $this->items[$offset];
     }
 
@@ -197,6 +217,8 @@ abstract class AbstractPagination implements PaginationInterface, \Countable, \I
      */
     public function offsetSet($offset, $value)
     {
+        $this->getItems();
+
         if (null === $offset) {
             $this->items[] = $value;
         } else {
@@ -209,6 +231,8 @@ abstract class AbstractPagination implements PaginationInterface, \Countable, \I
      */
     public function offsetUnset($offset)
     {
+        $this->getItems();
+
         unset($this->items[$offset]);
     }
 }
