@@ -91,7 +91,11 @@ abstract class AbstractPagination implements PaginationInterface, \Countable, \I
      */
     public function getCount()
     {
-        return $this->count;
+        if (is_callable($this->count)) {
+            $this->count = call_user_func($this->count);
+        }
+
+        return (int) $this->count;
     }
 
     /**
@@ -99,7 +103,9 @@ abstract class AbstractPagination implements PaginationInterface, \Countable, \I
      */
     public function setCount($count)
     {
-        $this->count = (int) $count;
+        $this->count = $count;
+
+        return $this;
     }
 
     /**
