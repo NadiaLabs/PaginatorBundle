@@ -67,6 +67,11 @@ class PaginationSubscriber implements EventSubscriberInterface
      */
     public function before(BeforeEvent $event)
     {
+        // Allow the compatibility for using in console or none-http-request situations
+        if (!$this->request instanceof Request) {
+            $this->request = new Request();
+        }
+
         $this->addEventSubscribers($event->getEventDispatcher());
 
         $event->getBuilder()->build();
